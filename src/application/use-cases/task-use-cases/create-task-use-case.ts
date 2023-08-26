@@ -1,12 +1,15 @@
 import Task from '../../../domain/entities/task';
 import TaskRepositoryImpl from '../../../infrastructure/repositories/task-repository-impl';
+import CreateTaskUseCaseDTO from './create-task-dto';
 
 class CreateTaskUseCase {
   constructor(private taskRepository: TaskRepositoryImpl) {}
 
-  execute(title: string): void {
-    const task = new Task(Date.now(), title, false);
-    this.taskRepository.create(task);
+  async execute({ title }: CreateTaskUseCaseDTO): Promise<void> {
+    const task = new Task({
+      title,
+    });
+    await this.taskRepository.create(task);
   }
 }
 
