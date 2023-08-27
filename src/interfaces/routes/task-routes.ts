@@ -1,9 +1,9 @@
 import { Router } from 'express';
+import { PrismaClient } from '@prisma/client';
 
 import TaskController from '../controllers/task-controller';
 import CreateTaskUseCase from '../../application/use-cases/task-use-cases/create-task-use-case';
 import TaskRepositoryImpl from '../../infrastructure/repositories/task-repository-impl';
-import { PrismaClient } from '@prisma/client';
 import ListTasksUseCase from '../../application/use-cases/task-use-cases/list-tasks-use-case';
 
 const router = Router();
