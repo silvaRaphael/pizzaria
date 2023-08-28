@@ -5,6 +5,10 @@ export class GetUserUseCase {
   constructor(private userRepository: UserRepositoryImpl) {}
 
   async execute(userId: string): Promise<User> {
-    return await this.userRepository.getOne(userId);
+    try {
+      return await this.userRepository.getOne(userId);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
 }

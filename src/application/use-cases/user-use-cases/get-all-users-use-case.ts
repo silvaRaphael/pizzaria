@@ -1,10 +1,14 @@
 import { User } from '../../../domain/entities/user';
 import { UserRepositoryImpl } from '../../../infrastructure/repositories/user-repository-impl';
 
-export class ListUsersUseCase {
+export class GetAllUsersUseCase {
   constructor(private userRepository: UserRepositoryImpl) {}
 
   async execute(): Promise<User[]> {
-    return await this.userRepository.getAll();
+    try {
+      return await this.userRepository.getAll();
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
 }

@@ -17,12 +17,43 @@ model Task {
   completed Boolean @default(false)
 }
 
+model City {
+  id       String   @id
+  state_id String
+  city     String
+  Client   Client[]
+}
+
+model State {
+  id     String   @id
+  state  String
+  abbr   String
+  Client Client[]
+}
+
 model User {
   id         String    @id
-  username   String    @unique
+  username   String
   name       String
   password   String
   active     Boolean
   created_at DateTime
   updated_at DateTime?
+}
+
+model Client {
+  id             String    @id
+  name           String
+  phone          String
+  zip_code       String
+  street_address String
+  street_number  String
+  reference      String?
+  state          State     @relation(fields: [state_id], references: [id])
+  state_id       String
+  city           City      @relation(fields: [city_id], references: [id])
+  city_id        String
+  active         Boolean
+  created_at     DateTime
+  updated_at     DateTime?
 }

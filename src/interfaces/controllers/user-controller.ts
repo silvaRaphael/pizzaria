@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 
 import { CreateUserUseCase } from '../../application/use-cases/user-use-cases/create-user-use-case';
 import { GetUserUseCase } from '../../application/use-cases/user-use-cases/get-user-use-case';
-import { ListUsersUseCase } from '../../application/use-cases/user-use-cases/list-users-use-case';
+import { GetAllUsersUseCase } from '../../application/use-cases/user-use-cases/get-all-users-use-case';
 
 export class UserController {
   constructor(
     private createUserUseCase: CreateUserUseCase,
     private getUserUseCase: GetUserUseCase,
-    private listUsersUseCase: ListUsersUseCase,
+    private getAllUsersUseCase: GetAllUsersUseCase,
   ) {}
 
   async createTask(req: Request, res: Response): Promise<void> {
@@ -22,10 +22,10 @@ export class UserController {
       });
       res
         .status(201)
-        .json({ message: 'User created successfully', id: user.id });
+        .json({ message: 'Usuário criado com sucesso!', id: user.id });
     } catch (error: any) {
       console.error(error);
-      res.status(500).json({ error: 'An error occurred' });
+      res.status(500).json({ error: 'Ocorreu um erro.' });
     }
   }
 
@@ -37,17 +37,17 @@ export class UserController {
       res.status(200).json(user);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'An error occurred' });
+      res.status(500).json({ error: 'Ocorreu um erro.' });
     }
   }
 
-  async listUsers(req: Request, res: Response): Promise<void> {
+  async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
-      const users = await this.listUsersUseCase.execute();
+      const users = await this.getAllUsersUseCase.execute();
       res.status(200).json(users);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'An error occurred' });
+      res.status(500).json({ error: 'Ocorreu um erro.' });
     }
   }
 }

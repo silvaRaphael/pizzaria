@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import { User } from '../../domain/entities/user';
 import { UserRepository } from '../../domain/repositories/user-repository';
@@ -9,33 +8,44 @@ export class UserRepositoryImpl implements UserRepository {
 
   async create(user: User): Promise<void> {
     try {
-      const userExists = await this.prisma.user.findUnique({
+      const userExists = await this.prisma.user.findFirst({
         where: {
           username: user.username,
         },
       });
 
       if (userExists) {
-        throw new Error('Username already exists');
+        throw new Error('Usuário já existe!');
       }
 
       await this.prisma.user.create({
         data: user,
       });
     } catch (error: any) {
+      console.error(error);
       throw new Error(error.message);
     }
   }
 
   async getOne(userId: string): Promise<User> {
-    return (await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    })) as User;
+    try {
+      return (await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      })) as User;
+    } catch (error: any) {
+      console.error(error);
+      throw new Error(error.message);
+    }
   }
 
   async getAll(): Promise<User[]> {
-    return (await this.prisma.user.findMany()) as User[];
+    try {
+      return (await this.prisma.user.findMany()) as User[];
+    } catch (error: any) {
+      console.error(error);
+      throw new Error(error.message);
+    }
   }
 }
