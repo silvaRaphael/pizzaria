@@ -18,7 +18,7 @@ const userController = new UserController(
 );
 
 router.post('/users', (req, res) => {
-  userController.createTask(req, res);
+  userController.createUser(req, res);
 });
 
 router.get('/user/:userId', (req, res) => {

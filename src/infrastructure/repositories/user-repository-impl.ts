@@ -22,29 +22,43 @@ export class UserRepositoryImpl implements UserRepository {
         data: user,
       });
     } catch (error: any) {
-      console.error(error);
       throw new Error(error.message);
     }
   }
 
   async getOne(userId: string): Promise<User> {
     try {
-      return (await this.prisma.user.findUnique({
+      return (await this.prisma.user.findFirst({
         where: {
           id: userId,
         },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+        },
       })) as User;
     } catch (error: any) {
-      console.error(error);
       throw new Error(error.message);
     }
   }
 
   async getAll(): Promise<User[]> {
     try {
-      return (await this.prisma.user.findMany()) as User[];
+      return (await this.prisma.user.findMany({
+        where: {
+          active: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      })) as User[];
     } catch (error: any) {
-      console.error(error);
       throw new Error(error.message);
     }
   }

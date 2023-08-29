@@ -11,7 +11,7 @@ export class UserController {
     private getAllUsersUseCase: GetAllUsersUseCase,
   ) {}
 
-  async createTask(req: Request, res: Response): Promise<void> {
+  async createUser(req: Request, res: Response): Promise<void> {
     const { username, name, password } = req.body;
 
     try {
@@ -20,12 +20,9 @@ export class UserController {
         name,
         password,
       });
-      res
-        .status(201)
-        .json({ message: 'Usuário criado com sucesso!', id: user.id });
+      res.status(201).json({ id: user.id });
     } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro.' });
+      res.status(500).json({ error: 'Ocorreu um erro!' });
     }
   }
 
@@ -36,8 +33,7 @@ export class UserController {
       const user = await this.getUserUseCase.execute(userId);
       res.status(200).json(user);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro.' });
+      res.status(500).json({ error: 'Ocorreu um erro!' });
     }
   }
 
@@ -46,8 +42,7 @@ export class UserController {
       const users = await this.getAllUsersUseCase.execute();
       res.status(200).json(users);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro.' });
+      res.status(500).json({ error: 'Ocorreu um erro!' });
     }
   }
 }
