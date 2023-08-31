@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { hash } from 'bcryptjs';
+import { hashSync } from 'bcryptjs';
 
 export class User {
   public id: string;
@@ -28,7 +28,7 @@ export class User {
     this.id = id ?? randomUUID();
     this.username = username;
     this.name = name;
-    this.password = password;
+    this.password = hashSync(password, 8);
     this.active = active ?? true;
     this.created_at = created_at ?? new Date();
     this.updated_at = new Date();

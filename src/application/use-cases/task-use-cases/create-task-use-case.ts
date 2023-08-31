@@ -5,11 +5,19 @@ import CreateTaskUseCaseDTO from './create-task-dto';
 class CreateTaskUseCase {
   constructor(private taskRepository: TaskRepositoryImpl) {}
 
-  async execute({ title }: CreateTaskUseCaseDTO): Promise<void> {
-    const task = new Task({
-      title,
-    });
-    await this.taskRepository.create(task);
+  async execute({ title }: CreateTaskUseCaseDTO): Promise<Task> {
+    try {
+      if (!title) {
+        throw new Error('Dados faltando!');
+      }
+      const task = new Task({
+        title,
+      });
+      await this.taskRepository.create(task);
+      return task;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
 }
 

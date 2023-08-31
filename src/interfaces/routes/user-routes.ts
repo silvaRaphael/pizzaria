@@ -10,11 +10,11 @@ import { GetUserUseCase } from '../../application/use-cases/user-use-cases/get-u
 const router = Router();
 
 const prismaClient = new PrismaClient();
-const userRepositoryImpl = new UserRepositoryImpl(prismaClient);
+const userRepository = new UserRepositoryImpl(prismaClient);
 const userController = new UserController(
-  new CreateUserUseCase(userRepositoryImpl),
-  new GetUserUseCase(userRepositoryImpl),
-  new GetAllUsersUseCase(userRepositoryImpl),
+  new CreateUserUseCase(userRepository),
+  new GetUserUseCase(userRepository),
+  new GetAllUsersUseCase(userRepository),
 );
 
 router.post('/users', (req, res) => {
