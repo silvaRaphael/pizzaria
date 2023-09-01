@@ -1,5 +1,7 @@
 # Sistema para Pizzaria
 
+<img src="https://img.shields.io/badge/NodeJs-18.17.0-accent">
+
 - #### Para instalar as configurar as variaveis e dependências execute os seguintes comandos:
 
 ```
