@@ -7,7 +7,8 @@
     "build": "npx tsc",
     "start": "node src/app.js",
     "dev": "tsnd --respawn --transpile-only src/app.ts",
-    "test": "jest"
+    "test": "NODE_ENV=test && npx jest tests/unit",
+    "test:e2e": "NODE_ENV=test && npx jest tests/e2e"
   },
   "keywords": [],
   "author": "",

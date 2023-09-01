@@ -5,6 +5,7 @@ import { UserRepositoryImpl } from '../../src/infrastructure/repositories/user-r
 import { CreateUserUseCase } from '../../src/application/use-cases/user-use-cases/create-user-use-case';
 import { GetUserUseCase } from '../../src/application/use-cases/user-use-cases/get-user-use-case';
 import { GetAllUsersUseCase } from '../../src/application/use-cases/user-use-cases/get-all-users-use-case';
+import { ClearDatabaseTests } from '../../src/interfaces/utils/clear-database-tests';
 
 describe('Create User UseCase', () => {
   let userRepository: UserRepositoryImpl;
@@ -12,6 +13,7 @@ describe('Create User UseCase', () => {
   let getUserUseCase: GetUserUseCase;
   let getAllUsersUseCase: GetAllUsersUseCase;
   let user: User;
+  let idsToDelete: string[] = [];
 
   beforeAll(async () => {
     userRepository = new UserRepositoryImpl(new PrismaClient());
@@ -23,7 +25,12 @@ describe('Create User UseCase', () => {
       name: 'test',
       password: '123',
     });
+    idsToDelete.push(user.id);
   });
+
+  afterAll(
+    async () => await ClearDatabaseTests(new PrismaClient().user, idsToDelete),
+  );
 
   it('Should get a user by id', async () => {
     const response = await getUserUseCase.execute(user.id);

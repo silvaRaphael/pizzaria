@@ -4,11 +4,13 @@ import { User } from '../../src/domain/entities/user';
 import { UserRepositoryImpl } from '../../src/infrastructure/repositories/user-repository-impl';
 import { CreateUserUseCase } from '../../src/application/use-cases/user-use-cases/create-user-use-case';
 import { CreateUserUseCaseDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
+import { ClearDatabaseTests } from '../../src/interfaces/utils/clear-database-tests';
 
 describe('Create User UseCase', () => {
   let userRepository: UserRepositoryImpl;
   let createUserUseCase: CreateUserUseCase;
   let userData: CreateUserUseCaseDTO;
+  let idsToDelete: string[] = [];
 
   beforeAll(() => {
     userRepository = new UserRepositoryImpl(new PrismaClient());
@@ -20,15 +22,23 @@ describe('Create User UseCase', () => {
     };
   });
 
-  it('Should create a new user', async () => {
-    const response = await createUserUseCase.execute(userData);
+  afterAll(
+    async () => await ClearDatabaseTests(new PrismaClient().user, idsToDelete),
+  );
 
-    expect(response).toBeInstanceOf(User);
+  it('Should create a new user', async () => {
+    const user = await createUserUseCase.execute(userData);
+
+    idsToDelete.push(user.id);
+
+    expect(user).toBeInstanceOf(User);
   });
 
   it('Should not create a user with same username', async () => {
     try {
-      await createUserUseCase.execute(userData);
+      const user = await createUserUseCase.execute(userData);
+
+      idsToDelete.push(user.id);
     } catch (error: any) {
       expect(error.message).toBe('Usuário já existe!');
     }
