@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { Client } from '../../src/domain/entities/client';
 import { ClientRepositoryImpl } from '../../src/infrastructure/repositories/client-repository-impl';
 import { CreateClientUseCase } from '../../src/application/use-cases/client-use-cases/create-client-use-case';
-import { CreateClientDTO } from '../../src/application/use-cases/client-use-cases/create-client-dto';
 import { ClearDatabaseTests } from '../../src/interfaces/utils/clear-database-tests';
 
 describe('Create Client UseCase', () => {

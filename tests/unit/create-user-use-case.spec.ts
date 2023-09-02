@@ -3,13 +3,13 @@ import { PrismaClient } from '@prisma/client';
 import { User } from '../../src/domain/entities/user';
 import { UserRepositoryImpl } from '../../src/infrastructure/repositories/user-repository-impl';
 import { CreateUserUseCase } from '../../src/application/use-cases/user-use-cases/create-user-use-case';
-import { CreateUserUseCaseDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
+import { CreateUserDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
 import { ClearDatabaseTests } from '../../src/interfaces/utils/clear-database-tests';
 
 describe('Create User UseCase', () => {
   let userRepository: UserRepositoryImpl;
   let createUserUseCase: CreateUserUseCase;
-  let userData: CreateUserUseCaseDTO;
+  let userData: CreateUserDTO;
   let idsToDelete: string[] = [];
 
   beforeAll(() => {

@@ -51,11 +51,62 @@ model Client {
   street_address String
   street_number  String
   reference      String?
-  state          State     @relation(fields: [state_id], references: [id])
   state_id       String
-  city           City      @relation(fields: [city_id], references: [id])
   city_id        String
   active         Boolean
   created_at     DateTime
   updated_at     DateTime?
+  state          State     @relation(fields: [state_id], references: [id])
+  city           City      @relation(fields: [city_id], references: [id])
+  Order          Order[]
+}
+
+model PizzaFlavor {
+  id               String             @id
+  flavor           String
+  price            Float
+  active           Boolean
+  created_at       DateTime
+  updated_at       DateTime?
+  OrderPizzaFlavor OrderPizzaFlavor[]
+}
+
+model PizzaTopping {
+  id                String              @id
+  topping           String
+  price             Float
+  active            Boolean
+  created_at        DateTime
+  updated_at        DateTime?
+  OrderPizzaTopping OrderPizzaTopping[]
+}
+
+model Order {
+  id                String              @id
+  client_id         String
+  size              Int
+  price             Float
+  status            Int
+  done              Boolean
+  created_at        DateTime
+  updated_at        DateTime?
+  client            Client              @relation(fields: [client_id], references: [id])
+  OrderPizzaFlavor  OrderPizzaFlavor[]
+  OrderPizzaTopping OrderPizzaTopping[]
+}
+
+model OrderPizzaFlavor {
+  id        String      @id
+  order_id  String
+  flavor_id String
+  flavor    PizzaFlavor @relation(fields: [flavor_id], references: [id])
+  order     Order       @relation(fields: [order_id], references: [id])
+}
+
+model OrderPizzaTopping {
+  id         String       @id
+  order_id   String
+  topping_id String
+  topping    PizzaTopping @relation(fields: [topping_id], references: [id])
+  order      Order        @relation(fields: [order_id], references: [id])
 }

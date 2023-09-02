@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { DateTime } from '../../interfaces/utils/datetime';
+
 export class Client {
   public id: string;
   public name: string;
@@ -49,7 +51,7 @@ export class Client {
     this.state_id = state_id;
     this.city_id = city_id;
     this.active = active ?? true;
-    this.created_at = created_at ?? new Date();
-    this.updated_at = new Date();
+    this.created_at = created_at ?? DateTime();
+    this.updated_at = DateTime();
   }
 }

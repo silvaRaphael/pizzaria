@@ -8,7 +8,7 @@ import { AuthenticateUserDTO } from '../../application/use-cases/user-use-cases/
 import { UserNotFoundError } from '../../interfaces/errors/user-not-found-error';
 import { InvalidCredentialsError } from '../../interfaces/errors/invalid-credentials-error';
 import { UserCredentialsDTO } from '../../application/use-cases/user-use-cases/user-credentials-dto';
-import { DateTime } from '../../interfaces/utils/datatime';
+import { DateTime } from '../../interfaces/utils/datetime';
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private prisma: PrismaClient) {}

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-export class PizzaFlavour {
+export class PizzaFlavor {
   public id: string;
   public flavor: string;
   public price: number;
