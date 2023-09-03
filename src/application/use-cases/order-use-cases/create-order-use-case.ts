@@ -1,11 +1,12 @@
-import { Order } from '../../domain/entities/order';
-import { OrderRepositoryImpl } from '../../infrastructure/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../infrastructure/repositories/order-flavor-repository-impl';
-import { OrderPizzaToppingImpl } from '../../infrastructure/repositories/order-pizza-topping-repository-impl';
-import { OrderPizzaFlavor } from '../../domain/entities/order-pizza-flavor';
-import { OrderPizzaTopping } from '../../domain/entities/order-pizza-topping';
+import { Order } from '../../../domain/entities/order';
+import { OrderRepositoryImpl } from '../../../infrastructure/repositories/order-repository-impl';
+import { OrderPizzaFlavorImpl } from '../../../infrastructure/repositories/order-flavor-repository-impl';
+import { OrderPizzaToppingImpl } from '../../../infrastructure/repositories/order-pizza-topping-repository-impl';
+import { OrderPizzaFlavor } from '../../../domain/entities/order-pizza-flavor';
+import { OrderPizzaTopping } from '../../../domain/entities/order-pizza-topping';
 import { CreateOrderDTO } from './create-order-dto';
 import { CreateOrderOutputDTO } from './create-order-output-dto';
+import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
 
 export class CreateOrderUseCase {
   constructor(
@@ -22,6 +23,10 @@ export class CreateOrderUseCase {
     pizzaToppings,
   }: CreateOrderDTO): Promise<CreateOrderOutputDTO> {
     try {
+      if (!client_id) throw new MissingDataError('client_id');
+      if (!size) throw new MissingDataError('size');
+      if (!price) throw new MissingDataError('price');
+
       const order = new Order({
         client_id,
         size,

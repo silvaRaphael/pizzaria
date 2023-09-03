@@ -1,7 +1,7 @@
-import { PizzaFlavor } from '../../domain/entities/pizza-flavor';
-import { PizzaFlavorRepositoryImpl } from '../../infrastructure/repositories/pizza-flavor-repository-impl';
+import { PizzaFlavor } from '../../../domain/entities/pizza-flavor';
+import { PizzaFlavorRepositoryImpl } from '../../../infrastructure/repositories/pizza-flavor-repository-impl';
 import { CreatePizzaFlavorDTO } from './create-pizza-flavor-dto';
-import { MissingDataError } from '../../interfaces/errors/missing-data-error';
+import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
 
 export class CreatePizzaFlavorUseCase {
   constructor(private pizzaFlavorRepository: PizzaFlavorRepositoryImpl) {}

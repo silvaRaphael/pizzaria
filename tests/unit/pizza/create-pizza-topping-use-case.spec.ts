@@ -2,8 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 import { PizzaTopping } from '../../../src/domain/entities/pizza-topping';
 import { PizzaToppingRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-topping-repository-impl';
-import { CreatePizzaToppingUseCase } from '../../../src/application/pizza-topping-use-cases/create-pizza-topping-use-case';
-import { CreatePizzaToppingDTO } from '../../../src/application/pizza-topping-use-cases/create-pizza-topping-dto';
+import { CreatePizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
+import { CreatePizzaToppingDTO } from '../../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-dto';
 import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
 
 describe('Create Pizza Topping UseCase', () => {

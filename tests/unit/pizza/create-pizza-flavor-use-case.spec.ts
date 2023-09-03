@@ -2,8 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 import { PizzaFlavor } from '../../../src/domain/entities/pizza-flavor';
 import { PizzaFlavorRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-flavor-repository-impl';
-import { CreatePizzaFlavorUseCase } from '../../../src/application/pizza-flavor-use-cases/create-pizza-flavor-use-case';
-import { CreatePizzaFlavorDTO } from '../../../src/application/pizza-flavor-use-cases/create-pizza-flavor-dto';
+import { CreatePizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
+import { CreatePizzaFlavorDTO } from '../../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-dto';
 import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
 
 describe('Create Pizza Flavor UseCase', () => {

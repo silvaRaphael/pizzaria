@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { Order } from '../../domain/entities/order';
 import { OrderRepository } from '../../domain/repositories/order-repository';
+import { UpdateOrderStatusDTO } from '../../application/use-cases/order-use-cases/update-order-status-dto';
 
 export class OrderRepositoryImpl implements OrderRepository {
   constructor(private prisma: PrismaClient) {}
@@ -41,20 +42,29 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
+  async getAllFromClient(clientId: string): Promise<Order[]> {
+    try {
+      return (await this.prisma.order.findMany({
+        where: {
+          client_id: clientId,
+        },
+      })) as Order[];
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
   async updateStatus({
-    orderId,
+    order_id,
     status,
-  }: {
-    orderId: string;
-    status: number;
-  }): Promise<void> {
+  }: UpdateOrderStatusDTO): Promise<void> {
     try {
       await this.prisma.order.update({
         data: {
           status,
         },
         where: {
-          id: orderId,
+          id: order_id,
         },
       });
     } catch (error: any) {

@@ -1,7 +1,7 @@
-import { PizzaTopping } from '../../domain/entities/pizza-topping';
-import { PizzaToppingRepositoryImpl } from '../../infrastructure/repositories/pizza-topping-repository-impl';
+import { PizzaTopping } from '../../../domain/entities/pizza-topping';
+import { PizzaToppingRepositoryImpl } from '../../../infrastructure/repositories/pizza-topping-repository-impl';
 import { CreatePizzaToppingDTO } from './create-pizza-topping-dto';
-import { MissingDataError } from '../../interfaces/errors/missing-data-error';
+import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
 
 export class CreatePizzaToppingUseCase {
   constructor(private pizzaToppingRepository: PizzaToppingRepositoryImpl) {}

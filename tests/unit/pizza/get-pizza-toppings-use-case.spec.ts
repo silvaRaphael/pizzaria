@@ -2,10 +2,10 @@ import { PrismaClient } from '@prisma/client';
 
 import { PizzaTopping } from '../../../src/domain/entities/pizza-topping';
 import { PizzaToppingRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-topping-repository-impl';
-import { CreatePizzaToppingUseCase } from '../../../src/application/pizza-topping-use-cases/create-pizza-topping-use-case';
+import { CreatePizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
 import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
-import { GetPizzaToppingUseCase } from '../../../src/application/pizza-topping-use-cases/get-pizza-topping-use-case';
-import { GetAllPizzaToppingsUseCase } from '../../../src/application/pizza-topping-use-cases/get-all-pizza-toppings-use-case';
+import { GetPizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/get-pizza-topping-use-case';
+import { GetAllPizzaToppingsUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/get-all-pizza-toppings-use-case';
 
 describe('Get Pizza Toppings UseCase', () => {
   let pizzaToppingRepository: PizzaToppingRepositoryImpl;

@@ -2,10 +2,10 @@ import { PrismaClient } from '@prisma/client';
 
 import { PizzaFlavor } from '../../../src/domain/entities/pizza-flavor';
 import { PizzaFlavorRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-flavor-repository-impl';
-import { CreatePizzaFlavorUseCase } from '../../../src/application/pizza-flavor-use-cases/create-pizza-flavor-use-case';
 import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
-import { GetPizzaFlavorUseCase } from '../../../src/application/pizza-flavor-use-cases/get-pizza-flavor-use-case';
-import { GetAllPizzaFlavorsUseCase } from '../../../src/application/pizza-flavor-use-cases/get-all-pizza-flavors-use-case';
+import { CreatePizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
+import { GetPizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/get-pizza-flavor-use-case';
+import { GetAllPizzaFlavorsUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/get-all-pizza-flavors-use-case';
 
 describe('Get Pizza Flavors UseCase', () => {
   let pizzaFlavorRepository: PizzaFlavorRepositoryImpl;
