@@ -1,10 +1,10 @@
 import 'node-fetch';
 jest.mock('node-fetch', () => jest.fn());
 
-import { CreateUserUseCaseDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
+import { CreateUserDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
 
 describe('User Controller', () => {
-  let userData: CreateUserUseCaseDTO;
+  let userData: CreateUserDTO;
 
   beforeAll(() => {
     userData = {

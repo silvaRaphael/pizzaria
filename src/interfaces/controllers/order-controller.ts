@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
+
 import { CreateOrderUseCase } from '../../application/use-cases/order-use-cases/create-order-use-case';
 import { GetOrderUseCase } from '../../application/use-cases/order-use-cases/get-order-use-case';
 import { UpdateOrderStatusUseCase } from '../../application/use-cases/order-use-cases/update-order-status-use-case';
 import { GetAllOrdersUseCase } from '../../application/use-cases/order-use-cases/get-all-orders-use-case';
 import { GetAllClientOrdersUseCase } from '../../application/use-cases/order-use-cases/get-all-client-orders-use-case';
 
-export class PizzaToppingController {
+export class OrderController {
   constructor(
     private createOrderUseCase: CreateOrderUseCase,
     private getOrderUseCase: GetOrderUseCase,
@@ -15,15 +16,16 @@ export class PizzaToppingController {
   ) {}
 
   async createOrder(req: Request, res: Response): Promise<void> {
-    const { client_id, size, price, pizzaFlavors, pizzaToppings } = req.body;
+    const { client_id, size, price, pizzaFlavorsIds, pizzaToppingsIds } =
+      req.body;
 
     try {
       const order = await this.createOrderUseCase.execute({
         client_id,
         size,
         price,
-        pizzaFlavors,
-        pizzaToppings,
+        pizzaFlavorsIds,
+        pizzaToppingsIds,
       });
 
       res.status(201).json({ id: order.id });
