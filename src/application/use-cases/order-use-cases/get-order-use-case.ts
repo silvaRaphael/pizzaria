@@ -6,7 +6,7 @@ export class GetOrderUseCase {
 
   async execute(orderId: string): Promise<Order> {
     try {
-      return await this.orderRepository.getOne(orderId);
+      return (await this.orderRepository.getOne(orderId)) as Order;
     } catch (error: any) {
       throw new Error(error.message);
     }

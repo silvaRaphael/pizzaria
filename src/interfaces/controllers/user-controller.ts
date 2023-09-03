@@ -20,6 +20,7 @@ export class UserController {
         name,
         password,
       });
+
       res.status(201).json({ id: user.id });
     } catch (error: any) {
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -31,6 +32,7 @@ export class UserController {
 
     try {
       const user = await this.getUserUseCase.execute(userId);
+
       res.status(200).json(user);
     } catch (error) {
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -40,6 +42,7 @@ export class UserController {
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
       const users = await this.getAllUsersUseCase.execute();
+
       res.status(200).json(users);
     } catch (error) {
       res.status(500).json({ error: 'Ocorreu um erro!' });

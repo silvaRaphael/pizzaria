@@ -4,6 +4,6 @@ export interface CreateOrderDTO {
   client_id: string;
   size: PizzaSizes;
   price: number;
-  pizzaFlavors: string[];
-  pizzaToppings: string[];
+  pizzaFlavorsIds: string[];
+  pizzaToppingsIds: string[];
 }

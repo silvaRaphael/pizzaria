@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import { OrderPizzaFlavor } from './order-pizza-flavor';
+import { OrderPizzaTopping } from './order-pizza-topping';
 
 export enum PizzaSizes {
   small = 0,
@@ -15,6 +17,8 @@ export class Order {
   public done: boolean;
   public created_at: Date;
   public updated_at: Date;
+  public orderPizzaFlavor: OrderPizzaFlavor[] = [];
+  public orderPizzaTopping: OrderPizzaTopping[] = [];
 
   constructor({
     id,

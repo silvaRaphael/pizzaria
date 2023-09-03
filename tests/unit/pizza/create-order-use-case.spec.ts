@@ -76,8 +76,8 @@ describe('Create Order UseCase', () => {
       client_id: client.id,
       size: PizzaSizes.medium,
       price: 20.9,
-      pizzaFlavors: [pizzaFlavor.id],
-      pizzaToppings: [pizzaTopping.id],
+      pizzaFlavorsIds: [pizzaFlavor.id],
+      pizzaToppingsIds: [pizzaTopping.id],
     };
     clientIds.push(client.id);
     pizzaFlavorIds.push(pizzaFlavor.id);

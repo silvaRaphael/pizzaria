@@ -21,14 +21,14 @@ model City {
   id       String   @id
   state_id String
   city     String
-  Client   Client[]
+  client   Client[]
 }
 
 model State {
   id     String   @id
   state  String
   abbr   String
-  Client Client[]
+  client Client[]
 }
 
 model User {
@@ -58,7 +58,7 @@ model Client {
   updated_at     DateTime?
   state          State     @relation(fields: [state_id], references: [id])
   city           City      @relation(fields: [city_id], references: [id])
-  Order          Order[]
+  order          Order[]
 }
 
 model PizzaFlavor {
@@ -68,7 +68,7 @@ model PizzaFlavor {
   active           Boolean
   created_at       DateTime
   updated_at       DateTime?
-  OrderPizzaFlavor OrderPizzaFlavor[]
+  orderPizzaFlavor OrderPizzaFlavor[]
 }
 
 model PizzaTopping {
@@ -78,7 +78,7 @@ model PizzaTopping {
   active            Boolean
   created_at        DateTime
   updated_at        DateTime?
-  OrderPizzaTopping OrderPizzaTopping[]
+  orderPizzaTopping OrderPizzaTopping[]
 }
 
 model Order {
@@ -91,8 +91,8 @@ model Order {
   created_at        DateTime
   updated_at        DateTime?
   client            Client              @relation(fields: [client_id], references: [id])
-  OrderPizzaFlavor  OrderPizzaFlavor[]
-  OrderPizzaTopping OrderPizzaTopping[]
+  orderPizzaFlavor  OrderPizzaFlavor[]
+  orderPizzaTopping OrderPizzaTopping[]
 }
 
 model OrderPizzaFlavor {

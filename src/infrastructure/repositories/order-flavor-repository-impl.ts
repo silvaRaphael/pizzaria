@@ -4,13 +4,24 @@ import { OrderPizzaFlavorRepository } from '../../domain/repositories/order-pizz
 import { OrderPizzaFlavor } from '../../domain/entities/order-pizza-flavor';
 
 export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
+  private includeQuery = {
+    flavor: {
+      select: {
+        id: true,
+        flavor: true,
+        price: true,
+      },
+    },
+  };
+
   constructor(private prisma: PrismaClient) {}
 
-  async create(orderPizzaFlavor: OrderPizzaFlavor): Promise<void> {
+  async create(orderPizzaFlavor: OrderPizzaFlavor): Promise<OrderPizzaFlavor> {
     try {
-      await this.prisma.orderPizzaFlavor.create({
-        data: orderPizzaFlavor,
-      });
+      return (await this.prisma.orderPizzaFlavor.create({
+        data: { ...orderPizzaFlavor, flavor: undefined },
+        include: this.includeQuery,
+      })) as OrderPizzaFlavor;
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -22,6 +33,7 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
         where: {
           id: orderPizzaFlavor,
         },
+        include: this.includeQuery,
       })) as OrderPizzaFlavor;
     } catch (error: any) {
       throw new Error(error.message);
@@ -34,6 +46,7 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
         where: {
           order_id: orderId,
         },
+        include: this.includeQuery,
       })) as OrderPizzaFlavor[];
     } catch (error: any) {
       throw new Error(error.message);

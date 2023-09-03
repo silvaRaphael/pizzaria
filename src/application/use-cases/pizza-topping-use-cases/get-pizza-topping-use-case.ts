@@ -4,9 +4,9 @@ import { PizzaToppingRepositoryImpl } from '../../../infrastructure/repositories
 export class GetPizzaToppingUseCase {
   constructor(private pizzaToppingRepository: PizzaToppingRepositoryImpl) {}
 
-  async execute(userId: string): Promise<PizzaTopping> {
+  async execute(pizzaToppingId: string): Promise<PizzaTopping> {
     try {
-      return await this.pizzaToppingRepository.getOne(userId);
+      return await this.pizzaToppingRepository.getOne(pizzaToppingId);
     } catch (error: any) {
       throw new Error(error.message);
     }

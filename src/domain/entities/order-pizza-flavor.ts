@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import { PizzaFlavor } from './pizza-flavor';
 
 export class OrderPizzaFlavor {
   public id: string;
   public order_id: string;
   public flavor_id: string;
+  public flavor?: PizzaFlavor;
 
   constructor({
     id,

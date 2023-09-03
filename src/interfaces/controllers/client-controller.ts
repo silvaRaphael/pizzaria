@@ -34,6 +34,7 @@ export class ClientController {
         state_id,
         city_id,
       });
+
       res.status(201).json({ id: client.id });
     } catch (error: any) {
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -45,6 +46,7 @@ export class ClientController {
 
     try {
       const client = await this.getClientUseCase.execute(clientId);
+
       res.status(200).json(client);
     } catch (error) {
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -54,6 +56,7 @@ export class ClientController {
   async getAllClients(req: Request, res: Response): Promise<void> {
     try {
       const clients = await this.getAllClientsUseCase.execute();
+
       res.status(200).json(clients);
     } catch (error) {
       res.status(500).json({ error: 'Ocorreu um erro!' });

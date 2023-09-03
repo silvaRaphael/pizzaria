@@ -3,9 +3,9 @@ import { PizzaToppingRepositoryImpl } from '../../../infrastructure/repositories
 export class DeletePizzaToppingUseCase {
   constructor(private pizzaToppingRepository: PizzaToppingRepositoryImpl) {}
 
-  async execute(userId: string): Promise<void> {
+  async execute(pizzaToppingId: string): Promise<void> {
     try {
-      await this.pizzaToppingRepository.delete(userId);
+      await this.pizzaToppingRepository.delete(pizzaToppingId);
     } catch (error: any) {
       throw new Error(error.message);
     }

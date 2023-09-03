@@ -4,24 +4,38 @@ import { OrderPizzaToppingRepository } from '../../domain/repositories/order-piz
 import { OrderPizzaTopping } from '../../domain/entities/order-pizza-topping';
 
 export class OrderPizzaToppingImpl implements OrderPizzaToppingRepository {
+  private includeQuery = {
+    topping: {
+      select: {
+        id: true,
+        topping: true,
+        price: true,
+      },
+    },
+  };
+
   constructor(private prisma: PrismaClient) {}
 
-  async create(OrderPizzaTopping: OrderPizzaTopping): Promise<void> {
+  async create(
+    orderPizzaTopping: OrderPizzaTopping,
+  ): Promise<OrderPizzaTopping> {
     try {
-      await this.prisma.orderPizzaTopping.create({
-        data: OrderPizzaTopping,
-      });
+      return (await this.prisma.orderPizzaTopping.create({
+        data: { ...orderPizzaTopping, topping: undefined },
+        include: this.includeQuery,
+      })) as OrderPizzaTopping;
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
 
-  async getOne(OrderPizzaToppingId: string): Promise<OrderPizzaTopping> {
+  async getOne(orderPizzaToppingId: string): Promise<OrderPizzaTopping> {
     try {
       return (await this.prisma.orderPizzaTopping.findFirst({
         where: {
-          id: OrderPizzaToppingId,
+          id: orderPizzaToppingId,
         },
+        include: this.includeQuery,
       })) as OrderPizzaTopping;
     } catch (error: any) {
       throw new Error(error.message);
@@ -34,17 +48,18 @@ export class OrderPizzaToppingImpl implements OrderPizzaToppingRepository {
         where: {
           order_id: orderId,
         },
+        include: this.includeQuery,
       })) as OrderPizzaTopping[];
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
 
-  async delete(OrderPizzaToppingId: string): Promise<void> {
+  async delete(orderPizzaToppingId: string): Promise<void> {
     try {
       await this.prisma.orderPizzaTopping.delete({
         where: {
-          id: OrderPizzaToppingId,
+          id: orderPizzaToppingId,
         },
       });
     } catch (error: any) {

@@ -5,10 +5,13 @@ import { OrderPizzaToppingImpl } from '../../../infrastructure/repositories/orde
 import { OrderPizzaFlavor } from '../../../domain/entities/order-pizza-flavor';
 import { OrderPizzaTopping } from '../../../domain/entities/order-pizza-topping';
 import { CreateOrderDTO } from './create-order-dto';
-import { CreateOrderOutputDTO } from './create-order-output-dto';
 import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
+import { OrderOutputDTO } from './order-output-dto';
 
 export class CreateOrderUseCase {
+  pizzaFlavors: OrderPizzaFlavor[] = [];
+  pizzaToppings: OrderPizzaTopping[] = [];
+
   constructor(
     private orderRepository: OrderRepositoryImpl,
     private orderPizzaFlavor: OrderPizzaFlavorImpl,
@@ -19,9 +22,9 @@ export class CreateOrderUseCase {
     client_id,
     size,
     price,
-    pizzaFlavors,
-    pizzaToppings,
-  }: CreateOrderDTO): Promise<CreateOrderOutputDTO> {
+    pizzaFlavorsIds,
+    pizzaToppingsIds,
+  }: CreateOrderDTO): Promise<OrderOutputDTO> {
     try {
       if (!client_id) throw new MissingDataError('client_id');
       if (!size) throw new MissingDataError('size');
@@ -35,8 +38,8 @@ export class CreateOrderUseCase {
 
       await this.orderRepository.create(order);
 
-      const orderPizzaFlavors = pizzaFlavors.map((flavor_id) =>
-        this.orderPizzaFlavor.create(
+      pizzaFlavorsIds.map((flavor_id) =>
+        this.pizzaFlavors.push(
           new OrderPizzaFlavor({
             order_id: order.id,
             flavor_id,
@@ -44,8 +47,8 @@ export class CreateOrderUseCase {
         ),
       );
 
-      const orderPizzaTopping = pizzaToppings.map((topping_id) =>
-        this.orderPizzaTopping.create(
+      pizzaToppingsIds.map((topping_id) =>
+        this.pizzaToppings.push(
           new OrderPizzaTopping({
             order_id: order.id,
             topping_id,
@@ -53,9 +56,32 @@ export class CreateOrderUseCase {
         ),
       );
 
-      await Promise.all([...orderPizzaFlavors, ...orderPizzaTopping]);
+      const orderPizzaFlavors = this.pizzaFlavors.map((pizzaFlavor) =>
+        this.orderPizzaFlavor.create(pizzaFlavor),
+      );
 
-      return { ...order, pizzaFlavors, pizzaToppings };
+      const orderPizzaTopping = this.pizzaToppings.map((pizzaTopping) =>
+        this.orderPizzaTopping.create(pizzaTopping),
+      );
+
+      const [orderPizzaFlavorsResponses, orderPizzaToppingsResponses] =
+        await Promise.all([
+          Promise.all(orderPizzaFlavors),
+          Promise.all(orderPizzaTopping),
+        ]);
+
+      return {
+        id: order.id,
+        client_id: order.client_id,
+        price: order.price,
+        size: order.size,
+        orderPizzaFlavor: orderPizzaFlavorsResponses.map(
+          (orderPizzaFlavor) => orderPizzaFlavor,
+        ),
+        orderPizzaTopping: orderPizzaToppingsResponses.map(
+          (orderPizzaFlavor) => orderPizzaFlavor,
+        ),
+      } as OrderOutputDTO;
     } catch (error: any) {
       throw new Error(error.message);
     }

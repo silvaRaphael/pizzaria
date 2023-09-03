@@ -5,12 +5,41 @@ import { OrderRepository } from '../../domain/repositories/order-repository';
 import { UpdateOrderStatusDTO } from '../../application/use-cases/order-use-cases/update-order-status-dto';
 
 export class OrderRepositoryImpl implements OrderRepository {
+  private includeQuery = {
+    orderPizzaFlavor: {
+      include: {
+        flavor: {
+          select: {
+            id: true,
+            flavor: true,
+            price: true,
+          },
+        },
+      },
+    },
+    orderPizzaTopping: {
+      include: {
+        topping: {
+          select: {
+            id: true,
+            topping: true,
+            price: true,
+          },
+        },
+      },
+    },
+  };
+
   constructor(private prisma: PrismaClient) {}
 
   async create(order: Order): Promise<void> {
     try {
       await this.prisma.order.create({
-        data: order,
+        data: {
+          ...order,
+          orderPizzaFlavor: undefined,
+          orderPizzaTopping: undefined,
+        },
       });
     } catch (error: any) {
       throw new Error(error.message);
@@ -24,6 +53,7 @@ export class OrderRepositoryImpl implements OrderRepository {
           done: false,
           id: orderId,
         },
+        include: this.includeQuery,
       })) as Order;
     } catch (error: any) {
       throw new Error(error.message);
@@ -36,6 +66,7 @@ export class OrderRepositoryImpl implements OrderRepository {
         where: {
           done: false,
         },
+        include: this.includeQuery,
       })) as Order[];
     } catch (error: any) {
       throw new Error(error.message);
@@ -48,6 +79,7 @@ export class OrderRepositoryImpl implements OrderRepository {
         where: {
           client_id: clientId,
         },
+        include: this.includeQuery,
       })) as Order[];
     } catch (error: any) {
       throw new Error(error.message);
