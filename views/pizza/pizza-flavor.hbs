@@ -1,0 +1,90 @@
+{{#> wrapper}}
+  <div class="col-lg-12">
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">Sabores</h5>
+        <button class="btn btn-primary" style="height: 3rem;" onclick="modalIncluir.show()">Novo Sabor</button>
+        <div class="modal fade" id="modalIncluir" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Novo Sabor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body row">
+                <div class="col-7 form-group">
+                  <label>Sabor</label>
+                  <input type="text" class="form-control" name="flavor">
+                </div>
+                <div class="col-5 form-group">
+                  <label>Preço</label>
+                  <input type="text" class="form-control" name="price" placeholder="0,00">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="createFlavor(this)">Salvar</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- End Vertically centered Modal-->
+      </div>
+      <div class="card-body">
+        <div class="py-3">
+          <table class="table datatable datatable-table" id="pizza-flavor-table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Sabor</th>
+                <th scope="col">Preço</th>
+                <th scope="col"><i class="bi bi-tools"></i></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{{/wrapper}}
+
+<script>
+  const pizzaFlavorTable = new DataTable('#pizza-flavor-table', {
+    columns: [
+      { data: '#', width: '10%', orderable: true, className: 'text-center' },
+      { data: 'flavor', width: '50%', orderable: true },
+      { data: 'price', width: '30%', orderable: false },
+      { data: '@', width: '10%', orderable: false, className: 'text-center' },
+    ],
+    ajax: {
+      url: '{{defaultPath}}/api/pizza-flavors',
+      dataSrc: '',
+    },
+  });
+
+    const modalIncluir = new bootstrap.Modal('#modalIncluir');
+
+    function createFlavor(button) {
+
+    const flavor = document.querySelector('[name="flavor"]').value;
+    const price = document.querySelector('[name="price"]').value;
+    
+    fetch('{{defaultPath}}/api/pizza-flavors', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        flavor,
+        price: Number(price),
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      pizzaFlavorTable.ajax.reload();
+      modalIncluir.hide();
+    });
+  }
+</script>

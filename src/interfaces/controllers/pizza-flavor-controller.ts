@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import fs from 'node:fs';
 
 import { CreatePizzaFlavorUseCase } from '../../application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
 import { DeletePizzaFlavorUseCase } from '../../application/use-cases/pizza-flavor-use-cases/delete-pizza-flavor-use-case';
@@ -44,7 +45,23 @@ export class PizzaFlavorController {
 
   async getAllPizzaFlavors(req: Request, res: Response): Promise<void> {
     try {
-      const pizzaFlavors = await this.getAllPizzaFlavorsUseCase.execute();
+      let pizzaFlavors = await this.getAllPizzaFlavorsUseCase.execute();
+
+      let actions = fs.readFileSync(
+        'views/partials/actions-dropdown.hbs',
+        'utf8',
+      );
+
+      pizzaFlavors = pizzaFlavors.map((item, index) => {
+        actions = actions.replace('{{edit}}', `editFlavor('${item.id}')`);
+        actions = actions.replace('{{delete}}', `deleteFlavor('${item.id}')`);
+
+        return {
+          ...item,
+          '#': index + 1,
+          '@': actions,
+        };
+      });
 
       res.status(200).json(pizzaFlavors);
     } catch (error) {
