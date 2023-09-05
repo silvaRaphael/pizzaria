@@ -1,10 +1,19 @@
 <div class="dropdown">
-  <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <i class="bi bi-three-dots"></i>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" onclick="{{edit}}">Editar</a>
-    <div class="dropdown-divider"></div>
-    <a class="dropdown-item" onclick="{{delete}}">Excluir</a>
+  <a class="btn btn-light btn-icon" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="true">
+    <i class="ri-more-fill"></i>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li>
+      <a class="dropdown-item" style="cursor: pointer;" title="Editar" onclick="{{edit}}">
+        <i class="ri-edit-line me-2 align-middle text-muted"></i>
+        Editar
+      </a>
+    <li class="dropdown-divider"></li>
+    <li>
+      <a class="dropdown-item" style="cursor: pointer;" title="Remover" onclick="{{delete}}">
+        <i class="ri-delete-bin-line me-2 align-middle text-muted"></i>
+        Remover
+      </a>
+    </li>
   </ul>
 </div>

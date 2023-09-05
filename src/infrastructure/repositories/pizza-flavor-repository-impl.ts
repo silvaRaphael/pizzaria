@@ -35,7 +35,23 @@ export class PizzaFlavorRepositoryImpl implements PizzaFlavorRepository {
         where: {
           active: true,
         },
+        orderBy: {
+          created_at: 'desc',
+        },
       })) as PizzaFlavor[];
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async update(pizzaFlavor: PizzaFlavor): Promise<void> {
+    try {
+      await this.prisma.pizzaFlavor.update({
+        data: pizzaFlavor,
+        where: {
+          id: pizzaFlavor.id,
+        },
+      });
     } catch (error: any) {
       throw new Error(error.message);
     }

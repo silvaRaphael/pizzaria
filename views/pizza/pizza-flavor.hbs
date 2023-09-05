@@ -4,35 +4,21 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between">
         <h5 class="card-title">Sabores</h5>
-        <button class="btn btn-primary" style="height: 3rem;" onclick="modalIncluir.show()">Novo Sabor</button>
-        <div class="modal fade" id="modalIncluir" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Novo Sabor</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body row">
-                <div class="col-7 form-group">
-                  <label>Sabor</label>
-                  <input type="text" class="form-control" name="flavor">
-                </div>
-                <div class="col-5 form-group">
-                  <label>Preço</label>
-                  <input type="text" class="form-control" name="price" placeholder="0,00">
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" onclick="createFlavor(this)">Salvar</button>
-              </div>
-            </div>
+        <button class="btn btn-primary" style="height: 3rem;" onclick="modalAdd.show()">Novo Sabor</button>
+        {{#> simple-modal id="modalAdd" title="Novo Sabor" onConfirm="createFlavor(this)"}}
+          <div class="col-7 form-group">
+            <label>Sabor</label>
+            <input type="text" class="form-control" name="flavor">
           </div>
-        </div><!-- End Vertically centered Modal-->
+          <div class="col-5 form-group">
+            <label>Preço</label>
+            <input type="text" class="form-control" name="price" placeholder="0,00">
+          </div>
+        {{/simple-modal}}
       </div>
       <div class="card-body">
         <div class="py-3">
-          <table class="table datatable datatable-table" id="pizza-flavor-table">
+          <table id="pizza-flavor-table" class="table dt-responsive nowrap align-middle" style="width:100%">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -50,8 +36,27 @@
   </div>
 {{/wrapper}}
 
+{{#> simple-modal id="modalEdit" title="Editar Sabor" onConfirm="updateFlavor(this)"}}
+  <div class="col-7 form-group">
+    <label>Sabor</label>
+    <input type="text" class="form-control" name="flavor">
+  </div>
+  <div class="col-5 form-group">
+    <label>Preço</label>
+    <input type="text" class="form-control" name="price" placeholder="0,00">
+  </div>
+{{/simple-modal}}
+
 <script>
+  CurrencyMask('#modalAdd [name="price"]');
+  CurrencyMask('#modalEdit [name="price"]');
+
   const pizzaFlavorTable = new DataTable('#pizza-flavor-table', {
+    paging: true,
+    autoWidth: true,
+    searching: true,
+    pageLength: 25,
+    language,
     columns: [
       { data: '#', width: '10%', orderable: true, className: 'text-center' },
       { data: 'flavor', width: '50%', orderable: true },
@@ -64,12 +69,13 @@
     },
   });
 
-    const modalIncluir = new bootstrap.Modal('#modalIncluir');
+  const modalAdd = new bootstrap.Modal('#modalAdd');
+  const modalEdit = new bootstrap.Modal('#modalEdit');
 
-    function createFlavor(button) {
+  function createFlavor(button) {
 
-    const flavor = document.querySelector('[name="flavor"]').value;
-    const price = document.querySelector('[name="price"]').value;
+    const flavor = document.querySelector('#modalAdd [name="flavor"]').value;
+    const price = document.querySelector('#modalAdd [name="price"]').value;
     
     fetch('{{defaultPath}}/api/pizza-flavors', {
       method: 'POST',
@@ -78,13 +84,48 @@
       },
       body: JSON.stringify({
         flavor,
-        price: Number(price),
+        price: Number(price.replace(',', '.')),
       }),
     })
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       pizzaFlavorTable.ajax.reload();
-      modalIncluir.hide();
+      modalAdd.hide();
+    });
+  }
+
+  function editFlavor(id) {
+
+    const flavor = document.querySelector('#modalEdit [name="flavor"]');
+    const price = document.querySelector('#modalEdit [name="price"]');
+    
+    fetch(`{{defaultPath}}/api/pizza-flavor/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      flavor.value = data.flavor;
+      price.value = data.price;
+      modalEdit.show();
+    });
+  }
+
+  function updateFlavor() {}
+
+  function deleteFlavor(id) {
+    CustomAlert(() => {
+        fetch(`{{defaultPath}}/api/pizza-flavor/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        pizzaFlavorTable.ajax.reload();
+      });
     });
   }
 </script>

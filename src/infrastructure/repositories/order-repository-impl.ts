@@ -66,6 +66,9 @@ export class OrderRepositoryImpl implements OrderRepository {
         where: {
           done: false,
         },
+        orderBy: {
+          created_at: 'desc',
+        },
         include: this.includeQuery,
       })) as Order[];
     } catch (error: any) {

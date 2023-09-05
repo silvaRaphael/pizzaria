@@ -1,22 +1,28 @@
 import { PizzaFlavor } from '../../../domain/entities/pizza-flavor';
 import { PizzaFlavorRepositoryImpl } from '../../../infrastructure/repositories/pizza-flavor-repository-impl';
-import { CreatePizzaFlavorDTO } from './create-pizza-flavor-dto';
+import { UpdatePizzaFlavorDTO } from './update-pizza-flavor-dto';
 import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
 
-export class CreatePizzaFlavorUseCase {
+export class UpdatePizzaFlavorUseCase {
   constructor(private pizzaFlavorRepository: PizzaFlavorRepositoryImpl) {}
 
-  async execute({ flavor, price }: CreatePizzaFlavorDTO): Promise<PizzaFlavor> {
+  async execute({
+    id,
+    flavor,
+    price,
+  }: UpdatePizzaFlavorDTO): Promise<PizzaFlavor> {
     try {
-      if (!flavor || !price) throw new MissingDataError('flavor');
-      if (!flavor || !price) throw new MissingDataError('price');
+      if (!id) throw new MissingDataError('id');
+      if (!flavor) throw new MissingDataError('flavor');
+      if (!price) throw new MissingDataError('price');
 
       const pizzaFlavor = new PizzaFlavor({
+        id,
         flavor,
         price,
       });
 
-      await this.pizzaFlavorRepository.create(pizzaFlavor);
+      await this.pizzaFlavorRepository.update(pizzaFlavor);
 
       return pizzaFlavor;
     } catch (error: any) {

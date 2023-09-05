@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
 
 import { CreatePizzaToppingUseCase } from '../../application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
-import { DeletePizzaToppingUseCase } from '../../application/use-cases/pizza-topping-use-cases/delete-pizza-topping-use-case';
-import { GetAllPizzaToppingsUseCase } from '../../application/use-cases/pizza-topping-use-cases/get-all-pizza-toppings-use-case';
 import { GetPizzaToppingUseCase } from '../../application/use-cases/pizza-topping-use-cases/get-pizza-topping-use-case';
+import { GetAllPizzaToppingsUseCase } from '../../application/use-cases/pizza-topping-use-cases/get-all-pizza-toppings-use-case';
+import { UpdatePizzaToppingUseCase } from '../../application/use-cases/pizza-topping-use-cases/update-pizza-topping-use-case';
+import { DeletePizzaToppingUseCase } from '../../application/use-cases/pizza-topping-use-cases/delete-pizza-topping-use-case';
 
 export class PizzaToppingController {
   constructor(
     private createPizzaToppingUseCase: CreatePizzaToppingUseCase,
     private getPizzaToppingUseCase: GetPizzaToppingUseCase,
     private getAllPizzaToppingsUseCase: GetAllPizzaToppingsUseCase,
+    private updatePizzaToppingUseCase: UpdatePizzaToppingUseCase,
     private deletePizzaToppingUseCase: DeletePizzaToppingUseCase,
   ) {}
 
@@ -47,6 +49,23 @@ export class PizzaToppingController {
       const pizzaToppings = await this.getAllPizzaToppingsUseCase.execute();
 
       res.status(200).json(pizzaToppings);
+    } catch (error) {
+      res.status(500).json({ error: 'Ocorreu um erro!' });
+    }
+  }
+
+  async updatePizzaTopping(req: Request, res: Response): Promise<void> {
+    const { pizzaToppingId } = req.params;
+    const { topping, price } = req.body;
+
+    try {
+      await this.updatePizzaToppingUseCase.execute({
+        id: pizzaToppingId,
+        topping,
+        price,
+      });
+
+      res.status(200).end();
     } catch (error) {
       res.status(500).json({ error: 'Ocorreu um erro!' });
     }
