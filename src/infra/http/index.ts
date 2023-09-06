@@ -1,4 +1,4 @@
-import '../infra/config';
+import '../config';
 
 import express from 'express';
 import { create } from 'express-handlebars';

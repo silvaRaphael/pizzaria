@@ -2,11 +2,11 @@
   "name": "pizzaria",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/src/server.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/src/infra/http/server.js",
-    "dev": "tsnd --respawn --transpile-only src/infra/http/server.ts",
+    "start": "node dist/src/infra/http/index.js",
+    "dev": "tsnd --respawn --transpile-only src/infra/http/index.ts",
     "test": "NODE_ENV=test && npx jest tests/unit",
     "test:e2e": "NODE_ENV=test && npx jest tests/e2e"
   },
