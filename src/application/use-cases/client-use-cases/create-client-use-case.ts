@@ -1,11 +1,10 @@
-import { Client } from '../../../domain/entities/client';
-
-import { ClientRepositoryImpl } from '../../../infrastructure/repositories/client-repository-impl';
-import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
+import { Client } from '../../../domain/client';
+import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { ClientRepository } from '../../repositories/client-repository';
 import { CreateClientDTO } from './create-client-dto';
 
 export class CreateClientUseCase {
-  constructor(private clientRepository: ClientRepositoryImpl) {}
+  constructor(private clientRepository: ClientRepository) {}
 
   async execute({
     name,

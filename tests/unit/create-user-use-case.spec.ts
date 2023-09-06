@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
-import { User } from '../../src/domain/entities/user';
-import { UserRepositoryImpl } from '../../src/infrastructure/repositories/user-repository-impl';
+import { User } from '../../src/domain/user';
+import { UserRepositoryImpl } from '../../src/infra/database/repositories/user-repository-impl';
 import { CreateUserUseCase } from '../../src/application/use-cases/user-use-cases/create-user-use-case';
 import { CreateUserDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
-import { ClearDatabaseTests } from '../../src/interfaces/utils/clear-database-tests';
+import { ClearDatabaseTests } from '../../src/infra/http/utils/clear-database-tests';
+import { prisma } from '../../src/infra/database/prisma';
 
 describe('Create User UseCase', () => {
   let userRepository: UserRepositoryImpl;
@@ -13,7 +14,7 @@ describe('Create User UseCase', () => {
   let idsToDelete: string[] = [];
 
   beforeAll(() => {
-    userRepository = new UserRepositoryImpl(new PrismaClient());
+    userRepository = new UserRepositoryImpl();
     createUserUseCase = new CreateUserUseCase(userRepository);
     userData = {
       username: 'test' + new Date().getTime(),
@@ -22,9 +23,7 @@ describe('Create User UseCase', () => {
     };
   });
 
-  afterAll(
-    async () => await ClearDatabaseTests(new PrismaClient().user, idsToDelete),
-  );
+  afterAll(async () => await ClearDatabaseTests(prisma.user, idsToDelete));
 
   it('Should create a new user', async () => {
     const user = await createUserUseCase.execute(userData);

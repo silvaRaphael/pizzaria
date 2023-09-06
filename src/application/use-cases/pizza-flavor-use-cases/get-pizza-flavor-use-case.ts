@@ -1,8 +1,8 @@
-import { PizzaFlavor } from '../../../domain/entities/pizza-flavor';
-import { PizzaFlavorRepositoryImpl } from '../../../infrastructure/repositories/pizza-flavor-repository-impl';
+import { PizzaFlavor } from '../../../domain/pizza-flavor';
+import { PizzaFlavorRepository } from '../../repositories/pizza-flavor-repository';
 
 export class GetPizzaFlavorUseCase {
-  constructor(private pizzaFlavorRepository: PizzaFlavorRepositoryImpl) {}
+  constructor(private pizzaFlavorRepository: PizzaFlavorRepository) {}
 
   async execute(pizzaFlavorId: string): Promise<PizzaFlavor> {
     try {

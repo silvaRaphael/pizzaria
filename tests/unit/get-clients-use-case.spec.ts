@@ -1,11 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-
-import { Client } from '../../src/domain/entities/client';
-import { ClientRepositoryImpl } from '../../src/infrastructure/repositories/client-repository-impl';
+import { Client } from '../../src/domain/client';
+import { ClientRepositoryImpl } from '../../src/infra/database/repositories/client-repository-impl';
 import { CreateClientUseCase } from '../../src/application/use-cases/client-use-cases/create-client-use-case';
 import { GetClientUseCase } from '../../src/application/use-cases/client-use-cases/get-client-use-case';
 import { GetAllClientsUseCase } from '../../src/application/use-cases/client-use-cases/get-all-clients-use-case';
-import { ClearDatabaseTests } from '../../src/interfaces/utils/clear-database-tests';
+import { ClearDatabaseTests } from '../../src/infra/http/utils/clear-database-tests';
+import { prisma } from '../../src/infra/database/prisma';
 
 describe('Create Client UseCase', () => {
   let clientRepository: ClientRepositoryImpl;
@@ -16,7 +15,7 @@ describe('Create Client UseCase', () => {
   let idsToDelete: string[] = [];
 
   beforeAll(async () => {
-    clientRepository = new ClientRepositoryImpl(new PrismaClient());
+    clientRepository = new ClientRepositoryImpl();
     createClientUseCase = new CreateClientUseCase(clientRepository);
     getClientUseCase = new GetClientUseCase(clientRepository);
     getAllClientsUseCase = new GetAllClientsUseCase(clientRepository);
@@ -33,10 +32,7 @@ describe('Create Client UseCase', () => {
     idsToDelete.push(client.id);
   });
 
-  afterAll(
-    async () =>
-      await ClearDatabaseTests(new PrismaClient().client, idsToDelete),
-  );
+  afterAll(async () => await ClearDatabaseTests(prisma.client, idsToDelete));
 
   it('Should get a client by id', async () => {
     const response = await getClientUseCase.execute(client.id);

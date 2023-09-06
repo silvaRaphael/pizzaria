@@ -1,4 +1,4 @@
-import { PizzaSizes } from '../../../domain/entities/order';
+import { PizzaSizes } from '../../../domain/order';
 
 export interface CreateOrderDTO {
   client_id: string;

@@ -1,7 +1,7 @@
-import { PizzaToppingRepositoryImpl } from '../../../infrastructure/repositories/pizza-topping-repository-impl';
+import { PizzaToppingRepository } from '../../repositories/pizza-topping-repository';
 
 export class DeletePizzaToppingUseCase {
-  constructor(private pizzaToppingRepository: PizzaToppingRepositoryImpl) {}
+  constructor(private pizzaToppingRepository: PizzaToppingRepository) {}
 
   async execute(pizzaToppingId: string): Promise<void> {
     try {

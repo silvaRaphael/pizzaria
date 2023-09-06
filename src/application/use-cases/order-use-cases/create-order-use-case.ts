@@ -1,11 +1,11 @@
-import { Order } from '../../../domain/entities/order';
-import { OrderRepositoryImpl } from '../../../infrastructure/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../../infrastructure/repositories/order-flavor-repository-impl';
-import { OrderPizzaToppingImpl } from '../../../infrastructure/repositories/order-pizza-topping-repository-impl';
-import { OrderPizzaFlavor } from '../../../domain/entities/order-pizza-flavor';
-import { OrderPizzaTopping } from '../../../domain/entities/order-pizza-topping';
+import { Order } from '../../../domain/order';
+import { OrderPizzaFlavor } from '../../../domain/order-pizza-flavor';
+import { OrderPizzaTopping } from '../../../domain/order-pizza-topping';
+import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { OrderPizzaFlavorRepository } from '../../repositories/order-pizza-flavor-repository';
+import { OrderPizzaToppingRepository } from '../../repositories/order-pizza-topping-repository';
+import { OrderRepository } from '../../repositories/order-repository';
 import { CreateOrderDTO } from './create-order-dto';
-import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
 import { OrderOutputDTO } from './order-output-dto';
 
 export class CreateOrderUseCase {
@@ -13,9 +13,9 @@ export class CreateOrderUseCase {
   pizzaToppings: OrderPizzaTopping[] = [];
 
   constructor(
-    private orderRepository: OrderRepositoryImpl,
-    private orderPizzaFlavor: OrderPizzaFlavorImpl,
-    private orderPizzaTopping: OrderPizzaToppingImpl,
+    private orderRepository: OrderRepository,
+    private orderPizzaFlavor: OrderPizzaFlavorRepository,
+    private orderPizzaTopping: OrderPizzaToppingRepository,
   ) {}
 
   async execute({

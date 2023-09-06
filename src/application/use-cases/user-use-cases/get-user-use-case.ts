@@ -1,8 +1,8 @@
-import { User } from '../../../domain/entities/user';
-import { UserRepositoryImpl } from '../../../infrastructure/repositories/user-repository-impl';
+import { User } from '../../../domain/user';
+import { UserRepository } from '../../repositories/user-repository';
 
 export class GetUserUseCase {
-  constructor(private userRepository: UserRepositoryImpl) {}
+  constructor(private userRepository: UserRepository) {}
 
   async execute(userId: string): Promise<User> {
     try {

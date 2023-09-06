@@ -1,8 +1,8 @@
-import { Order } from '../../../domain/entities/order';
-import { OrderRepositoryImpl } from '../../../infrastructure/repositories/order-repository-impl';
+import { Order } from '../../../domain/order';
+import { OrderRepository } from '../../repositories/order-repository';
 
 export class GetAllOrdersUseCase {
-  constructor(private orderRepository: OrderRepositoryImpl) {}
+  constructor(private orderRepository: OrderRepository) {}
 
   async execute(): Promise<Order[]> {
     try {

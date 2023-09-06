@@ -5,17 +5,14 @@
   "main": "dist/src/server.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/src/server.js",
-    "dev": "tsnd --respawn --transpile-only src/server.ts",
+    "start": "node dist/src/infra/http/server.js",
+    "dev": "tsnd --respawn --transpile-only src/infra/http/server.ts",
     "test": "NODE_ENV=test && npx jest tests/unit",
     "test:e2e": "NODE_ENV=test && npx jest tests/e2e"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "prisma": {
-    "schema": "./src/infrastructure/database/schema.prisma"
-  },
   "dependencies": {
     "@prisma/client": "^5.2.0",
     "bcryptjs": "^2.4.3",

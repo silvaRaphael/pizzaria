@@ -1,14 +1,16 @@
-import { User } from '../../../domain/entities/user';
-import { UserRepositoryImpl } from '../../../infrastructure/repositories/user-repository-impl';
-import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
+import { User } from '../../../domain/user';
+import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { UserRepository } from '../../repositories/user-repository';
 import { CreateUserDTO } from './create-user-dto';
 
 export class CreateUserUseCase {
-  constructor(private userRepository: UserRepositoryImpl) {}
+  constructor(private userRepository: UserRepository) {}
 
   async execute({ username, name, password }: CreateUserDTO): Promise<User> {
     try {
-      if (!username || !name || !password) throw new MissingDataError();
+      if (!username) throw new MissingDataError('username');
+      if (!name) throw new MissingDataError('name');
+      if (!password) throw new MissingDataError('password');
 
       const user = new User({
         username,

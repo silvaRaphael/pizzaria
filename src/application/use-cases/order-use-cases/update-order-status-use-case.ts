@@ -1,9 +1,9 @@
-import { OrderRepositoryImpl } from '../../../infrastructure/repositories/order-repository-impl';
-import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
+import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { OrderRepository } from '../../repositories/order-repository';
 import { UpdateOrderStatusDTO } from './update-order-status-dto';
 
 export class UpdateOrderStatusUseCase {
-  constructor(private orderRepository: OrderRepositoryImpl) {}
+  constructor(private orderRepository: OrderRepository) {}
 
   async execute({ order_id, status }: UpdateOrderStatusDTO): Promise<void> {
     try {

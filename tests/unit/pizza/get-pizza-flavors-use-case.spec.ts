@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
-import { PizzaFlavor } from '../../../src/domain/entities/pizza-flavor';
-import { PizzaFlavorRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-flavor-repository-impl';
-import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
+import { PizzaFlavor } from '../../../src/domain/pizza-flavor';
+import { PizzaFlavorRepositoryImpl } from '../../../src/infra/database/repositories/pizza-flavor-repository-impl';
+import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
 import { CreatePizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
 import { GetPizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/get-pizza-flavor-use-case';
 import { GetAllPizzaFlavorsUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/get-all-pizza-flavors-use-case';
+import { prisma } from '../../../src/infra/database/prisma';
 
 describe('Get Pizza Flavors UseCase', () => {
   let pizzaFlavorRepository: PizzaFlavorRepositoryImpl;
@@ -16,7 +17,7 @@ describe('Get Pizza Flavors UseCase', () => {
   let idsToDelete: string[] = [];
 
   beforeAll(async () => {
-    pizzaFlavorRepository = new PizzaFlavorRepositoryImpl(new PrismaClient());
+    pizzaFlavorRepository = new PizzaFlavorRepositoryImpl();
     createPizzaFlavorUseCase = new CreatePizzaFlavorUseCase(
       pizzaFlavorRepository,
     );
@@ -32,8 +33,7 @@ describe('Get Pizza Flavors UseCase', () => {
   });
 
   afterAll(
-    async () =>
-      await ClearDatabaseTests(new PrismaClient().pizzaFlavor, idsToDelete),
+    async () => await ClearDatabaseTests(prisma.pizzaFlavor, idsToDelete),
   );
 
   it('Should get a pizza flavor by id', async () => {

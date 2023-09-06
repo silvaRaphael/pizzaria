@@ -1,21 +1,19 @@
-import { PrismaClient } from '@prisma/client';
-
-import { PizzaSizes } from '../../../src/domain/entities/order';
-import { ClientRepositoryImpl } from '../../../src/infrastructure/repositories/client-repository-impl';
+import { PizzaSizes } from '../../../src/domain/order';
+import { ClientRepositoryImpl } from '../../../src/infra/database/repositories/client-repository-impl';
 import { CreateClientUseCase } from '../../../src/application/use-cases/client-use-cases/create-client-use-case';
 import { CreatePizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
 import { CreatePizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
 import { CreateOrderUseCase } from '../../../src/application/use-cases/order-use-cases/create-order-use-case';
 import { CreateOrderDTO } from '../../../src/application/use-cases/order-use-cases/create-order-dto';
-import { PizzaFlavorRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-flavor-repository-impl';
-import { PizzaToppingRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-topping-repository-impl';
-import { OrderRepositoryImpl } from '../../../src/infrastructure/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../../src/infrastructure/repositories/order-flavor-repository-impl';
-import { OrderPizzaToppingImpl } from '../../../src/infrastructure/repositories/order-pizza-topping-repository-impl';
-import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
+import { PizzaFlavorRepositoryImpl } from '../../../src/infra/database/repositories/pizza-flavor-repository-impl';
+import { PizzaToppingRepositoryImpl } from '../../../src/infra/database/repositories/pizza-topping-repository-impl';
+import { OrderRepositoryImpl } from '../../../src/infra/database/repositories/order-repository-impl';
+import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-flavor-repository-impl';
+import { OrderPizzaToppingImpl } from '../../../src/infra/database/repositories/order-pizza-topping-repository-impl';
+import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
+import { prisma } from '../../../src/infra/database/prisma';
 
 describe('Create Order UseCase', () => {
-  let prismaClient: PrismaClient;
   let clientRepository: ClientRepositoryImpl;
   let createClientUseCase: CreateClientUseCase;
   let pizzaFlavorRepository: PizzaFlavorRepositoryImpl;
@@ -33,13 +31,12 @@ describe('Create Order UseCase', () => {
   let pizzaToppingIds: string[] = [];
 
   beforeAll(async () => {
-    prismaClient = new PrismaClient();
-    clientRepository = new ClientRepositoryImpl(prismaClient);
-    pizzaFlavorRepository = new PizzaFlavorRepositoryImpl(prismaClient);
-    pizzaToppingRepository = new PizzaToppingRepositoryImpl(prismaClient);
-    orderRepository = new OrderRepositoryImpl(prismaClient);
-    orderPizzaFlavor = new OrderPizzaFlavorImpl(prismaClient);
-    orderPizzaTopping = new OrderPizzaToppingImpl(prismaClient);
+    clientRepository = new ClientRepositoryImpl();
+    pizzaFlavorRepository = new PizzaFlavorRepositoryImpl();
+    pizzaToppingRepository = new PizzaToppingRepositoryImpl();
+    orderRepository = new OrderRepositoryImpl();
+    orderPizzaFlavor = new OrderPizzaFlavorImpl();
+    orderPizzaTopping = new OrderPizzaToppingImpl();
     createClientUseCase = new CreateClientUseCase(clientRepository);
     createPizzaFlavorUseCase = new CreatePizzaFlavorUseCase(
       pizzaFlavorRepository,
@@ -86,14 +83,14 @@ describe('Create Order UseCase', () => {
 
   afterAll(async () => {
     await Promise.all([
-      prismaClient.orderPizzaFlavor.deleteMany({
+      prisma.orderPizzaFlavor.deleteMany({
         where: {
           order_id: {
             in: idsToDelete,
           },
         },
       }),
-      prismaClient.orderPizzaTopping.deleteMany({
+      prisma.orderPizzaTopping.deleteMany({
         where: {
           order_id: {
             in: idsToDelete,
@@ -101,10 +98,10 @@ describe('Create Order UseCase', () => {
         },
       }),
     ]);
-    await ClearDatabaseTests(prismaClient.pizzaFlavor, pizzaFlavorIds);
-    await ClearDatabaseTests(prismaClient.pizzaTopping, pizzaToppingIds);
-    await ClearDatabaseTests(prismaClient.order, idsToDelete);
-    await ClearDatabaseTests(prismaClient.client, clientIds);
+    await ClearDatabaseTests(prisma.pizzaFlavor, pizzaFlavorIds);
+    await ClearDatabaseTests(prisma.pizzaTopping, pizzaToppingIds);
+    await ClearDatabaseTests(prisma.order, idsToDelete);
+    await ClearDatabaseTests(prisma.client, clientIds);
   });
 
   it('Should create a new order', async () => {

@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-
-import { PizzaTopping } from '../../../src/domain/entities/pizza-topping';
-import { PizzaToppingRepositoryImpl } from '../../../src/infrastructure/repositories/pizza-topping-repository-impl';
+import { PizzaTopping } from '../../../src/domain/pizza-topping';
+import { PizzaToppingRepositoryImpl } from '../../../src/infra/database/repositories/pizza-topping-repository-impl';
 import { CreatePizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
 import { UpdatePizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/update-pizza-topping-use-case';
-import { ClearDatabaseTests } from '../../../src/interfaces/utils/clear-database-tests';
+import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
+import { prisma } from '../../../src/infra/database/prisma';
 
 describe('Create Pizza Topping UseCase', () => {
   let pizzaToppingRepository: PizzaToppingRepositoryImpl;
@@ -14,7 +13,7 @@ describe('Create Pizza Topping UseCase', () => {
   let idsToDelete: string[] = [];
 
   beforeAll(async () => {
-    pizzaToppingRepository = new PizzaToppingRepositoryImpl(new PrismaClient());
+    pizzaToppingRepository = new PizzaToppingRepositoryImpl();
     createPizzaToppingUseCase = new CreatePizzaToppingUseCase(
       pizzaToppingRepository,
     );
@@ -29,8 +28,7 @@ describe('Create Pizza Topping UseCase', () => {
   });
 
   afterAll(
-    async () =>
-      await ClearDatabaseTests(new PrismaClient().pizzaTopping, idsToDelete),
+    async () => await ClearDatabaseTests(prisma.pizzaTopping, idsToDelete),
   );
 
   it('Should update pizza topping', async () => {

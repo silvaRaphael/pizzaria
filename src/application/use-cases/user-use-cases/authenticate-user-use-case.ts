@@ -1,17 +1,18 @@
-import { UserRepositoryImpl } from '../../../infrastructure/repositories/user-repository-impl';
-import { MissingDataError } from '../../../interfaces/errors/missing-data-error';
+import { UserRepository } from '../../repositories/user-repository';
 import { AuthenticateUserDTO } from './authenticate-user-dto';
 import { UserCredentialsDTO } from './user-credentials-dto';
+import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
 
 export class AuthenticateUserUseCase {
-  constructor(private userRepository: UserRepositoryImpl) {}
+  constructor(private userRepository: UserRepository) {}
 
   async execute({
     username,
     password,
   }: AuthenticateUserDTO): Promise<UserCredentialsDTO> {
     try {
-      if (!username || !password) throw new MissingDataError();
+      if (!username) throw new MissingDataError('username');
+      if (!password) throw new MissingDataError('password');
 
       return await this.userRepository.authenticateUser({ username, password });
     } catch (error: any) {

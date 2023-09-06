@@ -1,8 +1,8 @@
-import { Client } from '../../../domain/entities/client';
-import { ClientRepositoryImpl } from '../../../infrastructure/repositories/client-repository-impl';
+import { Client } from '../../../domain/client';
+import { ClientRepository } from '../../repositories/client-repository';
 
 export class GetAllClientsUseCase {
-  constructor(private clientRepository: ClientRepositoryImpl) {}
+  constructor(private clientRepository: ClientRepository) {}
 
   async execute(): Promise<Client[]> {
     try {

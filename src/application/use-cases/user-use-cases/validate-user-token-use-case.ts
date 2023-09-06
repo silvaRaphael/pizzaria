@@ -1,8 +1,8 @@
-import { UserRepositoryImpl } from '../../../infrastructure/repositories/user-repository-impl';
+import { UserRepository } from '../../repositories/user-repository';
 import { UserCredentialsDTO } from './user-credentials-dto';
 
 export class ValidateUserTokenUseCase {
-  constructor(private userRepository: UserRepositoryImpl) {}
+  constructor(private userRepository: UserRepository) {}
 
   async execute(token: string): Promise<UserCredentialsDTO | null> {
     try {
