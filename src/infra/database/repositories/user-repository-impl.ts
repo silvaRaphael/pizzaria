@@ -6,9 +6,9 @@ import { User } from '../../../domain/user';
 import { UserRepository } from '../../../application/repositories/user-repository';
 import { AuthenticateUserDTO } from '../../../application/use-cases/user-use-cases/authenticate-user-dto';
 import { UserCredentialsDTO } from '../../../application/use-cases/user-use-cases/user-credentials-dto';
-import { UserNotFoundError } from '../../http/errors/user-not-found-error';
-import { InvalidCredentialsError } from '../../http/errors/invalid-credentials-error';
 import { DateTime } from '../../http/utils/datetime';
+import { UserNotFoundError } from '../../../application/errors/user-not-found-error';
+import { InvalidCredentialsError } from '../../../application/errors/invalid-credentials-error';
 
 export class UserRepositoryImpl implements UserRepository {
   async create(user: User): Promise<void> {

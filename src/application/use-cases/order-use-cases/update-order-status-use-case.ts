@@ -1,4 +1,4 @@
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 import { OrderRepository } from '../../repositories/order-repository';
 import { UpdateOrderStatusDTO } from './update-order-status-dto';
 

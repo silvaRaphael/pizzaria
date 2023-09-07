@@ -1,7 +1,7 @@
 import { UserRepository } from '../../repositories/user-repository';
 import { AuthenticateUserDTO } from './authenticate-user-dto';
 import { UserCredentialsDTO } from './user-credentials-dto';
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 
 export class AuthenticateUserUseCase {
   constructor(private userRepository: UserRepository) {}

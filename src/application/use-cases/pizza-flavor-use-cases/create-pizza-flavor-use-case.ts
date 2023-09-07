@@ -1,5 +1,5 @@
 import { PizzaFlavor } from '../../../domain/pizza-flavor';
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 import { PizzaFlavorRepository } from '../../repositories/pizza-flavor-repository';
 import { CreatePizzaFlavorDTO } from './create-pizza-flavor-dto';
 

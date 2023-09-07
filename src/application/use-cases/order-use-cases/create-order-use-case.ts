@@ -1,7 +1,7 @@
 import { Order } from '../../../domain/order';
 import { OrderPizzaFlavor } from '../../../domain/order-pizza-flavor';
 import { OrderPizzaTopping } from '../../../domain/order-pizza-topping';
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 import { OrderPizzaFlavorRepository } from '../../repositories/order-pizza-flavor-repository';
 import { OrderPizzaToppingRepository } from '../../repositories/order-pizza-topping-repository';
 import { OrderRepository } from '../../repositories/order-repository';

@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
 
-import { InvalidTokenError } from '../errors/invalid-token-error';
-import { ExpiredTokenError } from '../errors/expired-token-error';
-import { UserRepositoryImpl } from '../../infra/repositories/user-repository-impl';
-import { ValidateUserTokenUseCase } from '../../application/use-cases/user-use-cases/validate-user-token-use-case';
+import { InvalidTokenError } from '../../../application/errors/invalid-token-error';
+import { ValidateUserTokenUseCase } from '../../../application/use-cases/user-use-cases/validate-user-token-use-case';
+import { UserRepositoryImpl } from '../../database/repositories/user-repository-impl';
+import { ExpiredTokenError } from '../../../application/errors/expired-token-error';
 
 export const AuthMiddleware = async (
   req: Request,
@@ -21,7 +20,7 @@ export const AuthMiddleware = async (
     if (!token) throw new InvalidTokenError();
 
     const response = await new ValidateUserTokenUseCase(
-      new UserRepositoryImpl(new PrismaClient()),
+      new UserRepositoryImpl(),
     ).execute(token);
 
     if (!response) throw new ExpiredTokenError();

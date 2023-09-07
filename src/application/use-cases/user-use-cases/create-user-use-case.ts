@@ -1,5 +1,5 @@
 import { User } from '../../../domain/user';
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 import { UserRepository } from '../../repositories/user-repository';
 import { CreateUserDTO } from './create-user-dto';
 

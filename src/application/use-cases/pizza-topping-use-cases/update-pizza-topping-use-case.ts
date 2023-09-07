@@ -1,6 +1,6 @@
 import { PizzaToppingRepository } from '../../repositories/pizza-topping-repository';
 import { UpdatePizzaToppingDTO } from './update-pizza-topping-dto';
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 import { PizzaTopping } from '../../../domain/pizza-topping';
 
 export class UpdatePizzaToppingUseCase {

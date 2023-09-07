@@ -2,17 +2,20 @@
   "name": "pizzaria",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/src/index.js",
+  "main": "dist/src/infra/http/index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "start": "node dist/src/infra/http/index.js",
     "dev": "tsnd --respawn --transpile-only src/infra/http/index.ts",
     "test": "NODE_ENV=test && npx jest tests/unit",
     "test:e2e": "NODE_ENV=test && npx jest tests/e2e"
   },
   "keywords": [],
-  "author": "",
+  "author": "Raphael Silva",
   "license": "ISC",
+  "engines": {
+    "node": ">=18 <19"
+  },
   "dependencies": {
     "@prisma/client": "^5.2.0",
     "bcryptjs": "^2.4.3",

@@ -1,5 +1,5 @@
 import { Client } from '../../../domain/client';
-import { MissingDataError } from '../../../infra/http/errors/missing-data-error';
+import { MissingDataError } from '../../errors/missing-data-error';
 import { ClientRepository } from '../../repositories/client-repository';
 import { CreateClientDTO } from './create-client-dto';
 
