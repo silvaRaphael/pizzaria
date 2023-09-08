@@ -4,9 +4,9 @@ import { pageContext } from '../../../utils/page-context';
 
 const router = Router();
 
-router.get('/sabores', (req, res) => {
-  res.render('pizza/pizza-flavor', {
-    title: 'Pizza - Sabores',
+router.get('/coberturas', (req, res) => {
+  res.render('pizza/pizza-topping', {
+    title: 'Pizza - Coberturas',
     ...pageContext(req),
   });
 });

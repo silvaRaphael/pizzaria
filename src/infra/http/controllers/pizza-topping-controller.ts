@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import fs from 'node:fs';
 
 import { CreatePizzaToppingUseCase } from '../../../application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
 import { GetPizzaToppingUseCase } from '../../../application/use-cases/pizza-topping-use-cases/get-pizza-topping-use-case';
@@ -50,7 +51,27 @@ export class PizzaToppingController {
     try {
       const pizzaToppings = await this.getAllPizzaToppingsUseCase.execute();
 
-      res.status(200).json(pizzaToppings);
+      let actions = fs.readFileSync(
+        'views/partials/actions-dropdown.hbs',
+        'utf8',
+      );
+
+      const response = pizzaToppings.map((item, index) => {
+        actions = actions.replace('{{edit}}', `editTopping('${item.id}')`);
+        actions = actions.replace('{{delete}}', `deleteTopping('${item.id}')`);
+
+        return {
+          ...item,
+          price: new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(item.price),
+          '#': index + 1,
+          actions,
+        };
+      });
+
+      res.status(200).json(response);
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -68,7 +89,7 @@ export class PizzaToppingController {
         price,
       });
 
-      res.status(200).end();
+      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -81,7 +102,7 @@ export class PizzaToppingController {
     try {
       await this.deletePizzaToppingUseCase.execute(pizzaToppingId);
 
-      res.status(200).end();
+      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });

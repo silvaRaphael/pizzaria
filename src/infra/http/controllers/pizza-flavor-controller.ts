@@ -78,7 +78,7 @@ export class PizzaFlavorController {
             currency: 'BRL',
           }).format(item.price),
           '#': index + 1,
-          '@': actions,
+          actions,
         };
       });
 
@@ -100,7 +100,7 @@ export class PizzaFlavorController {
         price,
       });
 
-      res.status(200).end();
+      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -113,7 +113,7 @@ export class PizzaFlavorController {
     try {
       await this.deletePizzaFlavorUseCase.execute(pizzaFlavorId);
 
-      res.status(200).end();
+      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });

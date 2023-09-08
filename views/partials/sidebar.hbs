@@ -3,24 +3,24 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent path "/")}}collapsed{{/if}}" href="/">
+        <a class="nav-link {{#if (isDifferent url "/")}}collapsed{{/if}}" href="/">
           <i class="bi bi-grid"></i>
           <span>Início</span>
         </a>
       </li><!-- End Início Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isEqual (isDifferent path "/sabores") (isDifferent path "/coberturas"))}}collapsed{{/if}}" data-bs-target="#pizza-nav" data-bs-toggle="collapse">
+        <a class="nav-link {{#if (isEqual (isDifferent url "/sabores") (isDifferent url "/coberturas"))}}collapsed{{/if}}" data-bs-target="#pizza-nav" data-bs-toggle="collapse">
           <i class="bi bi-pie-chart"></i><span>Pizzas</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="pizza-nav" class="nav-content collapse {{#if (isEqual path "/sabores")}}show{{else if (isEqual path "/coberturas")}}collapsed{{else}}{{/if}}" data-bs-parent="#sidebar-nav">
+        <ul id="pizza-nav" class="nav-content collapse {{#if (isEqual url "/sabores")}}show{{else if (isEqual url "/coberturas")}}show{{else}}{{/if}}" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="/pizza/sabores" class="{{#if (isEqual path "/sabores")}}active{{/if}}">
+            <a href="/pizza/sabores" class="{{#if (isEqual url "/sabores")}}active{{/if}}">
               <i class="bi bi-circle"></i><span>Sabores</span>
             </a>
           </li>
           <li>
-            <a href="/pizza/coberturas" class="{{#if (isEqual path "/coberturas")}}active{{/if}}">
+            <a href="/pizza/coberturas" class="{{#if (isEqual url "/coberturas")}}active{{/if}}">
               <i class="bi bi-circle"></i><span>Coberturas</span>
             </a>
           </li>
@@ -28,28 +28,28 @@
       </li><!-- End Pizzas Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent path "/clientes")}}collapsed{{/if}}" href="/clientes">
+        <a class="nav-link {{#if (isDifferent url "/clientes")}}collapsed{{/if}}" href="/clientes">
           <i class="bi bi-people"></i>
           <span>Clientes</span>
         </a>
       </li><!-- End Clientes Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent path "/pedidos")}}collapsed{{/if}}" href="/pedidos">
+        <a class="nav-link {{#if (isDifferent url "/pedidos")}}collapsed{{/if}}" href="/pedidos">
           <i class="bi bi-card-list"></i>
           <span>Pedidos</span>
         </a>
       </li><!-- End Pedidos Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent path "/usuarios")}}collapsed{{/if}}" href="/usuarios">
+        <a class="nav-link {{#if (isDifferent url "/usuarios")}}collapsed{{/if}}" href="/usuarios">
           <i class="bi bi-person"></i>
           <span>Usuários</span>
         </a>
       </li><!-- End Usuários Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent path "/sair")}}collapsed{{/if}}" href="/sair">
+        <a class="nav-link {{#if (isDifferent url "/sair")}}collapsed{{/if}}" href="/sair">
           <i class="bi bi-box-arrow-right"></i>
           <span>Sair</span>
         </a>

@@ -21,6 +21,8 @@ export class UserController {
         password,
       });
 
+      console.log(user);
+
       res.status(201).json({ id: user.id });
     } catch (error: any) {
       console.error(error);

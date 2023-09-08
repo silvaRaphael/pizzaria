@@ -1,0 +1,166 @@
+{{#> wrapper}}
+  <div class="col-lg-12">
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">Coberturas</h5>
+        <a class="btn btn-primary h-min" onclick="modalAdd.show()">Nova Cobertura</a>
+        {{#> simple-modal id="modalAdd" title="Nova Cobertura" onConfirm="createTopping(this)"}}
+          <div class="col-7 form-group">
+            <label>Cobertura</label>
+            <input type="text" class="form-control" name="topping">
+          </div>
+          <div class="col-5 form-group">
+            <label>Preço</label>
+            <input type="text" class="form-control" name="price" placeholder="0,00">
+          </div>
+        {{/simple-modal}}
+      </div>
+      <div class="card-body">
+        <div class="py-3">
+          <table id="pizza-topping-table" class="table dt-responsive nowrap align-middle" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Cobertura</th>
+                <th scope="col">Preço</th>
+                <th scope="col"><i class="bi bi-tools"></i></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{{/wrapper}}
+
+{{#> simple-modal id="modalEdit" title="Editar Cobertura" onConfirm="updateTopping(this)"}}
+  <div class="col-7 form-group">
+    <label>Cobertura</label>
+    <input type="text" class="form-control" name="topping">
+  </div>
+  <div class="col-5 form-group">
+    <label>Preço</label>
+    <input type="text" class="form-control" name="price" placeholder="0,00">
+  </div>
+{{/simple-modal}}
+
+<script>
+  const pizzaToppingTable = new DataTable('#pizza-topping-table', {
+    paging: true,
+    autoWidth: true,
+    searching: true,
+    pageLength: 25,
+    language,
+    columns: [
+      { data: '#', width: '10%', className: 'text-center' },
+      { data: 'topping', width: '50%' },
+      { data: 'price', width: '30%' },
+      { data: 'actions', width: '10%', orderable: false, className: 'text-center' },
+    ],
+    ajax: {
+      url: '{{defaultPath}}/api/pizza-toppings',
+      dataSrc: '',
+    },
+  });
+
+  CurrencyMask('#modalAdd [name="price"]');
+  CurrencyMask('#modalEdit [name="price"]');
+
+  const modalAdd = new bootstrap.Modal('#modalAdd');
+  const modalEdit = new bootstrap.Modal('#modalEdit');
+
+  function createTopping(button) {
+
+    const requestCreateTopping = new ApiRequest('{{defaultPath}}/api/pizza-toppings', 'POST', '#modalAdd');
+
+    if(!requestCreateTopping.validate()) return;
+
+    requestCreateTopping.setButton(button);
+
+    requestCreateTopping.setBody({
+      topping: requestCreateTopping.getField('topping').value,
+      price: Number(requestCreateTopping.getField('price').value.replace(',', '.')),
+    });
+
+    requestCreateTopping.onSuccess((response) => {
+      Notification('Cobertura adicionada!');
+      pizzaToppingTable.ajax.reload();
+      modalAdd.hide();
+      requestCreateTopping.clearFields();
+    });
+
+    requestCreateTopping.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestCreateTopping.send();
+  }
+
+  const requestUpdateTopping = new ApiRequest(null, 'PUT', '#modalEdit');
+
+  function editTopping(id) {
+
+    const requestDataTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'GET', '#modalEdit');
+
+    requestDataTopping.onSuccess((response) => {
+
+      requestDataTopping.setFields({
+        topping: response.topping,
+        price: response.price,
+      });
+
+      requestUpdateTopping.setUrl(`{{defaultPath}}/api/pizza-topping/${id}`);
+      
+      modalEdit.show();
+    });
+
+    requestDataTopping.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataTopping.send();
+  }
+
+  function updateTopping(button) {
+
+    if(!requestUpdateTopping.validate()) return;
+
+    requestUpdateTopping.setButton(button);
+
+    requestUpdateTopping.setBody({
+      topping: requestUpdateTopping.getField('topping').value,
+      price: Number(requestUpdateTopping.getField('price').value.replace(',', '.')),
+    });
+
+    requestUpdateTopping.onSuccess((response) => {
+      Notification('Cobertura alterada!');
+      pizzaToppingTable.ajax.reload();
+      modalEdit.hide();
+    });
+
+    requestUpdateTopping.onError((response) => {
+      Notification(response.error);
+    });
+
+    requestUpdateTopping.send();
+  }
+
+  function deleteTopping(id) {
+    CustomAlert(() => {
+      const requestDeleteTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'DELETE');
+
+      requestDeleteTopping.onSuccess((response) => {
+        pizzaToppingTable.ajax.reload();
+      });
+
+      requestDeleteTopping.onError((response) => {
+        Notification(response.error, 'danger');
+      });
+
+      requestDeleteTopping.send();
+    });
+  }
+</script>

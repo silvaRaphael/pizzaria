@@ -4,7 +4,7 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between">
         <h5 class="card-title">Sabores</h5>
-        <button class="btn btn-primary" style="height: 3rem;" onclick="modalAdd.show()">Novo Sabor</button>
+        <a class="btn btn-primary h-min" onclick="modalAdd.show()">Novo Sabor</a>
         {{#> simple-modal id="modalAdd" title="Novo Sabor" onConfirm="createFlavor(this)"}}
           <div class="col-7 form-group">
             <label>Sabor</label>
@@ -48,9 +48,6 @@
 {{/simple-modal}}
 
 <script>
-  CurrencyMask('#modalAdd [name="price"]');
-  CurrencyMask('#modalEdit [name="price"]');
-
   const pizzaFlavorTable = new DataTable('#pizza-flavor-table', {
     paging: true,
     autoWidth: true,
@@ -58,10 +55,10 @@
     pageLength: 25,
     language,
     columns: [
-      { data: '#', width: '10%', orderable: true, className: 'text-center' },
-      { data: 'flavor', width: '50%', orderable: true },
-      { data: 'price', width: '30%', orderable: false },
-      { data: '@', width: '10%', orderable: false, className: 'text-center' },
+      { data: '#', width: '10%', className: 'text-center' },
+      { data: 'flavor', width: '50%' },
+      { data: 'price', width: '30%' },
+      { data: 'actions', width: '10%', orderable: false, className: 'text-center' },
     ],
     ajax: {
       url: '{{defaultPath}}/api/pizza-flavors',
@@ -69,63 +66,101 @@
     },
   });
 
+  CurrencyMask('#modalAdd [name="price"]');
+  CurrencyMask('#modalEdit [name="price"]');
+
   const modalAdd = new bootstrap.Modal('#modalAdd');
   const modalEdit = new bootstrap.Modal('#modalEdit');
 
   function createFlavor(button) {
 
-    const flavor = document.querySelector('#modalAdd [name="flavor"]').value;
-    const price = document.querySelector('#modalAdd [name="price"]').value;
-    
-    fetch('{{defaultPath}}/api/pizza-flavors', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        flavor,
-        price: Number(price.replace(',', '.')),
-      }),
-    })
-    .then((response) => response.json())
-    .then((data) => {
+    const requestCreateFlavor = new ApiRequest('{{defaultPath}}/api/pizza-flavors', 'POST', '#modalAdd');
+
+    if(!requestCreateFlavor.validate()) return;
+
+    requestCreateFlavor.setButton(button);
+
+    requestCreateFlavor.setBody({
+      flavor: requestCreateFlavor.getField('flavor').value,
+      price: Number(requestCreateFlavor.getField('price').value.replace(',', '.')),
+    });
+
+    requestCreateFlavor.onSuccess((response) => {
+      Notification('Sabor adicionado!');
       pizzaFlavorTable.ajax.reload();
       modalAdd.hide();
+      requestCreateFlavor.clearFields();
     });
+
+    requestCreateFlavor.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestCreateFlavor.send();
   }
+
+  const requestUpdateFlavor = new ApiRequest(null, 'PUT', '#modalEdit');
 
   function editFlavor(id) {
 
-    const flavor = document.querySelector('#modalEdit [name="flavor"]');
-    const price = document.querySelector('#modalEdit [name="price"]');
-    
-    fetch(`{{defaultPath}}/api/pizza-flavor/${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      flavor.value = data.flavor;
-      price.value = data.price;
+    const requestDataFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'GET', '#modalEdit');
+
+    requestDataFlavor.onSuccess((response) => {
+
+      requestDataFlavor.setFields({
+        flavor: response.flavor,
+        price: response.price,
+      });
+
+      requestUpdateFlavor.setUrl(`{{defaultPath}}/api/pizza-flavor/${id}`);
+      
       modalEdit.show();
     });
+
+    requestDataFlavor.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataFlavor.send();
   }
 
-  function updateFlavor() {}
+  function updateFlavor(button) {
+
+    if(!requestUpdateFlavor.validate()) return;
+
+    requestUpdateFlavor.setButton(button);
+
+    requestUpdateFlavor.setBody({
+      flavor: requestUpdateFlavor.getField('flavor').value,
+      price: Number(requestUpdateFlavor.getField('price').value.replace(',', '.')),
+    });
+
+    requestUpdateFlavor.onSuccess((response) => {
+      Notification('Sabor alterado!');
+      pizzaFlavorTable.ajax.reload();
+      modalEdit.hide();
+    });
+
+    requestUpdateFlavor.onError((response) => {
+      Notification(response.error);
+    });
+
+    requestUpdateFlavor.send();
+  }
 
   function deleteFlavor(id) {
     CustomAlert(() => {
-        fetch(`{{defaultPath}}/api/pizza-flavor/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
+      const requestDeleteFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'DELETE');
+
+      requestDeleteFlavor.onSuccess((response) => {
         pizzaFlavorTable.ajax.reload();
       });
+
+      requestDeleteFlavor.onError((response) => {
+        Notification(response.error, 'danger');
+      });
+
+      requestDeleteFlavor.send();
     });
   }
 </script>

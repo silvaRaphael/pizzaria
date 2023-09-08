@@ -20,6 +20,11 @@ export class PizzaToppingRepositoryImpl implements PizzaToppingRepository {
           active: true,
           id: pizzaToppingId,
         },
+        select: {
+          id: true,
+          topping: true,
+          price: true,
+        },
       })) as PizzaTopping;
     } catch (error: any) {
       throw new Error(error.message);
@@ -33,7 +38,12 @@ export class PizzaToppingRepositoryImpl implements PizzaToppingRepository {
           active: true,
         },
         orderBy: {
-          created_at: 'desc',
+          updated_at: 'desc',
+        },
+        select: {
+          id: true,
+          topping: true,
+          price: true,
         },
       })) as PizzaTopping[];
     } catch (error: any) {
