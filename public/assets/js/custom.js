@@ -20,6 +20,18 @@ function PhoneMask(selector = '') {
 }
 
 /**
+ * CEP mask 
+ * @param {string} selector
+ * @returns {HTMLElement}
+ */
+function CEPMask(selector = '') {
+  return new Cleave(selector, {
+    blocks: [5, 3],
+    delimiters: ['-'],
+  }).element;
+}
+
+/**
 * Monetary mask
 * @param {string} selector
 * @param {number} maxLength
@@ -188,33 +200,34 @@ function buscarCEP(button, tab) {
 }
 
 /**
-* listar cidades
-* @param {string} id_uf
-* @param {string} tab
-* @param {string} id_cidade
+* Load cities
+* @param {string} stateId
+* @param {string} selector
+* @param {string} cityId
 * @returns {void}
 */
-function listarCidades(id_uf, tab, id_cidade) {
+function loadCities(stateId, selector, cityId) {
 
-  document.querySelector(`${tab} [name="id_cidade"]`).innerHTML = '<option selected value="">Selecione uma opção</option>';
+  const requestLoadCities = new ApiRequest(`/api/cities/${stateId}`, 'GET', selector);
 
-  if (!id_uf) return;
+  requestLoadCities.getField('city_id').innerHTML = `<option value="">Selecione</option>`;
 
-  const listar_cidades_request = new ApiRequest('/cidades/carregar-lista', 'POST', tab);
+  if (!stateId) return;
 
-  listar_cidades_request.setDados({ id_uf });
+  requestLoadCities.onSuccess((response) => {
 
-  listar_cidades_request.onSuccess((data) => {
-    for (let i = 0; i <= data.total - 1; i++) {
-      const opt = document.createElement('option');
-      opt.value = data.cidades[i].id;
-      opt.innerHTML = data.cidades[i].cidade;
-      document.querySelector(`${tab} [name="id_cidade"]`).appendChild(opt);
-    }
-    if (id_cidade) document.querySelector(`${tab} [name="id_cidade"]`).value = id_cidade;
+    response.forEach((item) => {
+      requestLoadCities.getField('city_id').innerHTML += `<option value="${item.id}">${item.city}</option>`;
+    });
+
+    if (cityId) requestLoadCities.setFields({ city_id: cityId });
   });
 
-  listar_cidades_request.enviar();
+  requestLoadCities.onError((response) => {
+    Notification(response.error, 'danger');
+  });
+
+  requestLoadCities.send();
 }
 
 // api

@@ -1,0 +1,6 @@
+<select class="form-select" name="state_id" {{#if required}}required{{/if}} onchange="{{onChange}}">
+  <option value="">Selecione</option>
+  {{#each states}}
+    <option value="{{id}}">{{abbr}}</option>
+  {{/each}}
+</select>

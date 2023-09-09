@@ -23,7 +23,6 @@ export class CreateClientUseCase {
         !zip_code ||
         !street_address ||
         !street_number ||
-        !reference ||
         !state_id ||
         !city_id
       )

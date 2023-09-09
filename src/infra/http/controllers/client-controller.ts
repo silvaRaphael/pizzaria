@@ -70,8 +70,8 @@ export class ClientController {
       );
 
       const response = clients.map((item, index) => {
-        actions = actions.replace('{{edit}}', `editFlavor('${item.id}')`);
-        actions = actions.replace('{{delete}}', `deleteFlavor('${item.id}')`);
+        actions = actions.replace('{{edit}}', `editClient('${item.id}')`);
+        actions = actions.replace('{{delete}}', `deleteClient('${item.id}')`);
 
         return {
           ...item,
