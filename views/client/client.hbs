@@ -1,0 +1,167 @@
+{{#> wrapper}}
+  <div class="col-lg-12">
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">Clientes</h5>
+        <a class="btn btn-primary h-min" onclick="modalAdd.show()">Novo Cliente</a>
+      </div>
+      <div class="card-body">
+        <div class="py-3">
+          <table id="client-table" class="table dt-responsive nowrap align-middle" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Celular</th>
+                <th scope="col"><i class="bi bi-tools"></i></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{{/wrapper}}
+
+{{#> simple-modal id="modalAdd" title="Novo Cliente" onConfirm="createClient(this)"}}
+  <div class="col-7 form-group">
+    <label>Nome</label>
+    <input type="text" class="form-control" name="client">
+  </div>
+  <div class="col-7 form-group">
+    <label>Celular</label>
+    <input type="text" class="form-control" name="phone" placeholder="55 (00) 9000-0000">
+  </div>
+{{/simple-modal}}
+
+{{#> simple-modal id="modalEdit" title="Editar Cliente" onConfirm="updateClient(this)"}}
+  <div class="col-7 form-group">
+    <label>Nome</label>
+    <input type="text" class="form-control" name="client">
+  </div>
+  <div class="col-7 form-group">
+    <label>Celular</label>
+    <input type="text" class="form-control" name="phone" placeholder="55 (00) 9000-0000">
+  </div>
+{{/simple-modal}}
+
+<script>
+  const clientTable = new DataTable('#client-table', {
+    paging: true,
+    autoWidth: true,
+    searching: true,
+    pageLength: 25,
+    language,
+    columns: [
+      { data: '#', width: '10%', className: 'text-center' },
+      { data: 'name', width: '50%' },
+      { data: 'phone', width: '30%' },
+      { data: 'actions', width: '10%', orderable: false, className: 'text-center' },
+    ],
+    ajax: {
+      url: '{{defaultPath}}/api/clients',
+      dataSrc: '',
+    },
+  });
+
+  PhoneMask('#modalAdd [name="phone"]');
+  PhoneMask('#modalEdit [name="phone"]');
+
+  const modalAdd = new bootstrap.Modal('#modalAdd');
+  const modalEdit = new bootstrap.Modal('#modalEdit');
+
+  function createClient(button) {
+
+    const requestCreateClient = new ApiRequest('{{defaultPath}}/api/clients', 'POST', '#modalAdd');
+
+    if(!requestCreateClient.validate()) return;
+
+    requestCreateClient.setButton(button);
+
+    requestCreateClient.setBody({
+      client: requestCreateClient.getField('client').value,
+      phone: requestCreateClient.getField('phone').value,
+    });
+
+    requestCreateClient.onSuccess((response) => {
+      Notification('Cliente adicionado!');
+      clientTable.ajax.reload();
+      modalAdd.hide();
+      requestCreateClient.clearFields();
+    });
+
+    requestCreateClient.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestCreateClient.send();
+  }
+
+  const requestUpdateClient = new ApiRequest(null, 'PUT', '#modalEdit');
+
+  function editClient(id) {
+
+    const requestDataClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'GET', '#modalEdit');
+
+    requestDataClient.onSuccess((response) => {
+
+      requestDataClient.setFields({
+        client: response.client,
+        price: response.price,
+      });
+
+      requestUpdateClient.setUrl(`{{defaultPath}}/api/client/${id}`);
+      
+      modalEdit.show();
+    });
+
+    requestDataClient.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataClient.send();
+  }
+
+  function updateClient(button) {
+
+    if(!requestUpdateClient.validate()) return;
+
+    requestUpdateClient.setButton(button);
+
+    requestUpdateClient.setBody({
+      client: requestUpdateClient.getField('client').value,
+      price: Number(requestUpdateClient.getField('price').value.replace(',', '.')),
+    });
+
+    requestUpdateClient.onSuccess((response) => {
+      Notification('Cliente alterado!');
+      clientTable.ajax.reload();
+      modalEdit.hide();
+    });
+
+    requestUpdateClient.onError((response) => {
+      Notification(response.error);
+    });
+
+    requestUpdateClient.send();
+  }
+
+  function deleteClient(id) {
+    CustomAlert(() => {
+      const requestDeleteClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'DELETE');
+
+      requestDeleteClient.onSuccess((response) => {
+        clientTable.ajax.reload();
+      });
+
+      requestDeleteClient.onError((response) => {
+        Notification(response.error, 'danger');
+      });
+
+      requestDeleteClient.send();
+    });
+  }
+</script>

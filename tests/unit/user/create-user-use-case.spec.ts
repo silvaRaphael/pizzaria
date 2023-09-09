@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
-import { User } from '../../src/domain/user';
-import { UserRepositoryImpl } from '../../src/infra/database/repositories/user-repository-impl';
-import { CreateUserUseCase } from '../../src/application/use-cases/user-use-cases/create-user-use-case';
-import { CreateUserDTO } from '../../src/application/use-cases/user-use-cases/create-user-dto';
-import { ClearDatabaseTests } from '../../src/infra/http/utils/clear-database-tests';
-import { prisma } from '../../src/infra/database/prisma';
+import { User } from '../../../src/domain/user';
+import { UserRepositoryImpl } from '../../../src/infra/database/repositories/user-repository-impl';
+import { CreateUserUseCase } from '../../../src/application/use-cases/user-use-cases/create-user-use-case';
+import { CreateUserDTO } from '../../../src/application/use-cases/user-use-cases/create-user-dto';
+import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
+import { prisma } from '../../../src/infra/database/prisma';
 
 describe('Create User UseCase', () => {
   let userRepository: UserRepositoryImpl;

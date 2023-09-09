@@ -68,6 +68,37 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
+  async update(user: User): Promise<void> {
+    const { username, name, password } = user;
+
+    try {
+      const userExists = await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          username,
+          name,
+          password,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async delete(userId: string): Promise<void> {
+    try {
+      await prisma.user.delete({
+        where: {
+          id: userId,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
   async authenticateUser(
     credentials: AuthenticateUserDTO,
   ): Promise<UserCredentialsDTO> {

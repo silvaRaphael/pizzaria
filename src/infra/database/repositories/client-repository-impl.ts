@@ -36,4 +36,48 @@ export class ClientRepositoryImpl implements ClientRepository {
       throw new Error(error.message);
     }
   }
+
+  async update(client: Client): Promise<void> {
+    const {
+      name,
+      phone,
+      zip_code,
+      state_id,
+      city_id,
+      street_address,
+      street_number,
+      reference,
+    } = client;
+    try {
+      await prisma.client.update({
+        where: {
+          id: client.id,
+        },
+        data: {
+          name,
+          phone,
+          zip_code,
+          state_id,
+          city_id,
+          street_address,
+          street_number,
+          reference,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async delete(clientId: string): Promise<void> {
+    try {
+      await prisma.client.delete({
+        where: {
+          id: clientId,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

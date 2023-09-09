@@ -1,10 +1,10 @@
-import { Client } from '../../src/domain/client';
-import { ClientRepositoryImpl } from '../../src/infra/database/repositories/client-repository-impl';
-import { CreateClientUseCase } from '../../src/application/use-cases/client-use-cases/create-client-use-case';
-import { GetClientUseCase } from '../../src/application/use-cases/client-use-cases/get-client-use-case';
-import { GetAllClientsUseCase } from '../../src/application/use-cases/client-use-cases/get-all-clients-use-case';
-import { ClearDatabaseTests } from '../../src/infra/http/utils/clear-database-tests';
-import { prisma } from '../../src/infra/database/prisma';
+import { Client } from '../../../src/domain/client';
+import { ClientRepositoryImpl } from '../../../src/infra/database/repositories/client-repository-impl';
+import { CreateClientUseCase } from '../../../src/application/use-cases/client-use-cases/create-client-use-case';
+import { GetClientUseCase } from '../../../src/application/use-cases/client-use-cases/get-client-use-case';
+import { GetAllClientsUseCase } from '../../../src/application/use-cases/client-use-cases/get-all-clients-use-case';
+import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
+import { prisma } from '../../../src/infra/database/prisma';
 
 describe('Create Client UseCase', () => {
   let clientRepository: ClientRepositoryImpl;

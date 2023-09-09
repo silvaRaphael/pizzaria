@@ -82,7 +82,7 @@ export class OrderController {
         status,
       });
 
-      res.status(200).end();
+      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });

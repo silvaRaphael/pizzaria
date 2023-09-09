@@ -1,5 +1,26 @@
 /**
-* Máscara monetária.
+ * Only numbers 
+ * @param {string} string
+ * @returns {HTMLElement}
+ */
+function OnlyNumbers(string) {
+  return string.replace(/\W+/g, '');
+}
+
+/**
+ * Phone mask 
+ * @param {string} selector
+ * @returns {HTMLElement}
+ */
+function PhoneMask(selector = '') {
+  return new Cleave(selector, {
+    blocks: [0, 2, 2, 5, 4],
+    delimiters: ['+', ' (', ') ', '-'],
+  }).element;
+}
+
+/**
+* Monetary mask
 * @param {string} selector
 * @param {number} maxLength
 * @param {string} separator
