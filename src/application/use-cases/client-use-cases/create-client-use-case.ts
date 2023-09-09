@@ -17,16 +17,7 @@ export class CreateClientUseCase {
     city_id,
   }: CreateClientDTO): Promise<Client> {
     try {
-      if (
-        !name ||
-        !phone ||
-        !zip_code ||
-        !street_address ||
-        !street_number ||
-        !state_id ||
-        !city_id
-      )
-        throw new MissingDataError();
+      if (!name) throw new MissingDataError('name');
 
       const client = new Client({
         name,

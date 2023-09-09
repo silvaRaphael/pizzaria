@@ -18,17 +18,7 @@ export class UpdateClientUseCase {
     city_id,
   }: UpdateClientDTO): Promise<Client> {
     try {
-      if (
-        !id ||
-        !name ||
-        !phone ||
-        !zip_code ||
-        !street_address ||
-        !street_number ||
-        !state_id ||
-        !city_id
-      )
-        throw new MissingDataError();
+      if (!id || !name) throw new MissingDataError('name');
 
       const client = new Client({
         id,

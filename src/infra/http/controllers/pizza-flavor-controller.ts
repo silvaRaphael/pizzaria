@@ -62,12 +62,13 @@ export class PizzaFlavorController {
     try {
       const pizzaFlavors = await this.getAllPizzaFlavorsUseCase.execute();
 
-      let actions = fs.readFileSync(
+      let actionsButton = fs.readFileSync(
         'views/partials/actions-dropdown.hbs',
         'utf8',
       );
 
       const response = pizzaFlavors.map((item, index) => {
+        let actions = actionsButton;
         actions = actions.replace('{{edit}}', `editFlavor('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteFlavor('${item.id}')`);
 

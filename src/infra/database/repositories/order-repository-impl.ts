@@ -34,6 +34,7 @@ export class OrderRepositoryImpl implements OrderRepository {
       await prisma.order.create({
         data: {
           ...order,
+          size: Number(order.size),
           orderPizzaFlavor: undefined,
           orderPizzaTopping: undefined,
         },
@@ -47,6 +48,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     try {
       return (await prisma.order.findFirst({
         where: {
+          active: true,
           done: false,
           id: orderId,
         },
@@ -61,6 +63,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     try {
       return (await prisma.order.findMany({
         where: {
+          active: true,
           done: false,
         },
         orderBy: {
@@ -77,6 +80,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     try {
       return (await prisma.order.findMany({
         where: {
+          active: true,
           client_id: clientId,
         },
         include: this.includeQuery,
@@ -86,17 +90,33 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
-  async updateStatus({
-    order_id,
-    status,
-  }: UpdateOrderStatusDTO): Promise<void> {
+  async update(order: Order): Promise<void> {
+    try {
+      await prisma.order.update({
+        where: {
+          active: true,
+          id: order.id,
+        },
+        data: {
+          ...order,
+          size: Number(order.size),
+          orderPizzaFlavor: undefined,
+          orderPizzaTopping: undefined,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async updateStatus({ id, status }: UpdateOrderStatusDTO): Promise<void> {
     try {
       await prisma.order.update({
         data: {
           status,
         },
         where: {
-          id: order_id,
+          id: id,
         },
       });
     } catch (error: any) {
@@ -106,9 +126,12 @@ export class OrderRepositoryImpl implements OrderRepository {
 
   async delete(orderId: string): Promise<void> {
     try {
-      await prisma.order.delete({
+      await prisma.order.update({
         where: {
           id: orderId,
+        },
+        data: {
+          active: false,
         },
       });
     } catch (error: any) {

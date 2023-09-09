@@ -1,4 +1,4 @@
 export interface UpdateOrderStatusDTO {
-  order_id: string;
+  id: string;
   status: number;
 }

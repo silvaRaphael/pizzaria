@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
     });
   }
 
-  res.render('home', { title: 'Pizzaria', ...pageContext(req) });
+  res.render('pages/home', { title: 'Pizzaria', ...pageContext(req) });
 });
 
 export default router;

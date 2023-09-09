@@ -14,12 +14,9 @@ const hbs = create({
   extname: '.hbs',
   helpers: {
     defaultPath: () => 'http://localhost:3000',
-    isEqual(value1: any, value2: any) {
-      return value1 === value2;
-    },
-    isDifferent(value1: any, value2: any) {
-      return value1 !== value2;
-    },
+    getArray: (array: [], index: number) => array[index],
+    isEqual: (value1: any, value2: any) => value1 === value2,
+    isDifferent: (value1: any, value2: any) => value1 !== value2,
   },
 });
 

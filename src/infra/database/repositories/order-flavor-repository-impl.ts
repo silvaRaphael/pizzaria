@@ -61,4 +61,16 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
       throw new Error(error.message);
     }
   }
+
+  async deleteByOrderId(orderId: string): Promise<void> {
+    try {
+      await prisma.orderPizzaFlavor.deleteMany({
+        where: {
+          order_id: orderId,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

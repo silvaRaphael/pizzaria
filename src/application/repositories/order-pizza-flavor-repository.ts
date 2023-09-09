@@ -5,4 +5,5 @@ export interface OrderPizzaFlavorRepository {
   getOne(orderSpecificationsId: string): Promise<OrderPizzaFlavor>;
   getAll(orderId: string): Promise<OrderPizzaFlavor[]>;
   delete(orderSpecificationsId: string): Promise<void>;
+  deleteByOrderId(orderId: string): Promise<void>;
 }

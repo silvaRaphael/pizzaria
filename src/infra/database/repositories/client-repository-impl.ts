@@ -31,6 +31,15 @@ export class ClientRepositoryImpl implements ClientRepository {
         where: {
           active: true,
         },
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          street_address: true,
+          street_number: true,
+          state_id: true,
+          city_id: true,
+        },
       })) as Client[];
     } catch (error: any) {
       throw new Error(error.message);

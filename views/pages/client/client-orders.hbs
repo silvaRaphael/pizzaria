@@ -1,0 +1,263 @@
+{{#> wrapper menu=menu }}
+  <div class="col-lg-12">
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">{{title}}</h5>
+        <a class="btn btn-primary h-min" onclick="modalAdd.show()">Novo Pedido</a>
+      </div>
+      <div class="card-body">
+        <div class="py-3">
+          <table id="client-order-table" class="table dt-responsive nowrap align-middle" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Status</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Tamanho</th>
+                <th scope="col">Sabores</th>
+                <th scope="col">Coberturas</th>
+                <th scope="col"><i class="bi bi-tools"></i></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{{/wrapper}}
+
+{{#> simple-modal id="modalAdd" title="Novo Pedido" onSave="createOrder(this)"}}
+  <div class="col-6 form-group mb-2">
+    <label>Sabores</label>
+    <select class="form-select" name="pizzaFlavorsIds" onchange="calculateOrderPrice(this, 'pizzaFlavorsIds', '#modalAdd')" multiple required>
+      <option value="">Selecione</option>
+      {{#each pizzaFlavors}}
+        <option value="{{id}}" data-price="{{price}}">{{flavor}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Coberturas</label>
+    <select class="form-select" name="pizzaToppingsIds" onchange="calculateOrderPrice(this, 'pizzaToppingsIds', '#modalAdd')" multiple>
+      <option value="">Selecione</option>
+      {{#each pizzaToppings}}
+        <option value="{{id}}" data-price="{{price}}">{{topping}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Tamanho</label>
+    <select class="form-select" name="size" onchange="calculateSizePrice(this, '#modalAdd')" required>
+      <option value="0" data-price="50">Pequena</option>
+      <option value="1" data-price="75">Média</option>
+      <option value="2" data-price="100">Grande</option>
+    </select>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Preço</label>
+    <input type="text" class="form-control" name="price" data-size="50" value="50,00" required disabled>
+  </div>
+{{/simple-modal}}
+
+{{#> simple-modal id="modalEdit" title="Editar Pedido" onSave="updateOrder(this)"}}
+  <div class="col-6 form-group mb-2">
+    <label>Sabores</label>
+    <select class="form-select" name="pizzaFlavorsIds" onchange="calculateOrderPrice(this, 'pizzaFlavorsIds', '#modalEdit')" multiple required>
+      <option value="">Selecione</option>
+      {{#each pizzaFlavors}}
+        <option value="{{id}}" data-price="{{price}}">{{flavor}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Coberturas</label>
+    <select class="form-select" name="pizzaToppingsIds" onchange="calculateOrderPrice(this, 'pizzaToppingsIds', '#modalEdit')" multiple>
+      <option value="">Selecione</option>
+      {{#each pizzaToppings}}
+        <option value="{{id}}" data-price="{{price}}">{{topping}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Tamanho</label>
+    <select class="form-select" name="size" onchange="calculateSizePrice(this, '#modalEdit')" required>
+      <option value="0" data-price="50">Pequena</option>
+      <option value="1" data-price="75">Média</option>
+      <option value="2" data-price="100">Grande</option>
+    </select>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Preço</label>
+    <input type="text" class="form-control" name="price" data-size="50" value="50,00" required disabled>
+  </div>
+{{/simple-modal}}
+
+<script>
+  const OrderTable = new DataTable('#client-order-table', {
+    paging: true,
+    autoWidth: true,
+    searching: true,
+    pageLength: 25,
+    language,
+    columns: [
+      { data: '#', width: '7%', className: 'text-center' },
+      { data: 'status', width: '15%', className: 'text-center' },
+      { data: 'price', width: '10%', className: 'text-center' },
+      { data: 'size', width: '10%', className: 'text-center' },
+      { data: 'orderPizzaFlavor', width: '20%', render: function (data, type, row, meta) {
+          return data.map((item) => `<li>${item.flavor.flavor}</li>`).join('');
+      } },
+      { data: 'orderPizzaTopping', width: '20%', render: function (data, type, row, meta) {
+          return data.map((item) => `<li>${item.topping.topping}</li>`).join('');
+      } },
+      { data: 'actions', width: '8%', orderable: false, className: 'text-center' },
+    ],
+    ajax: {
+      url: '{{defaultPath}}/api/orders/{{clientId}}',
+      dataSrc: '',
+    },
+  });
+
+  const modalAdd = new bootstrap.Modal('#modalAdd');
+  const modalEdit = new bootstrap.Modal('#modalEdit');
+
+  function calculateOrderPrice(select, type, selector) {
+    const { selectedOptions } = select;
+    const optionsPrice = Array.from(selectedOptions).map((option) => Number(option.dataset.price ?? 0));
+    const price = optionsPrice.reduce((acc, crr) => acc + crr, 0);
+    const priceInput = document.querySelector(`${selector} [name="price"]`);
+
+    priceInput.dataset[type] = price;
+    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0);
+    priceInput.value = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(totalPrice).replace('R$ ', '');
+  }
+
+  function calculateSizePrice(select, selector) {
+    const { selectedOptions } = select;
+    const { price } = selectedOptions[0].dataset;
+    const priceInput = document.querySelector(`${selector} [name="price"]`);
+
+    priceInput.dataset.size = price;
+    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0);
+    priceInput.value = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(totalPrice).replace('R$ ', '');
+  }
+
+  function createOrder(button) {
+
+    const requestCreateOrder = new ApiRequest('{{defaultPath}}/api/order', 'POST', '#modalAdd');
+
+    if(!requestCreateOrder.validate()) return;
+
+    requestCreateOrder.setButton(button);
+
+    requestCreateOrder.setBody({
+      client_id: '{{clientId}}',
+      size: Number(requestCreateOrder.getField('size').value),
+      price: Object.values(requestCreateOrder.getField('price').dataset).reduce((acc, crr) => acc + Number(crr), 0),
+      pizzaFlavorsIds: Array.from(requestCreateOrder.getField('pizzaFlavorsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+      pizzaToppingsIds: Array.from(requestCreateOrder.getField('pizzaToppingsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+    });
+
+    requestCreateOrder.onSuccess((response) => {
+      Notification('Pedido adicionado!');
+      OrderTable.ajax.reload();
+      modalAdd.hide();
+      requestCreateOrder.clearFields();
+    });
+
+    requestCreateOrder.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestCreateOrder.send();
+  }
+
+  const requestUpdateOrder = new ApiRequest(null, 'PUT', '#modalEdit');
+
+  function editOrder(id) {
+
+    const requestDataOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'GET', '#modalEdit');
+
+    requestDataOrder.onSuccess((response) => {
+
+      Array.from(requestDataOrder.getField('pizzaFlavorsIds')).forEach((option) => {
+        option.selected = response.orderPizzaFlavor.filter((item) => item.flavor_id == option.value).length;
+      });
+
+      Array.from(requestDataOrder.getField('pizzaToppingsIds')).forEach((option) => {
+        option.selected = response.orderPizzaTopping.filter((item) => item.topping_id == option.value).length;
+      });
+
+      requestDataOrder.setFields({
+        size: response.size,
+        price: new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        }).format(response.price).replace('R$ ', ''),
+      });
+
+      requestUpdateOrder.setUrl(`{{defaultPath}}/api/order/${id}`);
+      
+      modalEdit.show();
+    });
+
+    requestDataOrder.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataOrder.send();
+  }
+
+  function updateOrder(button) {
+
+    if(!requestUpdateOrder.validate()) return;
+
+    requestUpdateOrder.setButton(button);
+
+    requestUpdateOrder.setBody({
+      client_id: '{{clientId}}',
+      size: Number(requestUpdateOrder.getField('size').value),
+      price: Object.values(requestUpdateOrder.getField('price').dataset).reduce((acc, crr) => acc + Number(crr), 0),
+      pizzaFlavorsIds: Array.from(requestUpdateOrder.getField('pizzaFlavorsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+      pizzaToppingsIds: Array.from(requestUpdateOrder.getField('pizzaToppingsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+    });
+
+    requestUpdateOrder.onSuccess((response) => {
+      Notification('Pedido alterado!');
+      OrderTable.ajax.reload();
+      modalEdit.hide();
+    });
+
+    requestUpdateOrder.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestUpdateOrder.send();
+  }
+
+  function deleteOrder(id) {
+    CustomAlert(() => {
+      const requestDeleteOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'DELETE');
+
+      requestDeleteOrder.onSuccess((response) => {
+        OrderTable.ajax.reload();
+      });
+
+      requestDeleteOrder.onError((response) => {
+        Notification(response.error, 'danger');
+      });
+
+      requestDeleteOrder.send();
+    });
+  }
+
+</script>

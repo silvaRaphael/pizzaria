@@ -51,12 +51,13 @@ export class PizzaToppingController {
     try {
       const pizzaToppings = await this.getAllPizzaToppingsUseCase.execute();
 
-      let actions = fs.readFileSync(
+      let actionsButton = fs.readFileSync(
         'views/partials/actions-dropdown.hbs',
         'utf8',
       );
 
       const response = pizzaToppings.map((item, index) => {
+        let actions = actionsButton;
         actions = actions.replace('{{edit}}', `editTopping('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteTopping('${item.id}')`);
 

@@ -4,19 +4,14 @@ import { OrderPizzaFlavor } from './order-pizza-flavor';
 import { OrderPizzaTopping } from './order-pizza-topping';
 import { DateTime } from '../infra/http/utils/datetime';
 
-export enum PizzaSizes {
-  small = 0,
-  medium = 1,
-  large = 2,
-}
-
 export class Order {
   public id: string;
   public client_id: string;
-  public size: PizzaSizes;
+  public size: 0 | 1 | 2;
   public price: number;
   public status: number;
   public done: boolean;
+  public active: boolean;
   public created_at: Date;
   public updated_at: Date;
   public orderPizzaFlavor: OrderPizzaFlavor[] = [];
@@ -29,14 +24,16 @@ export class Order {
     price,
     status,
     done,
+    active,
     created_at,
   }: {
     id?: string;
     client_id: string;
-    size: PizzaSizes;
+    size: 0 | 1 | 2;
     price: number;
     status?: number;
     done?: boolean;
+    active?: boolean;
     created_at?: Date;
   }) {
     this.id = id ?? randomUUID();
@@ -45,6 +42,7 @@ export class Order {
     this.price = price;
     this.status = status ?? 0;
     this.done = done ?? false;
+    this.active = active ?? true;
     this.created_at = created_at ?? DateTime();
     this.updated_at = DateTime();
   }

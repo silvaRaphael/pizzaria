@@ -10,4 +10,8 @@ router.use(homeRoutes);
 router.use(pizzaRoutes);
 router.use(clientRoutes);
 
+router.use((req, res, next) => {
+  res.status(404).redirect('/');
+});
+
 export default router;

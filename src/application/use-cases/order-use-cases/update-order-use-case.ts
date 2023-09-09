@@ -5,10 +5,10 @@ import { MissingDataError } from '../../errors/missing-data-error';
 import { OrderPizzaFlavorRepository } from '../../repositories/order-pizza-flavor-repository';
 import { OrderPizzaToppingRepository } from '../../repositories/order-pizza-topping-repository';
 import { OrderRepository } from '../../repositories/order-repository';
-import { CreateOrderDTO } from './create-order-dto';
 import { OrderOutputDTO } from './order-output-dto';
+import { UpdateOrderDTO } from './update-order-dto';
 
-export class CreateOrderUseCase {
+export class UpdateOrderUseCase {
   pizzaFlavors: OrderPizzaFlavor[] = [];
   pizzaToppings: OrderPizzaTopping[] = [];
 
@@ -19,29 +19,36 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute({
+    id,
     client_id,
     size,
     price,
     pizzaFlavorsIds,
     pizzaToppingsIds,
-  }: CreateOrderDTO): Promise<OrderOutputDTO> {
+  }: UpdateOrderDTO): Promise<OrderOutputDTO> {
     try {
+      if (!id) throw new MissingDataError('id');
       if (!client_id) throw new MissingDataError('client_id');
       if (size == null) throw new MissingDataError('size');
       if (price == null) throw new MissingDataError('price');
 
       const order = new Order({
+        id,
         client_id,
         size,
         price,
       });
 
-      await this.orderRepository.create(order);
+      await Promise.all([
+        this.orderRepository.update(order),
+        this.orderPizzaFlavor.deleteByOrderId(id),
+        this.orderPizzaTopping.deleteByOrderId(id),
+      ]);
 
       pizzaFlavorsIds.map((flavor_id) =>
         this.pizzaFlavors.push(
           new OrderPizzaFlavor({
-            order_id: order.id,
+            order_id: id,
             flavor_id,
           }),
         ),
@@ -50,7 +57,7 @@ export class CreateOrderUseCase {
       pizzaToppingsIds.map((topping_id) =>
         this.pizzaToppings.push(
           new OrderPizzaTopping({
-            order_id: order.id,
+            order_id: id,
             topping_id,
           }),
         ),

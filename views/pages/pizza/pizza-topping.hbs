@@ -3,18 +3,8 @@
 
     <div class="card">
       <div class="card-header d-flex justify-content-between">
-        <h5 class="card-title">Coberturas</h5>
+        <h5 class="card-title">{{title}}</h5>
         <a class="btn btn-primary h-min" onclick="modalAdd.show()">Nova Cobertura</a>
-        {{#> simple-modal id="modalAdd" title="Nova Cobertura" onConfirm="createTopping(this)"}}
-          <div class="col-7 form-group">
-            <label>Cobertura</label>
-            <input type="text" class="form-control" name="topping">
-          </div>
-          <div class="col-5 form-group">
-            <label>Preço</label>
-            <input type="text" class="form-control" name="price" placeholder="0,00">
-          </div>
-        {{/simple-modal}}
       </div>
       <div class="card-body">
         <div class="py-3">
@@ -36,14 +26,25 @@
   </div>
 {{/wrapper}}
 
-{{#> simple-modal id="modalEdit" title="Editar Cobertura" onConfirm="updateTopping(this)"}}
+{{#> simple-modal id="modalAdd" title="Nova Cobertura" onSave="createTopping(this)"}}
   <div class="col-7 form-group">
     <label>Cobertura</label>
-    <input type="text" class="form-control" name="topping">
+    <input type="text" class="form-control" name="topping" required>
   </div>
   <div class="col-5 form-group">
     <label>Preço</label>
-    <input type="text" class="form-control" name="price" placeholder="0,00">
+    <input type="text" class="form-control" name="price" placeholder="0,00" required>
+  </div>
+{{/simple-modal}}
+
+{{#> simple-modal id="modalEdit" title="Editar Cobertura" onSave="updateTopping(this)"}}
+  <div class="col-7 form-group">
+    <label>Cobertura</label>
+    <input type="text" class="form-control" name="topping" required>
+  </div>
+  <div class="col-5 form-group">
+    <label>Preço</label>
+    <input type="text" class="form-control" name="price" placeholder="0,00" required>
   </div>
 {{/simple-modal}}
 
@@ -142,7 +143,7 @@
     });
 
     requestUpdateTopping.onError((response) => {
-      Notification(response.error);
+      Notification(response.error, 'danger');
     });
 
     requestUpdateTopping.send();

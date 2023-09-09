@@ -3,6 +3,9 @@
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{linkPath}}">Início</a></li>
+      {{#each menu}}
+        <li class="breadcrumb-item"><a href="{{link}}">{{label}}</a></li>
+      {{/each}}
       <li class="breadcrumb-item active">{{title}}</li>
     </ol>
   </nav>

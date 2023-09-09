@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
+import fs from 'node:fs';
 
 import { CreateOrderUseCase } from '../../../application/use-cases/order-use-cases/create-order-use-case';
 import { GetOrderUseCase } from '../../../application/use-cases/order-use-cases/get-order-use-case';
 import { GetAllOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-orders-use-case';
 import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-client-orders-use-case';
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
+import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
+import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 
 export class OrderController {
   constructor(
@@ -12,7 +15,9 @@ export class OrderController {
     private getOrderUseCase: GetOrderUseCase,
     private getAllOrdersUseCase: GetAllOrdersUseCase,
     private getAllClientOrdersUseCase: GetAllClientOrdersUseCase,
+    private updateOrderUseCase: UpdateOrderUseCase,
     private updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+    private deleteOrderUseCase: DeleteOrderUseCase,
   ) {}
 
   async createOrder(req: Request, res: Response): Promise<void> {
@@ -52,7 +57,29 @@ export class OrderController {
     try {
       const orders = await this.getAllOrdersUseCase.execute();
 
-      res.status(200).json(orders);
+      let actionsButton = fs.readFileSync(
+        'views/partials/actions-dropdown.hbs',
+        'utf8',
+      );
+
+      const response = orders.map((item, index) => {
+        let actions = actionsButton;
+        actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
+        actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
+
+        return {
+          ...item,
+          size: ['Pequena', 'Média', 'Grande'][item.size],
+          price: new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(item.price),
+          '#': index + 1,
+          actions,
+        };
+      });
+
+      res.status(200).json(response);
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -65,7 +92,51 @@ export class OrderController {
     try {
       const orders = await this.getAllClientOrdersUseCase.execute(clientId);
 
-      res.status(200).json(orders);
+      let actionsButton = fs.readFileSync(
+        'views/partials/actions-dropdown.hbs',
+        'utf8',
+      );
+
+      const response = orders.map((item, index) => {
+        let actions = actionsButton;
+        actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
+        actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
+
+        return {
+          ...item,
+          size: ['Pequena', 'Média', 'Grande'][item.size],
+          price: new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(item.price),
+          '#': index + 1,
+          actions,
+        };
+      });
+
+      res.status(200).json(response);
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ error: 'Ocorreu um erro!' });
+    }
+  }
+
+  async updateOrder(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params;
+    const { client_id, size, price, pizzaFlavorsIds, pizzaToppingsIds } =
+      req.body;
+
+    try {
+      await this.updateOrderUseCase.execute({
+        id: orderId,
+        client_id,
+        size,
+        price,
+        pizzaFlavorsIds,
+        pizzaToppingsIds,
+      });
+
+      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });
@@ -78,9 +149,22 @@ export class OrderController {
 
     try {
       await this.updateOrderStatusUseCase.execute({
-        order_id: orderId,
+        id: orderId,
         status,
       });
+
+      res.status(204).end();
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ error: 'Ocorreu um erro!' });
+    }
+  }
+
+  async deleteOrder(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params;
+
+    try {
+      await this.deleteOrderUseCase.execute(orderId);
 
       res.status(204).end();
     } catch (error: any) {

@@ -3,7 +3,7 @@
 
     <div class="card">
       <div class="card-header d-flex justify-content-between">
-        <h5 class="card-title">Clientes</h5>
+        <h5 class="card-title">{{title}}</h5>
         <a class="btn btn-primary h-min" onclick="modalAdd.show()">Novo Cliente</a>
       </div>
       <div class="card-body">
@@ -26,26 +26,26 @@
   </div>
 {{/wrapper}}
 
-{{#> simple-modal id="modalAdd" title="Novo Cliente" onConfirm="createClient(this)"}}
+{{#> simple-modal id="modalAdd" title="Novo Cliente" onSave="createClient(this)"}}
   <div class="col-7 form-group mb-2">
     <label>Nome</label>
     <input type="text" class="form-control" name="name" required>
   </div>
   <div class="col-5 form-group mb-2">
     <label>Celular</label>
-    <input type="text" class="form-control" name="phone" required>
+    <input type="text" class="form-control" name="phone">
   </div>
   <div class="col-5 form-group mb-2">
     <label>CEP</label>
-    <input type="text" class="form-control" name="zip_code" required>
+    <input type="text" class="form-control" name="zip_code">
   </div>
   <div class="col-7 form-group mb-2">
     <label>Endereço</label>
-    <input type="text" class="form-control" name="street_address" required>
+    <input type="text" class="form-control" name="street_address">
   </div>
   <div class="col-5 form-group mb-2">
     <label>Número</label>
-    <input type="text" class="form-control" name="street_number" required>
+    <input type="text" class="form-control" name="street_number">
   </div>
   <div class="col-7 form-group mb-2">
     <label>Complemento</label>
@@ -53,36 +53,36 @@
   </div>
   <div class="col-5 form-group mb-2">
     <label>Estado</label>
-    {{> state-select states=states required=true onChange="loadCities(this.value, '#modalAdd')"}}
+    {{> state-select states=states required=false onChange="loadCities(this.value, '#modalAdd')"}}
   </div>
   <div class="col-7 form-group mb-2">
     <label>Cidade</label>
-    <select class="form-select" name="city_id" required>
+    <select class="form-select" name="city_id">
       <option value="">Selecione</option>
     </select>
   </div>
 {{/simple-modal}}
 
-{{#> simple-modal id="modalEdit" title="Editar Cliente" onConfirm="updateClient(this)"}}
+{{#> simple-modal id="modalEdit" title="Editar Cliente" onSave="updateClient(this)"}}
     <div class="col-7 form-group mb-2">
     <label>Nome</label>
     <input type="text" class="form-control" name="name" required>
   </div>
   <div class="col-5 form-group mb-2">
     <label>Celular</label>
-    <input type="text" class="form-control" name="phone" required>
+    <input type="text" class="form-control" name="phone">
   </div>
   <div class="col-5 form-group mb-2">
     <label>CEP</label>
-    <input type="text" class="form-control" name="zip_code" required>
+    <input type="text" class="form-control" name="zip_code">
   </div>
   <div class="col-7 form-group mb-2">
     <label>Endereço</label>
-    <input type="text" class="form-control" name="street_address" required>
+    <input type="text" class="form-control" name="street_address">
   </div>
   <div class="col-5 form-group mb-2">
     <label>Número</label>
-    <input type="text" class="form-control" name="street_number" required>
+    <input type="text" class="form-control" name="street_number">
   </div>
   <div class="col-7 form-group mb-2">
     <label>Complemento</label>
@@ -90,11 +90,11 @@
   </div>
   <div class="col-5 form-group mb-2">
     <label>Estado</label>
-    {{> state-select states=states required=true onChange="loadCities(this.value, '#modalEdit')"}}
+    {{> state-select states=states required=false onChange="loadCities(this.value, '#modalEdit')"}}
   </div>
   <div class="col-7 form-group mb-2">
     <label>Cidade</label>
-    <select class="form-select" name="city_id" required>
+    <select class="form-select" name="city_id">
       <option value="">Selecione</option>
     </select>
   </div>
@@ -217,7 +217,7 @@
     });
 
     requestUpdateClient.onError((response) => {
-      Notification(response.error);
+      Notification(response.error, 'danger');
     });
 
     requestUpdateClient.send();

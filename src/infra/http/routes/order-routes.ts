@@ -9,6 +9,8 @@ import { GetOrderUseCase } from '../../../application/use-cases/order-use-cases/
 import { GetAllOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-orders-use-case';
 import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-client-orders-use-case';
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
+import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
+import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 
 const router = Router();
 
@@ -20,7 +22,9 @@ const orderController = new OrderController(
   new GetOrderUseCase(orderRepository),
   new GetAllOrdersUseCase(orderRepository),
   new GetAllClientOrdersUseCase(orderRepository),
+  new UpdateOrderUseCase(orderRepository, orderPizzaFlavor, orderPizzaTopping),
   new UpdateOrderStatusUseCase(orderRepository),
+  new DeleteOrderUseCase(orderRepository),
 );
 
 router.post('/order', (req, res) => orderController.createOrder(req, res));
@@ -34,7 +38,15 @@ router.get('/orders/:clientId', (req, res) =>
 );
 
 router.put('/order/:orderId', (req, res) =>
+  orderController.updateOrder(req, res),
+);
+
+router.patch('/order/:orderId', (req, res) =>
   orderController.updateOrderStatus(req, res),
+);
+
+router.delete('/order/:orderId', (req, res) =>
+  orderController.deleteOrder(req, res),
 );
 
 export default router;

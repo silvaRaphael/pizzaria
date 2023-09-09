@@ -6,6 +6,7 @@ export interface OrderRepository {
   getOne(orderId: string): Promise<Order>;
   getAll(): Promise<Order[]>;
   getAllFromClient(clientId: string): Promise<Order[]>;
-  updateStatus({ order_id, status }: UpdateOrderStatusDTO): Promise<void>;
+  update(order: Order): Promise<void>;
+  updateStatus({ id, status }: UpdateOrderStatusDTO): Promise<void>;
   delete(orderId: string): Promise<void>;
 }

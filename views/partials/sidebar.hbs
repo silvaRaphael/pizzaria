@@ -3,46 +3,39 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent url "/")}}collapsed{{/if}}" href="/">
+        <a class="nav-link {{#if (isDifferent (getArray urlSteps 0) "")}}collapsed{{/if}}" href="/">
           <i class="bi bi-grid"></i>
           <span>Início</span>
         </a>
       </li><!-- End Início Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isEqual (isDifferent url "/sabores") (isDifferent url "/coberturas"))}}collapsed{{/if}}" data-bs-target="#pizza-nav" data-bs-toggle="collapse">
-          <i class="bi bi-pie-chart"></i><span>Pizzas</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link {{#if (isEqual (isDifferent (getArray urlSteps 0) "sabores") (isDifferent (getArray urlSteps 0) "coberturas"))}}collapsed{{/if}}" data-bs-target="#pizza-nav" data-bs-toggle="collapse">
+          <i class="bi bi-pie-chart"></i><span>Pizza</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="pizza-nav" class="nav-content collapse {{#if (isEqual url "/sabores")}}show{{else if (isEqual url "/coberturas")}}show{{else}}{{/if}}" data-bs-parent="#sidebar-nav">
+        <ul id="pizza-nav" class="nav-content collapse {{#if (isDifferent (isEqual (getArray urlSteps 0) "sabores") (isEqual (getArray urlSteps 0) "coberturas"))}}show{{/if}}" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="/pizza/sabores" class="{{#if (isEqual url "/sabores")}}active{{/if}}">
+            <a href="/pizza/sabores" class="{{#if (isEqual (getArray urlSteps 0) "sabores")}}active{{/if}}">
               <i class="bi bi-circle"></i><span>Sabores</span>
             </a>
           </li>
           <li>
-            <a href="/pizza/coberturas" class="{{#if (isEqual url "/coberturas")}}active{{/if}}">
+            <a href="/pizza/coberturas" class="{{#if (isEqual (getArray urlSteps 0) "coberturas")}}active{{/if}}">
               <i class="bi bi-circle"></i><span>Coberturas</span>
             </a>
           </li>
         </ul>
-      </li><!-- End Pizzas Nav -->
+      </li><!-- End Pizza Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent url "/clientes")}}collapsed{{/if}}" href="/clientes">
+        <a class="nav-link {{#if (isDifferent (getArray urlSteps 0) "clientes")}}collapsed{{/if}}" href="/clientes">
           <i class="bi bi-people"></i>
           <span>Clientes</span>
         </a>
       </li><!-- End Clientes Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent url "/pedidos")}}collapsed{{/if}}" href="/pedidos">
-          <i class="bi bi-card-list"></i>
-          <span>Pedidos</span>
-        </a>
-      </li><!-- End Pedidos Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link {{#if (isDifferent url "/usuarios")}}collapsed{{/if}}" href="/usuarios">
+        <a class="nav-link {{#if (isDifferent (getArray urlSteps 0) "usuarios")}}collapsed{{/if}}" href="/usuarios">
           <i class="bi bi-person"></i>
           <span>Usuários</span>
         </a>

@@ -64,12 +64,13 @@ export class ClientController {
     try {
       const clients = await this.getAllClientsUseCase.execute();
 
-      let actions = fs.readFileSync(
+      const actionsButton = fs.readFileSync(
         'views/partials/actions-dropdown.hbs',
         'utf8',
       );
 
       const response = clients.map((item, index) => {
+        let actions = actionsButton;
         actions = actions.replace('{{edit}}', `editClient('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteClient('${item.id}')`);
 

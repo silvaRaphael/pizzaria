@@ -46,18 +46,18 @@ model User {
 model Client {
   id             String    @id
   name           String
-  phone          String
-  zip_code       String
-  street_address String
-  street_number  String
+  phone          String?
+  zip_code       String?
+  street_address String?
+  street_number  String?
   reference      String?
-  state_id       String
-  city_id        String
+  state_id       String?
+  city_id        String?
   active         Boolean
   created_at     DateTime
   updated_at     DateTime?
-  state          State     @relation(fields: [state_id], references: [id])
-  city           City      @relation(fields: [city_id], references: [id])
+  state          State?    @relation(fields: [state_id], references: [id])
+  city           City?     @relation(fields: [city_id], references: [id])
   order          Order[]
 }
 
@@ -88,6 +88,7 @@ model Order {
   price             Float
   status            Int
   done              Boolean
+  active            Boolean?
   created_at        DateTime
   updated_at        DateTime?
   client            Client              @relation(fields: [client_id], references: [id])

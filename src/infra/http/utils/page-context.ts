@@ -5,10 +5,16 @@ export const pageContext = (
   value?: any,
 ): {
   url: string;
+  urlSteps: string[];
   query: any;
 } => {
+  const url = req.url.split('?')[0];
+  const urlSteps = url.split('/');
+  urlSteps.shift();
+
   return {
-    url: req.url.split('?')[0],
+    url,
+    urlSteps,
     query: req.query,
     ...value,
   };

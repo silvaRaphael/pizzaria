@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { PizzaTopping } from './pizza-topping';
 
 export class OrderPizzaTopping {
-  public id: string;
+  public id?: string;
   public order_id: string;
   public topping_id: string;
   public topping?: PizzaTopping;
