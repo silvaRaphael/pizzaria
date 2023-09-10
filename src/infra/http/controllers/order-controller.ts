@@ -104,6 +104,12 @@ export class OrderController {
 
         return {
           ...item,
+          status: [
+            '<span class="badge bg-secondary">Pedido Realizado</span>',
+            '<span class="badge bg-danger">Em Preparo</span>',
+            '<span class="badge bg-info">Em Entrega</span>',
+            '<span class="badge bg-primary">Entregue</span>',
+          ][item.status],
           size: ['Pequena', 'Média', 'Grande'][item.size],
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',

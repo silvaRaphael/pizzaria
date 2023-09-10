@@ -31,7 +31,7 @@ describe('Update Client UseCase', () => {
 
   afterAll(async () => await ClearDatabaseTests(prisma.client, idsToDelete));
 
-  it('Should create a new client', async () => {
+  it('Should update client with id', async () => {
     const reponse = await updateClientUseCase.execute({
       id: client.id,
       name: 'Test 2',

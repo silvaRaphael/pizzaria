@@ -6,9 +6,7 @@ export class GetAllClientOrdersUseCase {
 
   async execute(clientId: string): Promise<Order[]> {
     try {
-      const a = await this.orderRepository.getAllFromClient(clientId);
-      console.log(a);
-      return a;
+      return await this.orderRepository.getAllFromClient(clientId);
     } catch (error: any) {
       throw new Error(error.message);
     }

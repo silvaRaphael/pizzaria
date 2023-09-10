@@ -16,7 +16,11 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
   async create(orderPizzaFlavor: OrderPizzaFlavor): Promise<OrderPizzaFlavor> {
     try {
       return (await prisma.orderPizzaFlavor.create({
-        data: { ...orderPizzaFlavor, flavor: undefined },
+        data: {
+          id: orderPizzaFlavor.id,
+          order_id: orderPizzaFlavor.order_id,
+          flavor_id: orderPizzaFlavor.flavor_id,
+        },
         include: this.includeQuery,
       })) as OrderPizzaFlavor;
     } catch (error: any) {

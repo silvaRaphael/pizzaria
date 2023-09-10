@@ -13,6 +13,7 @@ export const ClearDatabaseTests = async (
       },
     });
   } catch (error: any) {
+    console.error(error);
     throw new Error('Erro ao limpar testes do banco de dados');
   }
 };

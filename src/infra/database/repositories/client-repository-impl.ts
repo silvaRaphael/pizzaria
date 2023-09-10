@@ -6,7 +6,20 @@ export class ClientRepositoryImpl implements ClientRepository {
   async create(client: Client): Promise<void> {
     try {
       await prisma.client.create({
-        data: client,
+        data: {
+          id: client.id,
+          name: client.name,
+          phone: client.phone,
+          zip_code: client.zip_code,
+          state_id: client.state_id,
+          city_id: client.city_id,
+          street_address: client.street_address,
+          street_number: client.street_number,
+          reference: client.reference,
+          active: client.active,
+          created_at: client.created_at,
+          updated_at: client.updated_at,
+        },
       });
     } catch (error: any) {
       throw new Error(error.message);
@@ -47,30 +60,21 @@ export class ClientRepositoryImpl implements ClientRepository {
   }
 
   async update(client: Client): Promise<void> {
-    const {
-      name,
-      phone,
-      zip_code,
-      state_id,
-      city_id,
-      street_address,
-      street_number,
-      reference,
-    } = client;
     try {
       await prisma.client.update({
         where: {
           id: client.id,
         },
         data: {
-          name,
-          phone,
-          zip_code,
-          state_id,
-          city_id,
-          street_address,
-          street_number,
-          reference,
+          name: client.name,
+          phone: client.phone,
+          zip_code: client.zip_code,
+          state_id: client.state_id,
+          city_id: client.city_id,
+          street_address: client.street_address,
+          street_number: client.street_number,
+          reference: client.reference,
+          updated_at: client.updated_at,
         },
       });
     } catch (error: any) {
@@ -80,9 +84,12 @@ export class ClientRepositoryImpl implements ClientRepository {
 
   async delete(clientId: string): Promise<void> {
     try {
-      await prisma.client.delete({
+      await prisma.client.update({
         where: {
           id: clientId,
+        },
+        data: {
+          active: false,
         },
       });
     } catch (error: any) {

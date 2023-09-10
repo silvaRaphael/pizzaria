@@ -33,10 +33,15 @@ export class OrderRepositoryImpl implements OrderRepository {
     try {
       await prisma.order.create({
         data: {
-          ...order,
+          id: order.id,
+          client_id: order.client_id,
+          price: order.price,
           size: Number(order.size),
-          orderPizzaFlavor: undefined,
-          orderPizzaTopping: undefined,
+          status: order.status,
+          done: order.done,
+          active: order.active,
+          created_at: order.created_at,
+          updated_at: order.updated_at,
         },
       });
     } catch (error: any) {
@@ -67,7 +72,7 @@ export class OrderRepositoryImpl implements OrderRepository {
           done: false,
         },
         orderBy: {
-          created_at: 'desc',
+          updated_at: 'desc',
         },
         include: this.includeQuery,
       })) as Order[];
@@ -82,6 +87,9 @@ export class OrderRepositoryImpl implements OrderRepository {
         where: {
           active: true,
           client_id: clientId,
+        },
+        orderBy: {
+          updated_at: 'desc',
         },
         include: this.includeQuery,
       })) as Order[];
@@ -98,10 +106,9 @@ export class OrderRepositoryImpl implements OrderRepository {
           id: order.id,
         },
         data: {
-          ...order,
+          client_id: order.client_id,
+          price: order.price,
           size: Number(order.size),
-          orderPizzaFlavor: undefined,
-          orderPizzaTopping: undefined,
         },
       });
     } catch (error: any) {

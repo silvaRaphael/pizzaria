@@ -41,16 +41,16 @@ router.get('/clientes', async (req, res) => {
 router.get('/clientes/:clientId/pedidos', async (req, res) => {
   const { clientId } = req.params;
 
-  const [{ name: clientName }, pizzaFlavors, pizzaToppings] = await Promise.all(
-    [
-      getClientUseCase.execute(clientId),
-      getAllPizzaFlavorsUseCase.execute(),
-      getAllPizzaToppingsUseCase.execute(),
-    ],
-  );
+  const [client, pizzaFlavors, pizzaToppings] = await Promise.all([
+    getClientUseCase.execute(clientId),
+    getAllPizzaFlavorsUseCase.execute(),
+    getAllPizzaToppingsUseCase.execute(),
+  ]);
+
+  if (!client) return res.redirect('/');
 
   res.render('pages/client/client-orders', {
-    title: `Pedidos - ${clientName}`,
+    title: `Pedidos - ${client.name}`,
     ...pageContext(req),
     menu: [{ link: '/clientes', label: 'Clientes' }],
     clientId,

@@ -6,7 +6,14 @@ export class PizzaToppingRepositoryImpl implements PizzaToppingRepository {
   async create(pizzaTopping: PizzaTopping): Promise<void> {
     try {
       await prisma.pizzaTopping.create({
-        data: pizzaTopping,
+        data: {
+          id: pizzaTopping.id,
+          topping: pizzaTopping.topping,
+          price: pizzaTopping.price,
+          active: pizzaTopping.active,
+          created_at: pizzaTopping.created_at,
+          updated_at: pizzaTopping.updated_at,
+        },
       });
     } catch (error: any) {
       throw new Error(error.message);
@@ -54,7 +61,11 @@ export class PizzaToppingRepositoryImpl implements PizzaToppingRepository {
   async update(pizzaTopping: PizzaTopping): Promise<void> {
     try {
       await prisma.pizzaTopping.update({
-        data: pizzaTopping,
+        data: {
+          topping: pizzaTopping.topping,
+          price: pizzaTopping.price,
+          updated_at: pizzaTopping.updated_at,
+        },
         where: {
           id: pizzaTopping.id,
         },
@@ -66,7 +77,10 @@ export class PizzaToppingRepositoryImpl implements PizzaToppingRepository {
 
   async delete(pizzaToppingId: string): Promise<void> {
     try {
-      await prisma.pizzaTopping.delete({
+      await prisma.pizzaTopping.update({
+        data: {
+          active: false,
+        },
         where: {
           id: pizzaToppingId,
         },

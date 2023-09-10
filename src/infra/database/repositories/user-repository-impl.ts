@@ -24,7 +24,17 @@ export class UserRepositoryImpl implements UserRepository {
       }
 
       await prisma.user.create({
-        data: user,
+        data: {
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          password: user.password,
+          active: user.active,
+          token: user.token,
+          token_expiration: user.token_expiration,
+          created_at: user.created_at,
+          updated_at: user.updated_at,
+        },
       });
     } catch (error: any) {
       throw new Error(error.message);
@@ -69,17 +79,16 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async update(user: User): Promise<void> {
-    const { username, name, password } = user;
-
     try {
-      const userExists = await prisma.user.update({
+      await prisma.user.update({
         where: {
           id: user.id,
         },
         data: {
-          username,
-          name,
-          password,
+          username: user.username,
+          name: user.name,
+          password: user.password,
+          updated_at: user.updated_at,
         },
       });
     } catch (error: any) {
@@ -89,7 +98,10 @@ export class UserRepositoryImpl implements UserRepository {
 
   async delete(userId: string): Promise<void> {
     try {
-      await prisma.user.delete({
+      await prisma.user.update({
+        data: {
+          active: false,
+        },
         where: {
           id: userId,
         },
@@ -146,7 +158,7 @@ export class UserRepositoryImpl implements UserRepository {
         where: {
           token,
           token_expiration: {
-            lt: new Date(),
+            lt: DateTime(),
           },
         },
         select: {

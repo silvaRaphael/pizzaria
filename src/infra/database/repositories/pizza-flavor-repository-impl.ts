@@ -6,7 +6,14 @@ export class PizzaFlavorRepositoryImpl implements PizzaFlavorRepository {
   async create(pizzaFlavor: PizzaFlavor): Promise<void> {
     try {
       await prisma.pizzaFlavor.create({
-        data: pizzaFlavor,
+        data: {
+          id: pizzaFlavor.id,
+          flavor: pizzaFlavor.flavor,
+          price: pizzaFlavor.price,
+          active: pizzaFlavor.active,
+          created_at: pizzaFlavor.created_at,
+          updated_at: pizzaFlavor.updated_at,
+        },
       });
     } catch (error: any) {
       throw new Error(error.message);
@@ -54,7 +61,11 @@ export class PizzaFlavorRepositoryImpl implements PizzaFlavorRepository {
   async update(pizzaFlavor: PizzaFlavor): Promise<void> {
     try {
       await prisma.pizzaFlavor.update({
-        data: pizzaFlavor,
+        data: {
+          flavor: pizzaFlavor.flavor,
+          price: pizzaFlavor.price,
+          updated_at: pizzaFlavor.updated_at,
+        },
         where: {
           id: pizzaFlavor.id,
         },
@@ -66,7 +77,10 @@ export class PizzaFlavorRepositoryImpl implements PizzaFlavorRepository {
 
   async delete(pizzaFlavorId: string): Promise<void> {
     try {
-      await prisma.pizzaFlavor.delete({
+      await prisma.pizzaFlavor.update({
+        data: {
+          active: false,
+        },
         where: {
           id: pizzaFlavorId,
         },

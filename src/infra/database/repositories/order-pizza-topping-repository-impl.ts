@@ -18,7 +18,11 @@ export class OrderPizzaToppingImpl implements OrderPizzaToppingRepository {
   ): Promise<OrderPizzaTopping> {
     try {
       return (await prisma.orderPizzaTopping.create({
-        data: { ...orderPizzaTopping, topping: undefined },
+        data: {
+          id: orderPizzaTopping.id,
+          order_id: orderPizzaTopping.order_id,
+          topping_id: orderPizzaTopping.topping_id,
+        },
         include: this.includeQuery,
       })) as OrderPizzaTopping;
     } catch (error: any) {
