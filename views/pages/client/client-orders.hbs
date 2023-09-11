@@ -91,7 +91,7 @@
   </div>
   <div class="col-6 form-group mb-2">
     <label>Preço</label>
-    <input type="text" class="form-control" name="price" data-size="50" value="50,00" required disabled>
+    <input type="text" class="form-control" name="price" value="0,00" required disabled>
   </div>
 {{/simple-modal}}
 
@@ -204,6 +204,10 @@
           currency: 'BRL',
         }).format(response.price).replace('R$ ', ''),
       });
+
+      requestDataOrder.getField('price').dataset.size = requestDataOrder.getField('size').selectedOptions[0].dataset.price;
+      requestDataOrder.getField('price').dataset.pizzaFlavorsIds = response.orderPizzaFlavor.map((item) => item.flavor.price).reduce((acc, crr) => acc + crr, 0);
+      requestDataOrder.getField('price').dataset.pizzaToppingsIds = response.orderPizzaTopping.map((item) => item.topping.price).reduce((acc, crr) => acc + crr, 0);
 
       requestUpdateOrder.setUrl(`{{defaultPath}}/api/order/${id}`);
       

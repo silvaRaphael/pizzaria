@@ -14,6 +14,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Cliente</th>
                 <th scope="col">Celular</th>
+                <th scope="col">Pedidos</th>
                 <th scope="col"><i class="bi bi-tools"></i></th>
               </tr>
             </thead>
@@ -110,8 +111,9 @@
     columns: [
       { data: '#', width: '10%', className: 'text-center' },
       { data: 'name', width: '50%' },
-      { data: 'phone', width: '30%' },
-      { data: 'actions', width: '10%', orderable: false, className: 'text-center' },
+      { data: 'phone', width: '20%' },
+      { data: 'orders', width: '13%' },
+      { data: 'actions', width: '7%', orderable: false, className: 'text-center' },
     ],
     ajax: {
       url: '{{defaultPath}}/api/clients',
