@@ -312,7 +312,7 @@ class ApiRequest {
    */
   setButton(button) {
     this.button = button;
-    this.buttonText = this.button.textContent;
+    this.buttonText = this.button.innerHTML;
   }
 
   /**
@@ -359,7 +359,7 @@ class ApiRequest {
 
   buttonLoading() {
     if (this.button) {
-      this.button.innerHTML = '<span class="spinner-border text-warning" role="status" style="width: 1rem; height: 1rem;"></span>';
+      this.button.innerHTML = '<span class="spinner-border text-warning mx-auto" role="status" style="width: 1rem; height: 1rem;"></span>';
       this.button.style.pointerEvents = 'none';
     }
   }

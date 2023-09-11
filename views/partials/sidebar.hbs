@@ -35,6 +35,13 @@
       </li><!-- End Clientes Nav -->
 
       <li class="nav-item">
+        <a class="nav-link {{#if (isDifferent (getArray urlSteps 0) "pedidos")}}collapsed{{/if}}" href="/pedidos">
+          <i class="bi bi-table"></i>
+          <span>Pedidos</span>
+        </a>
+      </li><!-- End Pedidos Nav -->
+
+      <li class="nav-item">
         <a class="nav-link {{#if (isDifferent (getArray urlSteps 0) "usuarios")}}collapsed{{/if}}" href="/usuarios">
           <i class="bi bi-person"></i>
           <span>Usuários</span>

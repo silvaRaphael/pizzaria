@@ -74,8 +74,15 @@ export class OrderRepositoryImpl implements OrderRepository {
         orderBy: {
           updated_at: 'desc',
         },
-        include: this.includeQuery,
-      })) as Order[];
+        include: {
+          ...this.includeQuery,
+          client: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      })) as any as Order[];
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -106,9 +113,9 @@ export class OrderRepositoryImpl implements OrderRepository {
           id: order.id,
         },
         data: {
-          client_id: order.client_id,
           price: order.price,
           size: Number(order.size),
+          updated_at: order.updated_at,
         },
       });
     } catch (error: any) {
@@ -116,11 +123,16 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
-  async updateStatus({ id, status }: UpdateOrderStatusDTO): Promise<void> {
+  async updateStatus({
+    id,
+    status,
+    done,
+  }: UpdateOrderStatusDTO): Promise<void> {
     try {
       await prisma.order.update({
         data: {
           status,
+          done,
         },
         where: {
           id: id,

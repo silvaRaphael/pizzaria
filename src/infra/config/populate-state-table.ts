@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../database/prisma';
 
-const prisma = new PrismaClient();
-
-async function populateStateTable() {
+export const populateStateTable = async () => {
   try {
     const stateCount = await prisma.state.count();
 
@@ -46,6 +44,4 @@ async function populateStateTable() {
   } finally {
     await prisma.$disconnect();
   }
-}
-
-populateStateTable();
+};

@@ -14,7 +14,10 @@ const hbs = create({
   extname: '.hbs',
   helpers: {
     defaultPath: () => 'http://localhost:3000',
-    getArray: (array: [], index: number) => array[index],
+    getArray: (array: [], index?: number) =>
+      index == null ? array : array[index],
+    getProperty: (obj: any, property?: string) =>
+      !property ? obj : obj[property],
     isEqual: (value1: any, value2: any) => value1 === value2,
     isDifferent: (value1: any, value2: any) => value1 !== value2,
   },
@@ -30,6 +33,6 @@ app.use(express.static('public'));
 app.use('/api', routes);
 app.use('/', webRoutes);
 
-app.listen(port, '0.0.0.0', () =>
-  console.log(`Server is running on http://localhost:${port}`),
-);
+app.listen(port, '0.0.0.0', async () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});

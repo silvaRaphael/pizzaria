@@ -74,7 +74,7 @@ export class ClientController {
         actions = actions.replace('{{edit}}', `editClient('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteClient('${item.id}')`);
 
-        const orders = `<a class='badge bg-primary text-white' href='/clientes/${item.id}/pedidos'>Ver Pedidos</a>`;
+        const orders = `<a class='badge bg-secondary text-white' href='/clientes/${item.id}/pedidos'>Ver Pedidos</a>`;
 
         return {
           ...item,

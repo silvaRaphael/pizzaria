@@ -1,3 +1,4 @@
+import { orderStatus } from '../../../domain/order-status';
 import { MissingDataError } from '../../errors/missing-data-error';
 import { OrderRepository } from '../../repositories/order-repository';
 import { UpdateOrderStatusDTO } from './update-order-status-dto';
@@ -8,9 +9,11 @@ export class UpdateOrderStatusUseCase {
   async execute({ id, status }: UpdateOrderStatusDTO): Promise<void> {
     try {
       if (!id) throw new MissingDataError('id');
-      if (!status) throw new MissingDataError('status');
+      if (status == null) throw new MissingDataError('status');
 
-      await this.orderRepository.updateStatus({ id, status });
+      const done = status == orderStatus.at(-1)?.status;
+
+      await this.orderRepository.updateStatus({ id, status, done });
     } catch (error: any) {
       throw new Error(error.message);
     }

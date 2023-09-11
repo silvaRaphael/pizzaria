@@ -16,7 +16,6 @@ export class UpdateOrderUseCase {
 
   async execute({
     id,
-    client_id,
     size,
     price,
     pizzaFlavorsIds,
@@ -24,13 +23,11 @@ export class UpdateOrderUseCase {
   }: UpdateOrderDTO): Promise<void> {
     try {
       if (!id) throw new MissingDataError('id');
-      if (!client_id) throw new MissingDataError('client_id');
       if (size == null) throw new MissingDataError('size');
       if (price == null) throw new MissingDataError('price');
 
       const order = new Order({
         id,
-        client_id,
         size,
         price,
       });

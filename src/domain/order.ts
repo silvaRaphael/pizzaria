@@ -28,7 +28,7 @@ export class Order {
     created_at,
   }: {
     id?: string;
-    client_id: string;
+    client_id?: string;
     size: 0 | 1 | 2;
     price: number;
     status?: number;
@@ -37,7 +37,7 @@ export class Order {
     created_at?: Date;
   }) {
     this.id = id ?? randomUUID();
-    this.client_id = client_id;
+    this.client_id = client_id ?? '';
     this.size = size;
     this.price = price;
     this.status = status ?? 0;

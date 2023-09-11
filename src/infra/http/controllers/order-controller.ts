@@ -8,6 +8,9 @@ import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
 import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
+import { orderStatus } from '../../../domain/order-status';
+import { pizzaSizes } from '../../../domain/pizza-sizes';
+import { FormatDate } from '../utils/format-date';
 
 export class OrderController {
   constructor(
@@ -67,13 +70,23 @@ export class OrderController {
         actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
 
+        if (item.status != 0) actions = '<i class="bi bi-clock"></i>';
+        if (item.done) actions = '<i class="bi bi-check"></i>';
+
         return {
           ...item,
-          size: ['Pequena', 'Média', 'Grande'][item.size],
+          status: orderStatus.map((status) => {
+            const notDone = !item.done
+              ? `style="cursor: pointer;" onclick="editOrderStatus('${item.id}', ${status.status})"`
+              : '';
+            return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
+          })[item.status],
+          size: pizzaSizes[item.size].size,
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(item.price),
+          updated_at: new FormatDate(item.updated_at).fullFormat('vertical'),
           '#': index + 1,
           actions,
         };
@@ -102,19 +115,23 @@ export class OrderController {
         actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
 
+        if (item.status != 0) actions = '<i class="bi bi-clock"></i>';
+        if (item.done) actions = '<i class="bi bi-check"></i>';
+
         return {
           ...item,
-          status: [
-            '<span class="badge bg-secondary">Pedido Realizado</span>',
-            '<span class="badge bg-danger">Em Preparo</span>',
-            '<span class="badge bg-info">Em Entrega</span>',
-            '<span class="badge bg-primary">Entregue</span>',
-          ][item.status],
-          size: ['Pequena', 'Média', 'Grande'][item.size],
+          status: orderStatus.map((status) => {
+            const notDone = !item.done
+              ? `style="cursor: pointer;" onclick="editOrderStatus('${item.id}', ${status.status})"`
+              : '';
+            return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
+          })[item.status],
+          size: pizzaSizes[item.size].size,
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(item.price),
+          updated_at: new FormatDate(item.updated_at).fullFormat(),
           '#': index + 1,
           actions,
         };
@@ -129,13 +146,11 @@ export class OrderController {
 
   async updateOrder(req: Request, res: Response): Promise<void> {
     const { orderId } = req.params;
-    const { client_id, size, price, pizzaFlavorsIds, pizzaToppingsIds } =
-      req.body;
+    const { size, price, pizzaFlavorsIds, pizzaToppingsIds } = req.body;
 
     try {
       await this.updateOrderUseCase.execute({
         id: orderId,
-        client_id,
         size,
         price,
         pizzaFlavorsIds,
