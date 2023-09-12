@@ -14,9 +14,8 @@
                 <th scope="col">#</th>
                 <th scope="col">Status</th>
                 <th scope="col">Preço</th>
-                <th scope="col">Tamanho</th>
-                <th scope="col">Sabores</th>
-                <th scope="col">Coberturas</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Pedido</th>
                 <th scope="col">Data</th>
                 <th scope="col"><i class="bi bi-tools"></i></th>
               </tr>
@@ -121,13 +120,14 @@
       { data: '#', width: '7%', className: 'text-center' },
       { data: 'status', width: '15%', className: 'text-center' },
       { data: 'price', width: '10%', className: 'text-center' },
-      { data: 'size', width: '10%', className: 'text-center' },
-      { data: 'orderPizzaFlavor', width: '20%', render: function (data, type, row, meta) {
+      {{!-- { data: 'orderPizzaFlavor', width: '20%', render: function (data, type, row, meta) {
           return data.map((item) => `<li>${item.flavor.flavor}</li>`).join('');
       } },
       { data: 'orderPizzaTopping', width: '20%', render: function (data, type, row, meta) {
           return data.map((item) => `<li>${item.topping.topping}</li>`).join('');
-      } },
+      } }, --}}
+      { data: 'ammount', width: '10%', className: 'text-center' },
+      { data: 'order', width: '10%', className: 'text-center' },
       { data: 'updated_at', width: '10%', className: 'text-center' },
       { data: 'actions', width: '8%', orderable: false, className: 'text-center' },
     ],

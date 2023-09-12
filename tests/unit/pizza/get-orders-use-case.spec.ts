@@ -4,7 +4,7 @@ import { CreateClientUseCase } from '../../../src/application/use-cases/client-u
 import { CreateOrderUseCase } from '../../../src/application/use-cases/order-use-cases/create-order-use-case';
 import { CreateOrderDTO } from '../../../src/application/use-cases/order-use-cases/create-order-dto';
 import { OrderRepositoryImpl } from '../../../src/infra/database/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-flavor-repository-impl';
+import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-pizza-flavor-repository-impl';
 import { OrderPizzaToppingImpl } from '../../../src/infra/database/repositories/order-pizza-topping-repository-impl';
 import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
 import { OrderOutputDTO } from '../../../src/application/use-cases/order-use-cases/order-output-dto';

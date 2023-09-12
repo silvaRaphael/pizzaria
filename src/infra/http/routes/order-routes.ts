@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { OrderRepositoryImpl } from '../../database/repositories/order-repository-impl';
 import { OrderController } from '../controllers/order-controller';
 import { CreateOrderUseCase } from '../../../application/use-cases/order-use-cases/create-order-use-case';
-import { OrderPizzaFlavorImpl } from '../../database/repositories/order-flavor-repository-impl';
+import { OrderPizzaFlavorImpl } from '../../database/repositories/order-pizza-flavor-repository-impl';
 import { OrderPizzaToppingImpl } from '../../database/repositories/order-pizza-topping-repository-impl';
 import { GetOrderUseCase } from '../../../application/use-cases/order-use-cases/get-order-use-case';
 import { GetAllOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-orders-use-case';

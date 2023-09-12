@@ -6,7 +6,7 @@ import { CreateOrderUseCase } from '../../../src/application/use-cases/order-use
 import { PizzaFlavorRepositoryImpl } from '../../../src/infra/database/repositories/pizza-flavor-repository-impl';
 import { PizzaToppingRepositoryImpl } from '../../../src/infra/database/repositories/pizza-topping-repository-impl';
 import { OrderRepositoryImpl } from '../../../src/infra/database/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-flavor-repository-impl';
+import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-pizza-flavor-repository-impl';
 import { OrderPizzaToppingImpl } from '../../../src/infra/database/repositories/order-pizza-topping-repository-impl';
 import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
 import { prisma } from '../../../src/infra/database/prisma';

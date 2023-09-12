@@ -7,8 +7,8 @@
     "build": "tsc",
     "start": "node dist/src/infra/http/index.js",
     "dev": "tsnd --respawn --transpile-only src/infra/http/index.ts",
-    "test": "NODE_ENV=test && npx jest tests/unit",
-    "test:e2e": "NODE_ENV=test && npx jest tests/e2e"
+    "test": "NODE_ENV=test && npx jest --detectOpenHandles tests/unit",
+    "test:e2e": "NODE_ENV=test && npx jest --detectOpenHandles tests/e2e"
   },
   "keywords": [],
   "author": "Raphael Silva",

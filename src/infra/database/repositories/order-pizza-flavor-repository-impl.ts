@@ -13,16 +13,16 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
     },
   };
 
-  async create(orderPizzaFlavor: OrderPizzaFlavor): Promise<OrderPizzaFlavor> {
+  async create(orderPizzaFlavor: OrderPizzaFlavor): Promise<void> {
     try {
-      return (await prisma.orderPizzaFlavor.create({
+      await prisma.orderPizzaFlavor.create({
         data: {
           id: orderPizzaFlavor.id,
-          order_id: orderPizzaFlavor.order_id,
+          order_pizza_id: orderPizzaFlavor.order_pizza_id,
           flavor_id: orderPizzaFlavor.flavor_id,
         },
         include: this.includeQuery,
-      })) as OrderPizzaFlavor;
+      });
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -45,7 +45,7 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
     try {
       return (await prisma.orderPizzaFlavor.findMany({
         where: {
-          order_id: orderId,
+          order_pizza_id: orderId,
         },
         include: this.includeQuery,
       })) as OrderPizzaFlavor[];
@@ -70,7 +70,7 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
     try {
       await prisma.orderPizzaFlavor.deleteMany({
         where: {
-          order_id: orderId,
+          order_pizza_id: orderId,
         },
       });
     } catch (error: any) {

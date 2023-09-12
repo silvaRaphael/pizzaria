@@ -1,9 +1,9 @@
-import { OrderRepository } from '../../../application/repositories/order-repository';
+import { OrderPizzaRepository } from '../../../application/repositories/order-pizza-repository';
 import { UpdateOrderStatusDTO } from '../../../application/use-cases/order-use-cases/update-order-status-dto';
-import { Order } from '../../../domain/order';
+import { OrderPizza } from '../../../domain/order-pizza';
 import { prisma } from '../prisma';
 
-export class OrderRepositoryImpl implements OrderRepository {
+export class OrderPizzaRepositoryImpl implements OrderPizzaRepository {
   private includeQuery = {
     orderPizzaFlavor: {
       include: {
@@ -29,18 +29,20 @@ export class OrderRepositoryImpl implements OrderRepository {
     },
   };
 
-  async create(order: Order): Promise<void> {
+  async create(orderPizza: OrderPizza): Promise<void> {
     try {
-      await prisma.order.create({
+      await prisma.orderPizza.create({
         data: {
-          id: order.id,
-          client_id: order.client_id,
-          price: order.price,
-          status: order.status,
-          done: order.done,
-          active: order.active,
-          created_at: order.created_at,
-          updated_at: order.updated_at,
+          id: orderPizza.id,
+          order_id: orderPizza.order_id,
+          size: Number(orderPizza.size),
+          price: orderPizza.price,
+          status: orderPizza.status,
+          ammount: orderPizza.ammount,
+          done: orderPizza.done,
+          active: orderPizza.active,
+          created_at: orderPizza.created_at,
+          updated_at: orderPizza.updated_at,
         },
       });
     } catch (error: any) {
@@ -48,24 +50,24 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
-  async getOne(orderId: string): Promise<Order> {
+  async getOne(orderPizzaId: string): Promise<OrderPizza> {
     try {
-      return (await prisma.order.findFirst({
+      return (await prisma.orderPizza.findFirst({
         where: {
           active: true,
           done: false,
-          id: orderId,
+          id: orderPizzaId,
         },
-        // include: this.includeQuery,
-      })) as Order;
+        include: this.includeQuery,
+      })) as OrderPizza;
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
 
-  async getAll(): Promise<Order[]> {
+  async getAll(): Promise<OrderPizza[]> {
     try {
-      return (await prisma.order.findMany({
+      return (await prisma.orderPizza.findMany({
         where: {
           active: true,
           done: false,
@@ -75,57 +77,41 @@ export class OrderRepositoryImpl implements OrderRepository {
         },
         include: {
           ...this.includeQuery,
-          orderPizza: {
-            select: {
-              ammount: true,
-            },
-          },
-          client: {
-            select: {
-              name: true,
-            },
-          },
         },
-      })) as any as Order[];
+      })) as any as OrderPizza[];
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
 
-  async getAllFromClient(clientId: string): Promise<Order[]> {
+  async getAllFromOrder(orderId: string): Promise<OrderPizza[]> {
     try {
-      return (await prisma.order.findMany({
+      return (await prisma.orderPizza.findMany({
         where: {
           active: true,
-          client_id: clientId,
+          order_id: orderId,
         },
         orderBy: {
           updated_at: 'desc',
         },
-        include: {
-          orderPizza: {
-            select: {
-              ammount: true,
-            },
-          },
-        },
-        // include: this.includeQuery,
-      })) as Order[];
+        include: this.includeQuery,
+      })) as OrderPizza[];
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
 
-  async update(order: Order): Promise<void> {
+  async update(orderPizza: OrderPizza): Promise<void> {
     try {
-      await prisma.order.update({
+      await prisma.orderPizza.update({
         where: {
           active: true,
-          id: order.id,
+          id: orderPizza.id,
         },
         data: {
-          price: order.price,
-          updated_at: order.updated_at,
+          price: orderPizza.price,
+          size: Number(orderPizza.size),
+          updated_at: orderPizza.updated_at,
         },
       });
     } catch (error: any) {
@@ -139,7 +125,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     done,
   }: UpdateOrderStatusDTO): Promise<void> {
     try {
-      await prisma.order.update({
+      await prisma.orderPizza.update({
         data: {
           status,
           done,
@@ -153,11 +139,11 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
-  async delete(orderId: string): Promise<void> {
+  async delete(orderPizzaId: string): Promise<void> {
     try {
-      await prisma.order.update({
+      await prisma.orderPizza.update({
         where: {
-          id: orderId,
+          id: orderPizzaId,
         },
         data: {
           active: false,

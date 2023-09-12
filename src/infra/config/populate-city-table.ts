@@ -1,10 +1,10 @@
 import { prisma } from '../database/prisma';
 
-export const populateCityTable = async () => {
+const populateCityTable = async () => {
   try {
-    const stateCount = await prisma.city.count();
+    const cityCount = await prisma?.city?.count();
 
-    if (stateCount) return;
+    if (cityCount) return;
 
     await prisma.city.createMany({
       data: [
@@ -5630,3 +5630,5 @@ export const populateCityTable = async () => {
     await prisma.$disconnect();
   }
 };
+
+populateCityTable();

@@ -1,2 +1,2 @@
 import 'dotenv/config';
-import '../database/prisma';
+import './populate-tables';

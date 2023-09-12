@@ -1,7 +1,7 @@
 import { OrderPizzaTopping } from '../../domain/order-pizza-topping';
 
 export interface OrderPizzaToppingRepository {
-  create(orderSpecifications: OrderPizzaTopping): Promise<OrderPizzaTopping>;
+  create(orderSpecifications: OrderPizzaTopping): Promise<void>;
   getOne(orderSpecificationsId: string): Promise<OrderPizzaTopping>;
   getAll(orderId: string): Promise<OrderPizzaTopping[]>;
   delete(orderSpecificationsId: string): Promise<void>;

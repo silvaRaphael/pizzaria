@@ -7,10 +7,17 @@ import { CreateOrderDTO } from '../../../src/application/use-cases/order-use-cas
 import { PizzaFlavorRepositoryImpl } from '../../../src/infra/database/repositories/pizza-flavor-repository-impl';
 import { PizzaToppingRepositoryImpl } from '../../../src/infra/database/repositories/pizza-topping-repository-impl';
 import { OrderRepositoryImpl } from '../../../src/infra/database/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-flavor-repository-impl';
+import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-pizza-flavor-repository-impl';
 import { OrderPizzaToppingImpl } from '../../../src/infra/database/repositories/order-pizza-topping-repository-impl';
 import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
 import { prisma } from '../../../src/infra/database/prisma';
+import { OrderPizzaRepositoryImpl } from '../../../src/infra/database/repositories/order-pizza-repository.impl';
+import { GetOrderUseCase } from '../../../src/application/use-cases/order-use-cases/get-order-use-case';
+import { GetAllOrdersUseCase } from '../../../src/application/use-cases/order-use-cases/get-all-orders-use-case';
+import { GetAllClientOrdersUseCase } from '../../../src/application/use-cases/order-use-cases/get-all-client-orders-use-case';
+import { Client } from '../../../src/domain/client';
+import { PizzaFlavor } from '../../../src/domain/pizza-flavor';
+import { PizzaTopping } from '../../../src/domain/pizza-topping';
 
 describe('Create Order UseCase', () => {
   let clientRepository: ClientRepositoryImpl;
@@ -21,19 +28,31 @@ describe('Create Order UseCase', () => {
   let createPizzaToppingUseCase: CreatePizzaToppingUseCase;
   let createOrderUseCase: CreateOrderUseCase;
   let orderRepository: OrderRepositoryImpl;
+  let orderPizzaRepository: OrderPizzaRepositoryImpl;
   let orderPizzaFlavor: OrderPizzaFlavorImpl;
   let orderPizzaTopping: OrderPizzaToppingImpl;
   let createOrderDTO: CreateOrderDTO;
+  let getOrderUseCase: GetOrderUseCase;
+  let getAllOrdersUseCase: GetAllOrdersUseCase;
+  let getAllClientOrdersUseCase: GetAllClientOrdersUseCase;
   let idsToDelete: string[] = [];
+  let orderPizzaIds: string[] = [];
+  let pizzaOrdersPizzaFlavorsIds: string[] = [];
+  let pizzaOrdersPizzaToppingsIds: string[] = [];
   let clientIds: string[] = [];
   let pizzaFlavorIds: string[] = [];
   let pizzaToppingIds: string[] = [];
+  let order: any;
+  let client: Client;
+  let pizzaFlavor: PizzaFlavor;
+  let pizzaTopping: PizzaTopping;
 
   beforeAll(async () => {
     clientRepository = new ClientRepositoryImpl();
     pizzaFlavorRepository = new PizzaFlavorRepositoryImpl();
     pizzaToppingRepository = new PizzaToppingRepositoryImpl();
     orderRepository = new OrderRepositoryImpl();
+    orderPizzaRepository = new OrderPizzaRepositoryImpl();
     orderPizzaFlavor = new OrderPizzaFlavorImpl();
     orderPizzaTopping = new OrderPizzaToppingImpl();
     createClientUseCase = new CreateClientUseCase(clientRepository);
@@ -45,10 +64,13 @@ describe('Create Order UseCase', () => {
     );
     createOrderUseCase = new CreateOrderUseCase(
       orderRepository,
+      orderPizzaRepository,
       orderPizzaFlavor,
       orderPizzaTopping,
     );
-    const [client, pizzaFlavor, pizzaTopping] = await Promise.all([
+    getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
+    getAllClientOrdersUseCase = new GetAllClientOrdersUseCase(orderRepository);
+    [client, pizzaFlavor, pizzaTopping] = await Promise.all([
       createClientUseCase.execute({
         name: 'Test',
         phone: '5511911112222',
@@ -70,10 +92,16 @@ describe('Create Order UseCase', () => {
     ]);
     createOrderDTO = {
       client_id: client.id,
-      size: 2,
       price: 20.9,
-      pizzaFlavorsIds: [pizzaFlavor.id],
-      pizzaToppingsIds: [pizzaTopping.id],
+      orderPizzas: [
+        {
+          size: 2,
+          price: 200,
+          ammount: 1,
+          pizzaFlavorsIds: [pizzaFlavor.id],
+          pizzaToppingsIds: [pizzaTopping.id],
+        },
+      ],
     };
     clientIds.push(client.id);
     pizzaFlavorIds.push(pizzaFlavor.id);
@@ -84,30 +112,44 @@ describe('Create Order UseCase', () => {
     await Promise.all([
       prisma.orderPizzaFlavor.deleteMany({
         where: {
-          order_id: {
-            in: idsToDelete,
+          id: {
+            in: pizzaOrdersPizzaFlavorsIds,
           },
         },
       }),
       prisma.orderPizzaTopping.deleteMany({
         where: {
-          order_id: {
-            in: idsToDelete,
+          id: {
+            in: pizzaOrdersPizzaToppingsIds,
           },
         },
       }),
     ]);
-    await ClearDatabaseTests(prisma.pizzaFlavor, pizzaFlavorIds);
-    await ClearDatabaseTests(prisma.pizzaTopping, pizzaToppingIds);
+    await prisma.orderPizza.deleteMany({
+      where: {
+        order_id: {
+          in: idsToDelete,
+        },
+      },
+    });
+    // await ClearDatabaseTests(prisma.pizzaFlavor, pizzaFlavorIds);
+    // await ClearDatabaseTests(prisma.pizzaTopping, pizzaToppingIds);
     await ClearDatabaseTests(prisma.order, idsToDelete);
-    await ClearDatabaseTests(prisma.client, clientIds);
+    // await ClearDatabaseTests(prisma.client, clientIds);
   });
 
   it('Should create a new order', async () => {
-    const order = await createOrderUseCase.execute(createOrderDTO);
+    order = await createOrderUseCase.execute(createOrderDTO);
 
-    idsToDelete.push(order.id);
+    orderPizzaIds = order.orderPizzaIds;
 
     expect(order.id).toBeDefined();
+  });
+
+  it('Sould get all order from client', async () => {
+    const orders = await getAllClientOrdersUseCase.execute(client.id);
+
+    expect(orders.length).toBeGreaterThan(0);
+    expect(orders.at(-1)?.id).toBe(order.id);
   });
 });

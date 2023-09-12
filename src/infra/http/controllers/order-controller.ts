@@ -24,16 +24,13 @@ export class OrderController {
   ) {}
 
   async createOrder(req: Request, res: Response): Promise<void> {
-    const { client_id, size, price, pizzaFlavorsIds, pizzaToppingsIds } =
-      req.body;
+    const { client_id, price, orderPizzas } = req.body;
 
     try {
       const order = await this.createOrderUseCase.execute({
         client_id,
-        size,
         price,
-        pizzaFlavorsIds,
-        pizzaToppingsIds,
+        orderPizzas,
       });
 
       res.status(201).json({ id: order.id });
@@ -81,7 +78,7 @@ export class OrderController {
               : '';
             return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
           })[item.status],
-          size: pizzaSizes[item.size].size,
+          // size: pizzaSizes[item.size].size,
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
@@ -126,11 +123,16 @@ export class OrderController {
               : '';
             return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
           })[item.status],
-          size: pizzaSizes[item.size].size,
+          // size: pizzaSizes[item.size].size,
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(item.price),
+          ammount: (item as any).orderPizza.reduce(
+            (acc: number, crr: { ammount: string }) => acc + crr.ammount,
+            0,
+          ),
+          order: `<span class="badge bg-secondary">Ver Pedidos</span>`,
           updated_at: new FormatDate(item.updated_at).fullFormat(),
           '#': index + 1,
           actions,
@@ -146,15 +148,13 @@ export class OrderController {
 
   async updateOrder(req: Request, res: Response): Promise<void> {
     const { orderId } = req.params;
-    const { size, price, pizzaFlavorsIds, pizzaToppingsIds } = req.body;
+    const { price, orderPizzas } = req.body;
 
     try {
       await this.updateOrderUseCase.execute({
         id: orderId,
-        size,
         price,
-        pizzaFlavorsIds,
-        pizzaToppingsIds,
+        orderPizzas,
       });
 
       res.status(204).end();

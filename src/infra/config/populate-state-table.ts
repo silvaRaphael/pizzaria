@@ -1,8 +1,8 @@
 import { prisma } from '../database/prisma';
 
-export const populateStateTable = async () => {
+const populateStateTable = async () => {
   try {
-    const stateCount = await prisma.state.count();
+    const stateCount = await prisma?.state?.count();
 
     if (stateCount) return;
 
@@ -45,3 +45,5 @@ export const populateStateTable = async () => {
     await prisma.$disconnect();
   }
 };
+
+populateStateTable();

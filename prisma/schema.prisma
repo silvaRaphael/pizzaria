@@ -82,32 +82,46 @@ model PizzaTopping {
 }
 
 model Order {
+  id         String       @id
+  client_id  String
+  price      Float
+  status     Int
+  done       Boolean
+  active     Boolean?
+  created_at DateTime
+  updated_at DateTime?
+  client     Client       @relation(fields: [client_id], references: [id])
+  orderPizza OrderPizza[]
+}
+
+model OrderPizza {
   id                String              @id
-  client_id         String
+  order_id          String
   size              Int
   price             Float
   status            Int
+  ammount           Int
   done              Boolean
   active            Boolean?
   created_at        DateTime
   updated_at        DateTime?
-  client            Client              @relation(fields: [client_id], references: [id])
+  order             Order?              @relation(fields: [order_id], references: [id])
   orderPizzaFlavor  OrderPizzaFlavor[]
   orderPizzaTopping OrderPizzaTopping[]
 }
 
 model OrderPizzaFlavor {
-  id        String      @id
-  order_id  String
-  flavor_id String
-  flavor    PizzaFlavor @relation(fields: [flavor_id], references: [id])
-  order     Order       @relation(fields: [order_id], references: [id])
+  id             String      @id
+  order_pizza_id String
+  flavor_id      String
+  flavor         PizzaFlavor @relation(fields: [flavor_id], references: [id])
+  orderPizza     OrderPizza  @relation(fields: [order_pizza_id], references: [id])
 }
 
 model OrderPizzaTopping {
-  id         String       @id
-  order_id   String
-  topping_id String
-  topping    PizzaTopping @relation(fields: [topping_id], references: [id])
-  order      Order        @relation(fields: [order_id], references: [id])
+  id             String       @id
+  order_pizza_id String
+  topping_id     String
+  topping        PizzaTopping @relation(fields: [topping_id], references: [id])
+  orderPizza     OrderPizza   @relation(fields: [order_pizza_id], references: [id])
 }
