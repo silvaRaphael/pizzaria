@@ -20,15 +20,8 @@ export class CreateOrderUseCase {
     private orderPizzaToppingRepository: OrderPizzaToppingRepository,
   ) {}
 
-  async execute({
-    client_id,
-    price,
-    orderPizzas,
-  }: CreateOrderDTO): Promise<{
+  async execute({ client_id, price, orderPizzas }: CreateOrderDTO): Promise<{
     id: string;
-    orderPizzaIds: string[];
-    pizzaOrdersPizzaFlavorsIds: string[];
-    pizzaOrdersPizzaToppingsIds: string[];
   }> {
     try {
       if (!client_id) throw new MissingDataError('client_id');
@@ -86,16 +79,7 @@ export class CreateOrderUseCase {
         ),
       ]);
 
-      return {
-        id: order.id,
-        orderPizzaIds: pizzaOrders.map((item) => item.id),
-        pizzaOrdersPizzaFlavorsIds: pizzaOrdersPizzaFlavorsIds.map(
-          (item) => item.id,
-        ),
-        pizzaOrdersPizzaToppingsIds: pizzaOrdersPizzaToppingsIds.map(
-          (item) => item.id,
-        ),
-      };
+      return { id: order.id };
     } catch (error: any) {
       throw new Error(error.message);
     }

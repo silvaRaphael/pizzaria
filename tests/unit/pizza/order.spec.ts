@@ -18,6 +18,7 @@ import { GetAllClientOrdersUseCase } from '../../../src/application/use-cases/or
 import { Client } from '../../../src/domain/client';
 import { PizzaFlavor } from '../../../src/domain/pizza-flavor';
 import { PizzaTopping } from '../../../src/domain/pizza-topping';
+import { UpdateOrderUseCase } from '../../../src/application/use-cases/order-use-cases/update-order-use-case';
 
 describe('Create Order UseCase', () => {
   let clientRepository: ClientRepositoryImpl;
@@ -27,6 +28,7 @@ describe('Create Order UseCase', () => {
   let createPizzaFlavorUseCase: CreatePizzaFlavorUseCase;
   let createPizzaToppingUseCase: CreatePizzaToppingUseCase;
   let createOrderUseCase: CreateOrderUseCase;
+  let updateOrderUseCase: UpdateOrderUseCase;
   let orderRepository: OrderRepositoryImpl;
   let orderPizzaRepository: OrderPizzaRepositoryImpl;
   let orderPizzaFlavor: OrderPizzaFlavorImpl;
@@ -35,13 +37,6 @@ describe('Create Order UseCase', () => {
   let getOrderUseCase: GetOrderUseCase;
   let getAllOrdersUseCase: GetAllOrdersUseCase;
   let getAllClientOrdersUseCase: GetAllClientOrdersUseCase;
-  let idsToDelete: string[] = [];
-  let orderPizzaIds: string[] = [];
-  let pizzaOrdersPizzaFlavorsIds: string[] = [];
-  let pizzaOrdersPizzaToppingsIds: string[] = [];
-  let clientIds: string[] = [];
-  let pizzaFlavorIds: string[] = [];
-  let pizzaToppingIds: string[] = [];
   let order: any;
   let client: Client;
   let pizzaFlavor: PizzaFlavor;
@@ -55,6 +50,9 @@ describe('Create Order UseCase', () => {
     orderPizzaRepository = new OrderPizzaRepositoryImpl();
     orderPizzaFlavor = new OrderPizzaFlavorImpl();
     orderPizzaTopping = new OrderPizzaToppingImpl();
+    getOrderUseCase = new GetOrderUseCase(orderRepository);
+    getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
+    getAllClientOrdersUseCase = new GetAllClientOrdersUseCase(orderRepository);
     createClientUseCase = new CreateClientUseCase(clientRepository);
     createPizzaFlavorUseCase = new CreatePizzaFlavorUseCase(
       pizzaFlavorRepository,
@@ -63,6 +61,12 @@ describe('Create Order UseCase', () => {
       pizzaToppingRepository,
     );
     createOrderUseCase = new CreateOrderUseCase(
+      orderRepository,
+      orderPizzaRepository,
+      orderPizzaFlavor,
+      orderPizzaTopping,
+    );
+    updateOrderUseCase = new UpdateOrderUseCase(
       orderRepository,
       orderPizzaRepository,
       orderPizzaFlavor,
@@ -90,7 +94,10 @@ describe('Create Order UseCase', () => {
         price: 10,
       }),
     ]);
-    createOrderDTO = {
+  });
+
+  it('Should create a new order', async () => {
+    order = await createOrderUseCase.execute({
       client_id: client.id,
       price: 20.9,
       orderPizzas: [
@@ -102,54 +109,52 @@ describe('Create Order UseCase', () => {
           pizzaToppingsIds: [pizzaTopping.id],
         },
       ],
-    };
-    clientIds.push(client.id);
-    pizzaFlavorIds.push(pizzaFlavor.id);
-    pizzaToppingIds.push(pizzaTopping.id);
-  });
-
-  afterAll(async () => {
-    await Promise.all([
-      prisma.orderPizzaFlavor.deleteMany({
-        where: {
-          id: {
-            in: pizzaOrdersPizzaFlavorsIds,
-          },
-        },
-      }),
-      prisma.orderPizzaTopping.deleteMany({
-        where: {
-          id: {
-            in: pizzaOrdersPizzaToppingsIds,
-          },
-        },
-      }),
-    ]);
-    await prisma.orderPizza.deleteMany({
-      where: {
-        order_id: {
-          in: idsToDelete,
-        },
-      },
     });
-    // await ClearDatabaseTests(prisma.pizzaFlavor, pizzaFlavorIds);
-    // await ClearDatabaseTests(prisma.pizzaTopping, pizzaToppingIds);
-    await ClearDatabaseTests(prisma.order, idsToDelete);
-    // await ClearDatabaseTests(prisma.client, clientIds);
-  });
-
-  it('Should create a new order', async () => {
-    order = await createOrderUseCase.execute(createOrderDTO);
-
-    orderPizzaIds = order.orderPizzaIds;
 
     expect(order.id).toBeDefined();
   });
 
-  it('Sould get all order from client', async () => {
-    const orders = await getAllClientOrdersUseCase.execute(client.id);
+  // it('Should update order by id', async () => {
+  //   const response = await updateOrderUseCase.execute({
+  //     id: order.id,
+  //     price: 20.9,
+  //     orderPizzas: [
+  //       {
+  //         size: 2,
+  //         price: 200,
+  //         ammount: 1,
+  //         pizzaFlavorsIds: [pizzaFlavor.id],
+  //         pizzaToppingsIds: [pizzaTopping.id],
+  //       },
+  //     ],
+  //   });
 
-    expect(orders.length).toBeGreaterThan(0);
-    expect(orders.at(-1)?.id).toBe(order.id);
+  //   expect(response.id).toBeDefined();
+  // });
+
+  it('Should get order by id', async () => {
+    const response = await getOrderUseCase.execute(order.id);
+
+    expect(response).toHaveProperty('id');
+  });
+
+  it('Should get all orders', async () => {
+    const response = await getAllOrdersUseCase.execute();
+
+    expect(response.length).toBeGreaterThan(0);
+    expect(response[response.length - 1]).toHaveProperty('id');
+  });
+
+  it('Should get all orders by client id', async () => {
+    const response = await getAllClientOrdersUseCase.execute(client.id);
+
+    expect(response.length).toBeGreaterThan(0);
+    expect(response.at(-1)?.id).toBe(order.id);
+  });
+
+  it('Should get nothing with wrong client id', async () => {
+    const response = await getAllClientOrdersUseCase.execute('fake-id');
+
+    expect(response.length).toBe(0);
   });
 });

@@ -1,5 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
 import { User } from '../../../src/domain/user';
 import { UserRepositoryImpl } from '../../../src/infra/database/repositories/user-repository-impl';
 import { CreateUserUseCase } from '../../../src/application/use-cases/user-use-cases/create-user-use-case';

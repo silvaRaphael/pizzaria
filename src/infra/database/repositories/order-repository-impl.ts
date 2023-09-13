@@ -4,31 +4,6 @@ import { Order } from '../../../domain/order';
 import { prisma } from '../prisma';
 
 export class OrderRepositoryImpl implements OrderRepository {
-  private includeQuery = {
-    orderPizzaFlavor: {
-      include: {
-        flavor: {
-          select: {
-            id: true,
-            flavor: true,
-            price: true,
-          },
-        },
-      },
-    },
-    orderPizzaTopping: {
-      include: {
-        topping: {
-          select: {
-            id: true,
-            topping: true,
-            price: true,
-          },
-        },
-      },
-    },
-  };
-
   async create(order: Order): Promise<void> {
     try {
       await prisma.order.create({
@@ -56,7 +31,6 @@ export class OrderRepositoryImpl implements OrderRepository {
           done: false,
           id: orderId,
         },
-        // include: this.includeQuery,
       })) as Order;
     } catch (error: any) {
       throw new Error(error.message);
@@ -74,7 +48,6 @@ export class OrderRepositoryImpl implements OrderRepository {
           updated_at: 'desc',
         },
         include: {
-          ...this.includeQuery,
           orderPizza: {
             select: {
               ammount: true,
@@ -109,7 +82,6 @@ export class OrderRepositoryImpl implements OrderRepository {
             },
           },
         },
-        // include: this.includeQuery,
       })) as Order[];
     } catch (error: any) {
       throw new Error(error.message);
