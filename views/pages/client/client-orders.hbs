@@ -30,7 +30,9 @@
 
 {{/wrapper}}
 
-{{#> simple-modal id="modalAdd" title="Novo Pedido" onSave="createOrder(this)"}}
+{{#> simple-modal id="modalAdd" title="Novo Pedido" onSave="createPizzaOrder(this)"}}
+  <div id="pizza-orders-list" class="col-12">
+  </div>
   <div class="col-6 form-group mb-2">
     <label>Sabores</label>
     <select class="form-select" name="pizzaFlavorsIds" onchange="calculateOrderPrice(this, 'pizzaFlavorsIds', '#modalAdd')" multiple required>
@@ -49,7 +51,7 @@
       {{/each}}
     </select>
   </div>
-  <div class="col-6 form-group mb-2">
+  <div class="col-4 form-group mb-2">
     <label>Tamanho</label>
     <select class="form-select" name="size" onchange="calculateSizePrice(this, '#modalAdd')" required>
       {{#each pizzaSizes}}
@@ -57,7 +59,15 @@
       {{/each}}
     </select>
   </div>
-  <div class="col-6 form-group mb-2">
+  <div class="col-4 form-group mb-2">
+    <label>Quantidade</label>
+    <div class="input-group">
+      <button class="btn btn-light" onclick="setAmmount('#modalAdd', '-1')"><i class="bx bx-minus"></i></button>
+      <input type="text" class="form-control text-center" name="ammount" value="1" onchange="setAmmount('#modalAdd')" required>
+      <button class="btn btn-light" onclick="setAmmount('#modalAdd', '+1')"><i class="bx bx-plus"></i></button>
+    </div>
+  </div>
+  <div class="col-4 form-group mb-2">
     <label>Preço</label>
     <input type="text" class="form-control" name="price" data-size="{{getProperty (getArray pizzaSizes 0) 'price'}}" value="{{getProperty (getArray pizzaSizes 0) 'priceLabel'}}" required disabled>
   </div>
@@ -120,12 +130,6 @@
       { data: '#', width: '7%', className: 'text-center' },
       { data: 'status', width: '15%', className: 'text-center' },
       { data: 'price', width: '10%', className: 'text-center' },
-      {{!-- { data: 'orderPizzaFlavor', width: '20%', render: function (data, type, row, meta) {
-          return data.map((item) => `<li>${item.flavor.flavor}</li>`).join('');
-      } },
-      { data: 'orderPizzaTopping', width: '20%', render: function (data, type, row, meta) {
-          return data.map((item) => `<li>${item.topping.topping}</li>`).join('');
-      } }, --}}
       { data: 'ammount', width: '10%', className: 'text-center' },
       { data: 'order', width: '10%', className: 'text-center' },
       { data: 'updated_at', width: '10%', className: 'text-center' },
@@ -141,6 +145,23 @@
   const modalEdit = new bootstrap.Modal('#modalEdit');
   const modalEditStatus = new bootstrap.Modal('#modalEditStatus');
 
+  let pizzaOrders = [];
+
+  function setAmmount(selector, operation) {
+    const ammount = getEl(`${selector} [name="ammount"]`);
+    if(operation == '+1') ammount.value++;
+    if(operation == '-1') ammount.value--;
+    if(ammount.value < 1 || !(Number(ammount.value) > 0)) ammount.value = 1;
+
+    const priceInput = getEl(`${selector} [name="price"]`);
+
+    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0) * Number(ammount.value);
+    priceInput.value = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(totalPrice).replace('R$ ', '');
+  }
+
   function calculateOrderPrice(select, type, selector) {
     const { selectedOptions } = select;
     const optionsPrice = Array.from(selectedOptions).map((option) => Number(option.dataset.price ?? 0));
@@ -148,7 +169,7 @@
     const priceInput = document.querySelector(`${selector} [name="price"]`);
 
     priceInput.dataset[type] = price;
-    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0);
+    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0) * Number(getEl(`${selector} [name="ammount"]`).value);
     priceInput.value = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -161,34 +182,95 @@
     const priceInput = document.querySelector(`${selector} [name="price"]`);
 
     priceInput.dataset.size = price;
-    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0);
+    const totalPrice = Object.values(priceInput.dataset).reduce((acc, crr) => acc + Number(crr), 0) * Number(getEl(`${selector} [name="ammount"]`).value);
     priceInput.value = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
     }).format(totalPrice).replace('R$ ', '');
   }
 
+  function createPizzaOrder(button) {
+
+    const requestCreatePizzaOrder = new ApiRequest(null, null, '#modalAdd');
+
+    if(!requestCreatePizzaOrder.validate()) return;
+
+    pizzaOrders.push({
+      size: Number(requestCreatePizzaOrder.getField('size').value),
+      price: Object.values(requestCreatePizzaOrder.getField('price').dataset).reduce((acc, crr) => acc + Number(crr), 0) * Number(getEl(`#modalAdd [name="ammount"]`).value),
+      ammount: Number(requestCreatePizzaOrder.getField('ammount').value),
+      pizzaFlavorsIds: Array.from(requestCreatePizzaOrder.getField('pizzaFlavorsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+      pizzaToppingsIds: Array.from(requestCreatePizzaOrder.getField('pizzaToppingsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+    });
+
+    requestCreatePizzaOrder.clearFields();
+
+    requestCreatePizzaOrder.setFields({
+      size: 0,
+      ammount: 1,
+      price: '{{getProperty (getArray pizzaSizes 0) "priceLabel"}}',
+    });
+
+    loadPizzaOrdersList();
+  }
+
+  function loadPizzaOrdersList() {
+
+    const pizzaOrdersList = getEl('#pizza-orders-list');
+    pizzaOrdersList.innerHTML = '';
+
+    pizzaOrders.forEach((item, index) => {
+      pizzaOrdersList.innerHTML += `<div class="card mb-2">
+        <div class="card-body pb-2 p-2 ps-3 row d-flex align-items-center">
+          <div class="col-4 text-start fw-bold">${String(index + 1).padStart(2, '0')}</div>
+          <div class="col-4 text-center fw-semibold">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${getEl('[name="size"] option', true)[item.size].text.toLowerCase()}${item.ammount > 1 ? 's' : ''}</div>
+          <div class="col-4 text-end">
+            <button class="btn btn-light fw-semibold" onclick="deletePizzaOrder(${index})">Remover</button>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    if(pizzaOrders.length) {
+      const totalPrice = Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(pizzaOrders.reduce((acc, crr) => acc + crr.price, 0));
+      pizzaOrdersList.insertAdjacentHTML('beforeEnd', `<button class="btn btn-success w-100 mb-2" onclick="createOrder(this)">Finalizar - ${totalPrice}</button>`);
+    }
+  }
+
+  function deletePizzaOrder(index) {
+    pizzaOrders = pizzaOrders.filter((item, i) => i != index);
+    loadPizzaOrdersList();
+  }
+
   function createOrder(button) {
 
     const requestCreateOrder = new ApiRequest('{{defaultPath}}/api/order', 'POST', '#modalAdd');
 
-    if(!requestCreateOrder.validate()) return;
+    if(!pizzaOrders.length) return;
 
     requestCreateOrder.setButton(button);
 
     requestCreateOrder.setBody({
       client_id: '{{clientId}}',
-      size: Number(requestCreateOrder.getField('size').value),
-      price: Object.values(requestCreateOrder.getField('price').dataset).reduce((acc, crr) => acc + Number(crr), 0),
-      pizzaFlavorsIds: Array.from(requestCreateOrder.getField('pizzaFlavorsIds').selectedOptions).map((option) => option.value).filter((id) => id),
-      pizzaToppingsIds: Array.from(requestCreateOrder.getField('pizzaToppingsIds').selectedOptions).map((option) => option.value).filter((id) => id),
+      price: pizzaOrders.reduce((acc, crr) => acc + crr.price, 0),
+      orderPizzas: pizzaOrders,
     });
 
     requestCreateOrder.onSuccess((response) => {
       Notification('Pedido adicionado!');
       OrderTable.ajax.reload();
       modalAdd.hide();
+      pizzaOrders.length = 0;
+      loadPizzaOrdersList();
       requestCreateOrder.clearFields();
+      requestCreateOrder.setFields({
+        size: 0,
+        ammount: 1,
+        price: '{{getProperty (getArray pizzaSizes 0) "priceLabel"}}',
+      });
     });
 
     requestCreateOrder.onError((response) => {

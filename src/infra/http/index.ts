@@ -6,7 +6,7 @@ import { create } from 'express-handlebars';
 import routes from './routes';
 import webRoutes from './web/routes';
 
-const port = Number(process.env.PORT) || 3000;
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -33,6 +33,6 @@ app.use(express.static('public'));
 app.use('/api', routes);
 app.use('/', webRoutes);
 
-app.listen(port, '0.0.0.0', async () => {
+app.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

@@ -2,7 +2,9 @@ import { OrderPizzaFlavorRepository } from '../../../application/repositories/or
 import { OrderPizzaFlavor } from '../../../domain/order-pizza-flavor';
 import { prisma } from '../prisma';
 
-export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
+export class OrderPizzaFlavorRepositoryImpl
+  implements OrderPizzaFlavorRepository
+{
   private includeQuery = {
     flavor: {
       select: {
@@ -21,7 +23,6 @@ export class OrderPizzaFlavorImpl implements OrderPizzaFlavorRepository {
           order_pizza_id: orderPizzaFlavor.order_pizza_id,
           flavor_id: orderPizzaFlavor.flavor_id,
         },
-        include: this.includeQuery,
       });
     } catch (error: any) {
       throw new Error(error.message);

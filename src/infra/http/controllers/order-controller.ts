@@ -9,7 +9,6 @@ import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-u
 import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 import { orderStatus } from '../../../domain/order-status';
-import { pizzaSizes } from '../../../domain/pizza-sizes';
 import { FormatDate } from '../utils/format-date';
 
 export class OrderController {

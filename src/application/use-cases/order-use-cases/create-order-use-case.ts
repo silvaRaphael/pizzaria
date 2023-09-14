@@ -2,17 +2,14 @@ import { Order } from '../../../domain/order';
 import { OrderPizza } from '../../../domain/order-pizza';
 import { OrderPizzaFlavor } from '../../../domain/order-pizza-flavor';
 import { OrderPizzaTopping } from '../../../domain/order-pizza-topping';
-import { MissingDataError } from '../../errors/missing-data-error';
-import { OrderPizzaFlavorRepository } from '../../repositories/order-pizza-flavor-repository';
-import { OrderPizzaRepository } from '../../repositories/order-pizza-repository';
-import { OrderPizzaToppingRepository } from '../../repositories/order-pizza-topping-repository';
 import { OrderRepository } from '../../repositories/order-repository';
+import { OrderPizzaRepository } from '../../repositories/order-pizza-repository';
+import { OrderPizzaFlavorRepository } from '../../repositories/order-pizza-flavor-repository';
+import { OrderPizzaToppingRepository } from '../../repositories/order-pizza-topping-repository';
 import { CreateOrderDTO } from './create-order-dto';
+import { MissingDataError } from '../../errors/missing-data-error';
 
 export class CreateOrderUseCase {
-  pizzaFlavors: OrderPizzaFlavor[] = [];
-  pizzaToppings: OrderPizzaTopping[] = [];
-
   constructor(
     private orderRepository: OrderRepository,
     private orderPizzaRepository: OrderPizzaRepository,
@@ -35,8 +32,8 @@ export class CreateOrderUseCase {
       await this.orderRepository.create(order);
 
       const pizzaOrders: OrderPizza[] = [];
-      const pizzaOrdersPizzaFlavorsIds: OrderPizzaFlavor[] = [];
-      const pizzaOrdersPizzaToppingsIds: OrderPizzaTopping[] = [];
+      const pizzaOrdersPizzaFlavors: OrderPizzaFlavor[] = [];
+      const pizzaOrdersPizzaToppings: OrderPizzaTopping[] = [];
 
       for (const item of orderPizzas) {
         const orderPizza = new OrderPizza({
@@ -47,35 +44,37 @@ export class CreateOrderUseCase {
         });
         pizzaOrders.push(orderPizza);
 
-        item.pizzaFlavorsIds.forEach((item) => {
-          pizzaOrdersPizzaFlavorsIds.push(
+        item.pizzaFlavorsIds.forEach((pizzaFlavorsId) => {
+          pizzaOrdersPizzaFlavors.push(
             new OrderPizzaFlavor({
               order_pizza_id: orderPizza.id,
-              flavor_id: item,
+              flavor_id: pizzaFlavorsId,
             }),
           );
         });
 
-        item.pizzaToppingsIds.forEach((item) => {
-          pizzaOrdersPizzaToppingsIds.push(
+        item.pizzaToppingsIds.forEach((pizzaToppingsId) => {
+          pizzaOrdersPizzaToppings.push(
             new OrderPizzaTopping({
               order_pizza_id: orderPizza.id,
-              topping_id: item,
+              topping_id: pizzaToppingsId,
             }),
           );
         });
       }
 
-      await Promise.all(
-        pizzaOrders.map((item) => this.orderPizzaRepository.create(item)),
-      );
+      await Promise.all([
+        ...pizzaOrders.map((pizzaOrder) =>
+          this.orderPizzaRepository.create(pizzaOrder),
+        ),
+      ]);
 
       await Promise.all([
-        ...pizzaOrdersPizzaFlavorsIds.map((item) =>
-          this.orderPizzaFlavorRepository.create(item),
+        ...pizzaOrdersPizzaFlavors.map((pizzaOrdersPizzaFlavor) =>
+          this.orderPizzaFlavorRepository.create(pizzaOrdersPizzaFlavor),
         ),
-        ...pizzaOrdersPizzaToppingsIds.map((item) =>
-          this.orderPizzaToppingRepository.create(item),
+        ...pizzaOrdersPizzaToppings.map((pizzaOrdersPizzaTopping) =>
+          this.orderPizzaToppingRepository.create(pizzaOrdersPizzaTopping),
         ),
       ]);
 

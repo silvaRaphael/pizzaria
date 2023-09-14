@@ -111,17 +111,17 @@ model OrderPizza {
 }
 
 model OrderPizzaFlavor {
-  id             String      @id
+  id             String       @id
   order_pizza_id String
   flavor_id      String
-  flavor         PizzaFlavor @relation(fields: [flavor_id], references: [id])
-  orderPizza     OrderPizza  @relation(fields: [order_pizza_id], references: [id])
+  flavor         PizzaFlavor? @relation(fields: [flavor_id], references: [id])
+  orderPizza     OrderPizza?  @relation(fields: [order_pizza_id], references: [id])
 }
 
 model OrderPizzaTopping {
-  id             String       @id
+  id             String        @id
   order_pizza_id String
   topping_id     String
-  topping        PizzaTopping @relation(fields: [topping_id], references: [id])
-  orderPizza     OrderPizza   @relation(fields: [order_pizza_id], references: [id])
+  topping        PizzaTopping? @relation(fields: [topping_id], references: [id])
+  orderPizza     OrderPizza?   @relation(fields: [order_pizza_id], references: [id])
 }

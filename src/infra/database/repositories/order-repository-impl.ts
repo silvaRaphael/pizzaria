@@ -31,6 +31,27 @@ export class OrderRepositoryImpl implements OrderRepository {
           done: false,
           id: orderId,
         },
+        include: {
+          orderPizza: {
+            include: {
+              orderPizzaFlavor: {
+                include: {
+                  flavor: true,
+                },
+              },
+              orderPizzaTopping: {
+                include: {
+                  topping: true,
+                },
+              },
+            },
+          },
+          client: {
+            select: {
+              name: true,
+            },
+          },
+        },
       })) as Order;
     } catch (error: any) {
       throw new Error(error.message);

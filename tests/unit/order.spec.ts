@@ -1,26 +1,23 @@
-import { ClientRepositoryImpl } from '../../../src/infra/database/repositories/client-repository-impl';
-import { CreateClientUseCase } from '../../../src/application/use-cases/client-use-cases/create-client-use-case';
-import { CreatePizzaFlavorUseCase } from '../../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
-import { CreatePizzaToppingUseCase } from '../../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
-import { CreateOrderUseCase } from '../../../src/application/use-cases/order-use-cases/create-order-use-case';
-import { CreateOrderDTO } from '../../../src/application/use-cases/order-use-cases/create-order-dto';
-import { PizzaFlavorRepositoryImpl } from '../../../src/infra/database/repositories/pizza-flavor-repository-impl';
-import { PizzaToppingRepositoryImpl } from '../../../src/infra/database/repositories/pizza-topping-repository-impl';
-import { OrderRepositoryImpl } from '../../../src/infra/database/repositories/order-repository-impl';
-import { OrderPizzaFlavorImpl } from '../../../src/infra/database/repositories/order-pizza-flavor-repository-impl';
-import { OrderPizzaToppingImpl } from '../../../src/infra/database/repositories/order-pizza-topping-repository-impl';
-import { ClearDatabaseTests } from '../../../src/infra/http/utils/clear-database-tests';
-import { prisma } from '../../../src/infra/database/prisma';
-import { OrderPizzaRepositoryImpl } from '../../../src/infra/database/repositories/order-pizza-repository.impl';
-import { GetOrderUseCase } from '../../../src/application/use-cases/order-use-cases/get-order-use-case';
-import { GetAllOrdersUseCase } from '../../../src/application/use-cases/order-use-cases/get-all-orders-use-case';
-import { GetAllClientOrdersUseCase } from '../../../src/application/use-cases/order-use-cases/get-all-client-orders-use-case';
-import { Client } from '../../../src/domain/client';
-import { PizzaFlavor } from '../../../src/domain/pizza-flavor';
-import { PizzaTopping } from '../../../src/domain/pizza-topping';
-import { UpdateOrderUseCase } from '../../../src/application/use-cases/order-use-cases/update-order-use-case';
+import { ClientRepositoryImpl } from '../../src/infra/database/repositories/client-repository-impl';
+import { CreateClientUseCase } from '../../src/application/use-cases/client-use-cases/create-client-use-case';
+import { CreatePizzaFlavorUseCase } from '../../src/application/use-cases/pizza-flavor-use-cases/create-pizza-flavor-use-case';
+import { CreatePizzaToppingUseCase } from '../../src/application/use-cases/pizza-topping-use-cases/create-pizza-topping-use-case';
+import { CreateOrderUseCase } from '../../src/application/use-cases/order-use-cases/create-order-use-case';
+import { PizzaFlavorRepositoryImpl } from '../../src/infra/database/repositories/pizza-flavor-repository-impl';
+import { PizzaToppingRepositoryImpl } from '../../src/infra/database/repositories/pizza-topping-repository-impl';
+import { OrderRepositoryImpl } from '../../src/infra/database/repositories/order-repository-impl';
+import { OrderPizzaFlavorRepositoryImpl } from '../../src/infra/database/repositories/order-pizza-flavor-repository-impl';
+import { OrderPizzaToppingRepositoryImpl } from '../../src/infra/database/repositories/order-pizza-topping-repository-impl';
+import { OrderPizzaRepositoryImpl } from '../../src/infra/database/repositories/order-pizza-repository.impl';
+import { GetOrderUseCase } from '../../src/application/use-cases/order-use-cases/get-order-use-case';
+import { GetAllOrdersUseCase } from '../../src/application/use-cases/order-use-cases/get-all-orders-use-case';
+import { GetAllClientOrdersUseCase } from '../../src/application/use-cases/order-use-cases/get-all-client-orders-use-case';
+import { Client } from '../../src/domain/client';
+import { PizzaFlavor } from '../../src/domain/pizza-flavor';
+import { PizzaTopping } from '../../src/domain/pizza-topping';
+import { UpdateOrderUseCase } from '../../src/application/use-cases/order-use-cases/update-order-use-case';
 
-describe('Create Order UseCase', () => {
+describe('Order', () => {
   let clientRepository: ClientRepositoryImpl;
   let createClientUseCase: CreateClientUseCase;
   let pizzaFlavorRepository: PizzaFlavorRepositoryImpl;
@@ -31,9 +28,8 @@ describe('Create Order UseCase', () => {
   let updateOrderUseCase: UpdateOrderUseCase;
   let orderRepository: OrderRepositoryImpl;
   let orderPizzaRepository: OrderPizzaRepositoryImpl;
-  let orderPizzaFlavor: OrderPizzaFlavorImpl;
-  let orderPizzaTopping: OrderPizzaToppingImpl;
-  let createOrderDTO: CreateOrderDTO;
+  let orderPizzaFlavor: OrderPizzaFlavorRepositoryImpl;
+  let orderPizzaTopping: OrderPizzaToppingRepositoryImpl;
   let getOrderUseCase: GetOrderUseCase;
   let getAllOrdersUseCase: GetAllOrdersUseCase;
   let getAllClientOrdersUseCase: GetAllClientOrdersUseCase;
@@ -48,8 +44,8 @@ describe('Create Order UseCase', () => {
     pizzaToppingRepository = new PizzaToppingRepositoryImpl();
     orderRepository = new OrderRepositoryImpl();
     orderPizzaRepository = new OrderPizzaRepositoryImpl();
-    orderPizzaFlavor = new OrderPizzaFlavorImpl();
-    orderPizzaTopping = new OrderPizzaToppingImpl();
+    orderPizzaFlavor = new OrderPizzaFlavorRepositoryImpl();
+    orderPizzaTopping = new OrderPizzaToppingRepositoryImpl();
     getOrderUseCase = new GetOrderUseCase(orderRepository);
     getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
     getAllClientOrdersUseCase = new GetAllClientOrdersUseCase(orderRepository);
@@ -74,6 +70,7 @@ describe('Create Order UseCase', () => {
     );
     getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
     getAllClientOrdersUseCase = new GetAllClientOrdersUseCase(orderRepository);
+
     [client, pizzaFlavor, pizzaTopping] = await Promise.all([
       createClientUseCase.execute({
         name: 'Test',
@@ -82,8 +79,6 @@ describe('Create Order UseCase', () => {
         street_address: 'Test',
         street_number: '123',
         reference: 'Test',
-        city_id: '5200050',
-        state_id: '52',
       }),
       createPizzaFlavorUseCase.execute({
         flavor: 'Calabresa',
