@@ -18,8 +18,8 @@ const hbs = create({
       index == null ? array : array[index],
     getProperty: (obj: any, property?: string) =>
       !property ? obj : obj[property],
-    isEqual: (value1: any, value2: any) => value1 === value2,
-    isDifferent: (value1: any, value2: any) => value1 !== value2,
+    isEqual: (value1: any, value2: any) => value1 == value2,
+    isDifferent: (value1: any, value2: any) => value1 != value2,
   },
 });
 

@@ -112,10 +112,50 @@
     gap: 1rem;">
     {{#each orderStatus}}
       <div class="btn btn-group-vertical btn-light p-3 order-status-btn" data-status="{{status}}" onclick="updateOrderStatus(this, {{status}})">
-        <h1 class="bi bi-envelope mx-auto"></h1>
+        <h1 class="bi bi-list-ol mx-auto"></h1>
         <span class="small fw-semibold lh-1">{{label}}</span>
       </div>
     {{/each}}
+  </div>
+{{/simple-modal}}
+
+{{#> simple-modal id="modalOrderPizzas" title="Ver Pedido de <span></span>" lg=true}}
+  <div id="order-pizza-list" style="display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;">
+    <div class="card mb-2">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-4 text-start fw-bold text-primary">Pedido 01</div>
+          <div class="col-8 text-end fw-semibold text-dark">2 pizzas grandes</div>
+        </div>
+      </div>
+      <div class="card-body pt-3">
+        <div class="row">
+          <div class="col-6">
+            <label class="fw-semibold">Sabores</label>
+            <ul>
+              <li>Calabresa</li>
+              <li>Frango</li>
+            </ul>
+          </div>
+          <div class="col-6">
+            <label class="fw-semibold">Coberturas</label>
+            <ul>
+              <li>Queijo</li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          {{#each orderStatus}}
+            <div class="btn btn-success order-status-btn {{#if (isDifferent status 1)}}d-none{{/if}}" data-status="{{status}}" onclick="updateOrderPizzaStatus(this, {{status}})">
+              <i class="bi bi-list-ol me-1 mb-0"></i>
+              <small class="fw-medium lh-1">{{label}}</small>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
   </div>
 {{/simple-modal}}
 
@@ -144,6 +184,7 @@
   const modalAdd = new bootstrap.Modal('#modalAdd');
   const modalEdit = new bootstrap.Modal('#modalEdit');
   const modalEditStatus = new bootstrap.Modal('#modalEditStatus');
+  const modalOrderPizzas = new bootstrap.Modal('#modalOrderPizzas');
 
   let pizzaOrders = [];
 
@@ -390,6 +431,61 @@
     });
 
     requestUpdateOrderStatus.send();
+  }
+
+  function getOrderPizzas(id) {
+
+     const requestDataOrderPizzas = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'GET', '');
+
+     console.log(requestDataOrderPizzas.url)
+
+      requestDataOrderPizzas.onSuccess((response) => {
+
+        console.log(response);
+
+        const ordersPizzaList = getEl('#order-pizza-list');
+        ordersPizzaList.innerHTML = '';
+
+        response.forEach((item, index) => {
+          ordersPizzaList.innerHTML += `<div class="card mb-2">
+            <div class="card-body pb-2 p-2 ps-3 row d-flex align-items-center">
+              <div class="col-4 text-start fw-bold">${String(index + 1).padStart(2, '0')}</div>
+              <div class="col-4 text-center fw-semibold">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${getEl('[name="size"] option', true)[item.size].text.toLowerCase()}${item.ammount > 1 ? 's' : ''}</div>
+              <div class="col-4 text-end">
+                <button class="btn btn-light fw-semibold" onclick="detailsOrderPizza(${index})">Ver Detalhes</button>
+              </div>
+            </div>
+          </div>`;
+        });
+
+        {{!-- Array.from(requestDataOrderPizzas.getField('pizzaFlavorsIds')).forEach((option) => {
+          option.selected = response.orderPizzaFlavor.filter((item) => item.flavor_id == option.value).length;
+        });
+
+        Array.from(requestDataOrderPizzas.getField('pizzaToppingsIds')).forEach((option) => {
+          option.selected = response.orderPizzaTopping.filter((item) => item.topping_id == option.value).length;
+        }); --}}
+
+        {{!-- requestDataOrderPizzas.setFields({
+          size: response.size,
+          price: new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(response.price).replace('R$ ', ''),
+        }); --}}
+
+        {{!-- requestDataOrderPizzas.getField('price').dataset.size = requestDataOrderPizzas.getField('size').selectedOptions[0].dataset.price;
+        requestDataOrderPizzas.getField('price').dataset.pizzaFlavorsIds = response.orderPizzaFlavor.map((item) => item.flavor.price).reduce((acc, crr) => acc + crr, 0);
+        requestDataOrderPizzas.getField('price').dataset.pizzaToppingsIds = response.orderPizzaTopping.map((item) => item.topping.price).reduce((acc, crr) => acc + crr, 0); --}}
+
+        modalOrderPizzas.show();
+      });
+
+      requestDataOrderPizzas.onError((response) => {
+        Notification(response.error, 'danger');
+      });
+
+      requestDataOrderPizzas.send();
   }
 
 </script>

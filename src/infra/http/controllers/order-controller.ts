@@ -5,6 +5,7 @@ import { CreateOrderUseCase } from '../../../application/use-cases/order-use-cas
 import { GetOrderUseCase } from '../../../application/use-cases/order-use-cases/get-order-use-case';
 import { GetAllOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-orders-use-case';
 import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-client-orders-use-case';
+import { GetOrderPizzasUseCase } from '../../../application/use-cases/order-use-cases/get-order-pizzas-use-case';
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
 import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
@@ -17,6 +18,7 @@ export class OrderController {
     private getOrderUseCase: GetOrderUseCase,
     private getAllOrdersUseCase: GetAllOrdersUseCase,
     private getAllClientOrdersUseCase: GetAllClientOrdersUseCase,
+    private getOrderPizzasUseCase: GetOrderPizzasUseCase,
     private updateOrderUseCase: UpdateOrderUseCase,
     private updateOrderStatusUseCase: UpdateOrderStatusUseCase,
     private deleteOrderUseCase: DeleteOrderUseCase,
@@ -122,7 +124,6 @@ export class OrderController {
               : '';
             return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
           })[item.status],
-          // size: pizzaSizes[item.size].size,
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
@@ -131,10 +132,56 @@ export class OrderController {
             (acc: number, crr: { ammount: string }) => acc + crr.ammount,
             0,
           ),
-          order: `<span class="badge bg-secondary">Ver Pedidos</span>`,
+          order: `<span class="badge bg-secondary" style="cursor: pointer;" onclick="getOrderPizzas('${item.id}')">Ver Pedido</span>`,
           updated_at: new FormatDate(item.updated_at).fullFormat(),
           '#': index + 1,
           actions,
+        };
+      });
+
+      res.status(200).json(response);
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ error: 'Ocorreu um erro!' });
+    }
+  }
+
+  async getOrderPizzas(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params;
+
+    try {
+      const orderPizzas = await this.getOrderPizzasUseCase.execute(orderId);
+
+      // let actionsButton = fs.readFileSync(
+      //   'views/partials/actions-dropdown.hbs',
+      //   'utf8',
+      // );
+
+      const response = orderPizzas.map((item, index) => {
+        // let actions = actionsButton;
+        // actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
+        // actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
+
+        // if (item.status != 0) actions = '<i class="bi bi-clock"></i>';
+        // if (item.done) actions = '<i class="bi bi-check"></i>';
+
+        console.log(item);
+
+        return {
+          ...item,
+          status: orderStatus.map((status) => {
+            const notDone = !item.done
+              ? `style="cursor: pointer;" onclick="editOrderPizzaStatus('${item.id}', ${status.status})"`
+              : '';
+            return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
+          })[item.status],
+          price: new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(item.price),
+          updated_at: new FormatDate(item.updated_at).fullFormat(),
+          '#': index + 1,
+          actions: '',
         };
       });
 
