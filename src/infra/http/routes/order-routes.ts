@@ -13,6 +13,7 @@ import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cas
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 import { OrderPizzaRepositoryImpl } from '../../database/repositories/order-pizza-repository.impl';
 import { GetOrderPizzasUseCase } from '../../../application/use-cases/order-use-cases/get-order-pizzas-use-case';
+import { UpdateOrderPizzasStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-pizzas-status-use-case';
 
 const router = Router();
 
@@ -38,6 +39,7 @@ const orderController = new OrderController(
     orderPizzaToppingRepository,
   ),
   new UpdateOrderStatusUseCase(orderRepository),
+  new UpdateOrderPizzasStatusUseCase(orderPizzaRepository),
   new DeleteOrderUseCase(orderRepository),
 );
 
@@ -61,6 +63,10 @@ router.put('/order/:orderId', (req, res) =>
 
 router.patch('/order/:orderId', (req, res) =>
   orderController.updateOrderStatus(req, res),
+);
+
+router.patch('/order-pizzas/:orderPizzasId', (req, res) =>
+  orderController.updateOrderPizzasStatus(req, res),
 );
 
 router.delete('/order/:orderId', (req, res) =>

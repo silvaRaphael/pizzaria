@@ -8,9 +8,11 @@ import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-
 import { GetOrderPizzasUseCase } from '../../../application/use-cases/order-use-cases/get-order-pizzas-use-case';
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
 import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
+import { UpdateOrderPizzasStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-pizzas-status-use-case';
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 import { orderStatus } from '../../../domain/order-status';
 import { FormatDate } from '../utils/format-date';
+import { pizzaSizes } from '../../../domain/pizza-sizes';
 
 export class OrderController {
   constructor(
@@ -21,6 +23,7 @@ export class OrderController {
     private getOrderPizzasUseCase: GetOrderPizzasUseCase,
     private updateOrderUseCase: UpdateOrderUseCase,
     private updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+    private updateOrderPizzasStatusUseCase: UpdateOrderPizzasStatusUseCase,
     private deleteOrderUseCase: DeleteOrderUseCase,
   ) {}
 
@@ -152,33 +155,14 @@ export class OrderController {
     try {
       const orderPizzas = await this.getOrderPizzasUseCase.execute(orderId);
 
-      // let actionsButton = fs.readFileSync(
-      //   'views/partials/actions-dropdown.hbs',
-      //   'utf8',
-      // );
-
       const response = orderPizzas.map((item, index) => {
-        // let actions = actionsButton;
-        // actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
-        // actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
-
-        // if (item.status != 0) actions = '<i class="bi bi-clock"></i>';
-        // if (item.done) actions = '<i class="bi bi-check"></i>';
-
-        console.log(item);
-
         return {
           ...item,
-          status: orderStatus.map((status) => {
-            const notDone = !item.done
-              ? `style="cursor: pointer;" onclick="editOrderPizzaStatus('${item.id}', ${status.status})"`
-              : '';
-            return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
-          })[item.status],
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(item.price),
+          size: pizzaSizes[item.size],
           updated_at: new FormatDate(item.updated_at).fullFormat(),
           '#': index + 1,
           actions: '',
@@ -217,6 +201,23 @@ export class OrderController {
     try {
       await this.updateOrderStatusUseCase.execute({
         id: orderId,
+        status,
+      });
+
+      res.status(204).end();
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ error: 'Ocorreu um erro!' });
+    }
+  }
+
+  async updateOrderPizzasStatus(req: Request, res: Response): Promise<void> {
+    const { orderPizzasId } = req.params;
+    const { status } = req.body;
+
+    try {
+      await this.updateOrderPizzasStatusUseCase.execute({
+        id: orderPizzasId,
         status,
       });
 

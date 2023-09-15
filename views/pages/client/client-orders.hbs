@@ -123,39 +123,6 @@
   <div id="order-pizza-list" style="display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;">
-    <div class="card mb-2">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-4 text-start fw-bold text-primary">Pedido 01</div>
-          <div class="col-8 text-end fw-semibold text-dark">2 pizzas grandes</div>
-        </div>
-      </div>
-      <div class="card-body pt-3">
-        <div class="row">
-          <div class="col-6">
-            <label class="fw-semibold">Sabores</label>
-            <ul>
-              <li>Calabresa</li>
-              <li>Frango</li>
-            </ul>
-          </div>
-          <div class="col-6">
-            <label class="fw-semibold">Coberturas</label>
-            <ul>
-              <li>Queijo</li>
-            </ul>
-          </div>
-        </div>
-        <div class="row">
-          {{#each orderStatus}}
-            <div class="btn btn-success order-status-btn {{#if (isDifferent status 1)}}d-none{{/if}}" data-status="{{status}}" onclick="updateOrderPizzaStatus(this, {{status}})">
-              <i class="bi bi-list-ol me-1 mb-0"></i>
-              <small class="fw-medium lh-1">{{label}}</small>
-            </div>
-          {{/each}}
-        </div>
-      </div>
-    </div>
   </div>
 {{/simple-modal}}
 
@@ -435,57 +402,91 @@
 
   function getOrderPizzas(id) {
 
-     const requestDataOrderPizzas = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'GET', '');
+    const requestDataOrderPizzas = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'GET', '');
 
-     console.log(requestDataOrderPizzas.url)
+    requestDataOrderPizzas.onSuccess((response) => {
+      const ordersPizzaList = getEl('#order-pizza-list');
+      ordersPizzaList.innerHTML = '';
 
-      requestDataOrderPizzas.onSuccess((response) => {
-
-        console.log(response);
-
-        const ordersPizzaList = getEl('#order-pizza-list');
-        ordersPizzaList.innerHTML = '';
-
-        response.forEach((item, index) => {
-          ordersPizzaList.innerHTML += `<div class="card mb-2">
-            <div class="card-body pb-2 p-2 ps-3 row d-flex align-items-center">
-              <div class="col-4 text-start fw-bold">${String(index + 1).padStart(2, '0')}</div>
-              <div class="col-4 text-center fw-semibold">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${getEl('[name="size"] option', true)[item.size].text.toLowerCase()}${item.ammount > 1 ? 's' : ''}</div>
-              <div class="col-4 text-end">
-                <button class="btn btn-light fw-semibold" onclick="detailsOrderPizza(${index})">Ver Detalhes</button>
+      response.forEach((item, index) => {
+        ordersPizzaList.innerHTML += `<div class="card mb-2 order-pizza-card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-8 text-start fw-semibold text-dark">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${item.size.size}</div>
+              <div class="col-4 text-end fw-bold text-success">${item.price}</div>
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            <div class="row">
+              <div class="col-6">
+                <label class="fw-semibold">Sabores</label>
+                <ul>
+                  ${item.orderPizzaFlavor.length
+                    ? item.orderPizzaFlavor.map((flavor) => `<li>${flavor.flavor.flavor}</li>`).join('')
+                    : 'Nenhum'
+                  }
+                </ul>
+              </div>
+              <div class="col-6">
+                <label class="fw-semibold">Coberturas</label>
+                <ul>
+                  ${item.orderPizzaTopping.length
+                    ? item.orderPizzaTopping.map((topping) => `<li>${topping.topping.topping}</li>`).join('')
+                    : 'Nenhuma'
+                  }
+                </ul>
               </div>
             </div>
-          </div>`;
-        });
-
-        {{!-- Array.from(requestDataOrderPizzas.getField('pizzaFlavorsIds')).forEach((option) => {
-          option.selected = response.orderPizzaFlavor.filter((item) => item.flavor_id == option.value).length;
-        });
-
-        Array.from(requestDataOrderPizzas.getField('pizzaToppingsIds')).forEach((option) => {
-          option.selected = response.orderPizzaTopping.filter((item) => item.topping_id == option.value).length;
-        }); --}}
-
-        {{!-- requestDataOrderPizzas.setFields({
-          size: response.size,
-          price: new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(response.price).replace('R$ ', ''),
-        }); --}}
-
-        {{!-- requestDataOrderPizzas.getField('price').dataset.size = requestDataOrderPizzas.getField('size').selectedOptions[0].dataset.price;
-        requestDataOrderPizzas.getField('price').dataset.pizzaFlavorsIds = response.orderPizzaFlavor.map((item) => item.flavor.price).reduce((acc, crr) => acc + crr, 0);
-        requestDataOrderPizzas.getField('price').dataset.pizzaToppingsIds = response.orderPizzaTopping.map((item) => item.topping.price).reduce((acc, crr) => acc + crr, 0); --}}
-
-        modalOrderPizzas.show();
+            <div class="row">
+              {{#each orderStatus as |item index|}}
+                <div class="btn d-flex justify-content-center align-items-center order-status-btn ${(item.status + 1) != {{index}} ? 'd-none' : ''}
+                  {{#if (isEqual status 0)}}btn-secondary{{/if}}
+                  {{#if (isEqual status 1)}}btn-warning{{/if}}
+                  {{#if (isEqual status 2)}}btn-danger{{/if}}
+                  {{#if (isEqual status 3)}}btn-success{{/if}}"
+                  data-status="{{status}}"
+                  onclick="updateOrderPizzaStatus(this, {{status}}, '${item.id}', '${item.order_id}')">
+                  <i class="bi bi-list-ol me-1 m-0"></i>
+                  <span class="fw-medium">{{label}}</span>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>`;
       });
 
-      requestDataOrderPizzas.onError((response) => {
-        Notification(response.error, 'danger');
-      });
+      getEl('#modalOrderPizzas .modal-title span').innerHTML = response?.at(0)?.order?.client?.name ?? '';
 
-      requestDataOrderPizzas.send();
+      modalOrderPizzas.show();
+    });
+
+    requestDataOrderPizzas.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataOrderPizzas.send();
+  }
+
+  function updateOrderPizzaStatus(button, status, id, order_id) {
+
+    const requestUpdateOrderPizzasStatus = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'PATCH', '#modalOrderPizzas');
+
+    requestUpdateOrderPizzasStatus.setButton(button);
+
+    requestUpdateOrderPizzasStatus.setBody({ status, id });
+
+    requestUpdateOrderPizzasStatus.onSuccess((response) => {
+      Notification('Status alterado!');
+      {{!-- OrderTable.ajax.reload(); --}}
+      {{!-- modalOrderPizzas.hide(); --}}
+      getOrderPizzas(order_id);
+    });
+
+    requestUpdateOrderPizzasStatus.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestUpdateOrderPizzasStatus.send();
   }
 
 </script>

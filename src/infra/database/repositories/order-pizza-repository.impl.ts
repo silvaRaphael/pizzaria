@@ -75,9 +75,7 @@ export class OrderPizzaRepositoryImpl implements OrderPizzaRepository {
         orderBy: {
           updated_at: 'desc',
         },
-        include: {
-          ...this.includeQuery,
-        },
+        include: this.includeQuery,
       })) as any as OrderPizza[];
     } catch (error: any) {
       throw new Error(error.message);
@@ -94,7 +92,18 @@ export class OrderPizzaRepositoryImpl implements OrderPizzaRepository {
         orderBy: {
           updated_at: 'desc',
         },
-        include: this.includeQuery,
+        include: {
+          ...this.includeQuery,
+          order: {
+            select: {
+              client: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
       })) as OrderPizza[];
     } catch (error: any) {
       throw new Error(error.message);
