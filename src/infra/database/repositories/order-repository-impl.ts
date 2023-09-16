@@ -1,3 +1,4 @@
+import { OrderFilterDTO } from '../../../application/repositories/order-filter-dto';
 import { OrderRepository } from '../../../application/repositories/order-repository';
 import { UpdateOrderStatusDTO } from '../../../application/use-cases/order-use-cases/update-order-status-dto';
 import { Order } from '../../../domain/order';
@@ -28,20 +29,28 @@ export class OrderRepositoryImpl implements OrderRepository {
       return (await prisma.order.findFirst({
         where: {
           active: true,
-          done: false,
           id: orderId,
         },
         include: {
           orderPizza: {
-            include: {
+            select: {
+              ammount: true,
               orderPizzaFlavor: {
-                include: {
-                  flavor: true,
+                select: {
+                  flavor: {
+                    select: {
+                      flavor: true,
+                    },
+                  },
                 },
               },
               orderPizzaTopping: {
-                include: {
-                  topping: true,
+                select: {
+                  topping: {
+                    select: {
+                      topping: true,
+                    },
+                  },
                 },
               },
             },
@@ -58,13 +67,34 @@ export class OrderRepositoryImpl implements OrderRepository {
     }
   }
 
-  async getAll(): Promise<Order[]> {
+  async getAll(filter?: OrderFilterDTO): Promise<Order[]> {
+    let created_at = {};
+    if (filter?.created_at) {
+      created_at = {
+        gte: new Date(filter.created_at.setHours(0, 0, 0, 0)),
+        lte: new Date(filter.created_at.setHours(23, 59, 59, 999)),
+      };
+    }
+    if (filter?.created_in && filter.created_in.length) {
+      created_at = {
+        gte: new Date(filter.created_in[0].setHours(0, 0, 0, 0)),
+        lte: new Date(
+          filter.created_in[filter.created_in.length - 1].setHours(
+            23,
+            59,
+            59,
+            999,
+          ),
+        ),
+      };
+    }
     try {
       return (await prisma.order.findMany({
         where: {
           active: true,
-          done: false,
+          created_at,
         },
+        take: filter?.limit,
         orderBy: {
           updated_at: 'desc',
         },
@@ -104,23 +134,6 @@ export class OrderRepositoryImpl implements OrderRepository {
           },
         },
       })) as Order[];
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  }
-
-  async update(order: Order): Promise<void> {
-    try {
-      await prisma.order.update({
-        where: {
-          active: true,
-          id: order.id,
-        },
-        data: {
-          price: order.price,
-          updated_at: order.updated_at,
-        },
-      });
     } catch (error: any) {
       throw new Error(error.message);
     }

@@ -20,6 +20,10 @@ export class CreateOrderUseCase {
   async execute({ client_id, price, orderPizzas }: CreateOrderDTO): Promise<{
     id: string;
   }> {
+    const pizzaOrders: OrderPizza[] = [];
+    const pizzaOrdersPizzaFlavors: OrderPizzaFlavor[] = [];
+    const pizzaOrdersPizzaToppings: OrderPizzaTopping[] = [];
+
     try {
       if (!client_id) throw new MissingDataError('client_id');
       if (price == null) throw new MissingDataError('price');
@@ -31,15 +35,11 @@ export class CreateOrderUseCase {
 
       await this.orderRepository.create(order);
 
-      const pizzaOrders: OrderPizza[] = [];
-      const pizzaOrdersPizzaFlavors: OrderPizzaFlavor[] = [];
-      const pizzaOrdersPizzaToppings: OrderPizzaTopping[] = [];
-
       for (const item of orderPizzas) {
         const orderPizza = new OrderPizza({
           order_id: order.id,
           size: item.size,
-          price: item.size,
+          price: item.price,
           ammount: item.ammount,
         });
         pizzaOrders.push(orderPizza);

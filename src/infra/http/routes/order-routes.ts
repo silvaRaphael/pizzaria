@@ -9,7 +9,6 @@ import { GetOrderUseCase } from '../../../application/use-cases/order-use-cases/
 import { GetAllOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-orders-use-case';
 import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-client-orders-use-case';
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
-import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 import { OrderPizzaRepositoryImpl } from '../../database/repositories/order-pizza-repository.impl';
 import { GetOrderPizzasUseCase } from '../../../application/use-cases/order-use-cases/get-order-pizzas-use-case';
@@ -32,12 +31,6 @@ const orderController = new OrderController(
   new GetAllOrdersUseCase(orderRepository),
   new GetAllClientOrdersUseCase(orderRepository),
   new GetOrderPizzasUseCase(orderPizzaRepository),
-  new UpdateOrderUseCase(
-    orderRepository,
-    orderPizzaRepository,
-    orderPizzaFlavorRepository,
-    orderPizzaToppingRepository,
-  ),
   new UpdateOrderStatusUseCase(orderRepository),
   new UpdateOrderPizzasStatusUseCase(orderPizzaRepository),
   new DeleteOrderUseCase(orderRepository),
@@ -55,10 +48,6 @@ router.get('/orders/:clientId', (req, res) =>
 
 router.get('/order-pizzas/:orderId', (req, res) =>
   orderController.getOrderPizzas(req, res),
-);
-
-router.put('/order/:orderId', (req, res) =>
-  orderController.updateOrder(req, res),
 );
 
 router.patch('/order/:orderId', (req, res) =>

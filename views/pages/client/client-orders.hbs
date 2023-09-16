@@ -111,7 +111,15 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;">
     {{#each orderStatus}}
-      <div class="btn btn-group-vertical btn-light p-3 order-status-btn" data-status="{{status}}" onclick="updateOrderStatus(this, {{status}})">
+      <div
+        class="btn btn-group-vertical
+        {{#if (isEqual status 0)}}btn-secondary{{/if}}
+        {{#if (isEqual status 1)}}btn-warning{{/if}}
+        {{#if (isEqual status 2)}}btn-danger{{/if}}
+        {{#if (isEqual status 3)}}btn-success{{/if}}
+        p-3 order-status-btn"
+        data-status="{{status}}"
+        onclick="updateOrderStatus(this, {{status}})">
         <h1 class="bi bi-list-ol mx-auto"></h1>
         <span class="small fw-semibold lh-1">{{label}}</span>
       </div>
@@ -230,9 +238,9 @@
     pizzaOrders.forEach((item, index) => {
       pizzaOrdersList.innerHTML += `<div class="card mb-2">
         <div class="card-body pb-2 p-2 ps-3 row d-flex align-items-center">
-          <div class="col-4 text-start fw-bold">${String(index + 1).padStart(2, '0')}</div>
-          <div class="col-4 text-center fw-semibold">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${getEl('[name="size"] option', true)[item.size].text.toLowerCase()}${item.ammount > 1 ? 's' : ''}</div>
-          <div class="col-4 text-end">
+          <div class="col-2 text-start fw-bold">${String(index + 1).padStart(2, '0')}</div>
+          <div class="col-7 text-center fw-semibold">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${getEl('[name="size"] option', true)[item.size].text.toLowerCase()}${item.ammount > 1 ? 's' : ''}</div>
+          <div class="col-3 text-end">
             <button class="btn btn-light fw-semibold" onclick="deletePizzaOrder(${index})">Remover</button>
           </div>
         </div>
@@ -374,7 +382,7 @@
 
   function editOrderStatus(id, status) {
 
-    Array.from(document.querySelectorAll('#modalEditStatus .order-status-btn')).forEach((item) => item.classList.toggle('active', item.dataset.status == status));
+    Array.from(document.querySelectorAll('#modalEditStatus .order-status-btn')).forEach((item) => item.classList.toggle('disabled', item.dataset.status <= status));
 
     requestUpdateOrderStatus.setUrl(`{{defaultPath}}/api/order/${id}`);
 
@@ -388,7 +396,6 @@
     requestUpdateOrderStatus.setBody({ status });
 
     requestUpdateOrderStatus.onSuccess((response) => {
-      Notification('Status alterado!');
       OrderTable.ajax.reload();
       modalEditStatus.hide();
     });
@@ -412,7 +419,7 @@
         ordersPizzaList.innerHTML += `<div class="card mb-2 order-pizza-card">
           <div class="card-header">
             <div class="row">
-              <div class="col-8 text-start fw-semibold text-dark">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${item.size.size}</div>
+              <div class="col-8 text-start fw-semibold text-dark">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${item.size.size}${item.ammount > 1 ? 's' : ''}</div>
               <div class="col-4 text-end fw-bold text-success">${item.price}</div>
             </div>
           </div>
@@ -450,6 +457,12 @@
                   <span class="fw-medium">{{label}}</span>
                 </div>
               {{/each}}
+              <div class="btn d-flex justify-content-center align-items-center btn-dark text-light disabled ${(item.status) != 3 ? 'd-none' : ''}"
+                data-status="{{status}}"
+                onclick="updateOrderPizzaStatus(this, {{status}}, '${item.id}', '${item.order_id}')">
+                <i class="bi bi-check-circle me-1 m-0"></i>
+                <span class="fw-medium">Finalizado</span>
+              </div>
             </div>
           </div>
         </div>`;
@@ -476,9 +489,6 @@
     requestUpdateOrderPizzasStatus.setBody({ status, id });
 
     requestUpdateOrderPizzasStatus.onSuccess((response) => {
-      Notification('Status alterado!');
-      {{!-- OrderTable.ajax.reload(); --}}
-      {{!-- modalOrderPizzas.hide(); --}}
       getOrderPizzas(order_id);
     });
 

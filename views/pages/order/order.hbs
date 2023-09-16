@@ -14,9 +14,8 @@
                 <th scope="col">Cliente</th>
                 <th scope="col">Status</th>
                 <th scope="col">Preço</th>
-                <th scope="col">Tamanho</th>
-                <th scope="col">Sabores</th>
-                <th scope="col">Coberturas</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Pedido</th>
                 <th scope="col">Data</th>
                 <th scope="col"><i class="bi bi-tools"></i></th>
               </tr>
@@ -69,11 +68,26 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;">
     {{#each orderStatus}}
-      <div class="btn btn-group-vertical btn-light p-3 order-status-btn" data-status="{{status}}" onclick="updateOrderStatus(this, {{status}})">
-        <h1 class="bi bi-envelope mx-auto"></h1>
+      <div
+        class="btn btn-group-vertical
+        {{#if (isEqual status 0)}}btn-secondary{{/if}}
+        {{#if (isEqual status 1)}}btn-warning{{/if}}
+        {{#if (isEqual status 2)}}btn-danger{{/if}}
+        {{#if (isEqual status 3)}}btn-success{{/if}}
+        p-3 order-status-btn"
+        data-status="{{status}}"
+        onclick="updateOrderStatus(this, {{status}})">
+        <h1 class="bi bi-list-ol mx-auto"></h1>
         <span class="small fw-semibold lh-1">{{label}}</span>
       </div>
     {{/each}}
+  </div>
+{{/simple-modal}}
+
+{{#> simple-modal id="modalOrderPizzas" title="Ver Pedido de <span></span>" lg=true}}
+  <div id="order-pizza-list" style="display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;">
   </div>
 {{/simple-modal}}
 
@@ -86,16 +100,11 @@
     language,
     columns: [
       { data: '#', width: '7%', className: 'text-center' },
-      { data: 'client.name', width: '15%' },
-      { data: 'status', width: '10%', className: 'text-center' },
+      { data: 'client.name', width: '12%' },
+      { data: 'status', width: '12%', className: 'text-center' },
       { data: 'price', width: '10%', className: 'text-center' },
-      { data: 'size', width: '10%', className: 'text-center' },
-      { data: 'orderPizzaFlavor', width: '15%', render: function (data, type, row, meta) {
-          return data.map((item) => `<li>${item.flavor.flavor}</li>`).join('');
-      } },
-      { data: 'orderPizzaTopping', width: '15%', render: function (data, type, row, meta) {
-          return data.map((item) => `<li>${item.topping.topping}</li>`).join('');
-      } },
+      { data: 'ammount', width: '7%', className: 'text-center' },
+      { data: 'order', width: '10%', className: 'text-center' },
       { data: 'updated_at', width: '10%', className: 'text-center' },
       { data: 'actions', width: '8%', orderable: false, className: 'text-center' },
     ],
@@ -107,6 +116,7 @@
 
   const modalEdit = new bootstrap.Modal('#modalEdit');
   const modalEditStatus = new bootstrap.Modal('#modalEditStatus');
+  const modalOrderPizzas = new bootstrap.Modal('#modalOrderPizzas');
 
   function calculateOrderPrice(select, type, selector) {
     const { selectedOptions } = select;
@@ -221,7 +231,7 @@
 
   function editOrderStatus(id, status) {
 
-    Array.from(document.querySelectorAll('#modalEditStatus .order-status-btn')).forEach((item) => item.classList.toggle('active', item.dataset.status == status));
+    Array.from(document.querySelectorAll('#modalEditStatus .order-status-btn')).forEach((item) => item.classList.toggle('disabled', item.dataset.status <= status));
 
     requestUpdateOrderStatus.setUrl(`{{defaultPath}}/api/order/${id}`);
 
@@ -235,7 +245,6 @@
     requestUpdateOrderStatus.setBody({ status });
 
     requestUpdateOrderStatus.onSuccess((response) => {
-      Notification('Status alterado!');
       OrderTable.ajax.reload();
       modalEditStatus.hide();
     });
@@ -245,6 +254,98 @@
     });
 
     requestUpdateOrderStatus.send();
+  }
+
+  function getOrderPizzas(id) {
+
+    const requestDataOrderPizzas = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'GET', '');
+
+    requestDataOrderPizzas.onSuccess((response) => {
+      const ordersPizzaList = getEl('#order-pizza-list');
+      ordersPizzaList.innerHTML = '';
+
+      response.forEach((item, index) => {
+        ordersPizzaList.innerHTML += `<div class="card mb-2 order-pizza-card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-8 text-start fw-semibold text-dark">${item.ammount} pizza${item.ammount > 1 ? 's' : ''} ${item.size.size}${item.ammount > 1 ? 's' : ''}</div>
+              <div class="col-4 text-end fw-bold text-success">${item.price}</div>
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            <div class="row">
+              <div class="col-6">
+                <label class="fw-semibold">Sabores</label>
+                <ul>
+                  ${item.orderPizzaFlavor.length
+                    ? item.orderPizzaFlavor.map((flavor) => `<li>${flavor.flavor.flavor}</li>`).join('')
+                    : 'Nenhum'
+                  }
+                </ul>
+              </div>
+              <div class="col-6">
+                <label class="fw-semibold">Coberturas</label>
+                <ul>
+                  ${item.orderPizzaTopping.length
+                    ? item.orderPizzaTopping.map((topping) => `<li>${topping.topping.topping}</li>`).join('')
+                    : 'Nenhuma'
+                  }
+                </ul>
+              </div>
+            </div>
+            <div class="row">
+              {{#each orderStatus as |item index|}}
+                <div class="btn d-flex justify-content-center align-items-center order-status-btn ${(item.status + 1) != {{index}} ? 'd-none' : ''}
+                  {{#if (isEqual status 0)}}btn-secondary{{/if}}
+                  {{#if (isEqual status 1)}}btn-warning{{/if}}
+                  {{#if (isEqual status 2)}}btn-danger{{/if}}
+                  {{#if (isEqual status 3)}}btn-success{{/if}}"
+                  data-status="{{status}}"
+                  onclick="updateOrderPizzaStatus(this, {{status}}, '${item.id}', '${item.order_id}')">
+                  <i class="bi bi-list-ol me-1 m-0"></i>
+                  <span class="fw-medium">{{label}}</span>
+                </div>
+              {{/each}}
+              <div class="btn d-flex justify-content-center align-items-center btn-dark text-light disabled ${(item.status) != 3 ? 'd-none' : ''}"
+                data-status="{{status}}"
+                onclick="updateOrderPizzaStatus(this, {{status}}, '${item.id}', '${item.order_id}')">
+                <i class="bi bi-check-circle me-1 m-0"></i>
+                <span class="fw-medium">Finalizado</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      });
+
+      getEl('#modalOrderPizzas .modal-title span').innerHTML = response?.at(0)?.order?.client?.name ?? '';
+
+      modalOrderPizzas.show();
+    });
+
+    requestDataOrderPizzas.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataOrderPizzas.send();
+  }
+
+  function updateOrderPizzaStatus(button, status, id, order_id) {
+
+    const requestUpdateOrderPizzasStatus = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'PATCH', '#modalOrderPizzas');
+
+    requestUpdateOrderPizzasStatus.setButton(button);
+
+    requestUpdateOrderPizzasStatus.setBody({ status, id });
+
+    requestUpdateOrderPizzasStatus.onSuccess((response) => {
+      getOrderPizzas(order_id);
+    });
+
+    requestUpdateOrderPizzasStatus.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestUpdateOrderPizzasStatus.send();
   }
 
 </script>

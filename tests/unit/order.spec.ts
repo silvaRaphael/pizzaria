@@ -15,7 +15,6 @@ import { GetAllClientOrdersUseCase } from '../../src/application/use-cases/order
 import { Client } from '../../src/domain/client';
 import { PizzaFlavor } from '../../src/domain/pizza-flavor';
 import { PizzaTopping } from '../../src/domain/pizza-topping';
-import { UpdateOrderUseCase } from '../../src/application/use-cases/order-use-cases/update-order-use-case';
 
 describe('Order', () => {
   let clientRepository: ClientRepositoryImpl;
@@ -25,7 +24,6 @@ describe('Order', () => {
   let createPizzaFlavorUseCase: CreatePizzaFlavorUseCase;
   let createPizzaToppingUseCase: CreatePizzaToppingUseCase;
   let createOrderUseCase: CreateOrderUseCase;
-  let updateOrderUseCase: UpdateOrderUseCase;
   let orderRepository: OrderRepositoryImpl;
   let orderPizzaRepository: OrderPizzaRepositoryImpl;
   let orderPizzaFlavor: OrderPizzaFlavorRepositoryImpl;
@@ -57,12 +55,6 @@ describe('Order', () => {
       pizzaToppingRepository,
     );
     createOrderUseCase = new CreateOrderUseCase(
-      orderRepository,
-      orderPizzaRepository,
-      orderPizzaFlavor,
-      orderPizzaTopping,
-    );
-    updateOrderUseCase = new UpdateOrderUseCase(
       orderRepository,
       orderPizzaRepository,
       orderPizzaFlavor,
@@ -108,24 +100,6 @@ describe('Order', () => {
 
     expect(order.id).toBeDefined();
   });
-
-  // it('Should update order by id', async () => {
-  //   const response = await updateOrderUseCase.execute({
-  //     id: order.id,
-  //     price: 20.9,
-  //     orderPizzas: [
-  //       {
-  //         size: 2,
-  //         price: 200,
-  //         ammount: 1,
-  //         pizzaFlavorsIds: [pizzaFlavor.id],
-  //         pizzaToppingsIds: [pizzaTopping.id],
-  //       },
-  //     ],
-  //   });
-
-  //   expect(response.id).toBeDefined();
-  // });
 
   it('Should get order by id', async () => {
     const response = await getOrderUseCase.execute(order.id);

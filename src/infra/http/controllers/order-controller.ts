@@ -7,7 +7,6 @@ import { GetAllOrdersUseCase } from '../../../application/use-cases/order-use-ca
 import { GetAllClientOrdersUseCase } from '../../../application/use-cases/order-use-cases/get-all-client-orders-use-case';
 import { GetOrderPizzasUseCase } from '../../../application/use-cases/order-use-cases/get-order-pizzas-use-case';
 import { UpdateOrderStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-status-use-case';
-import { UpdateOrderUseCase } from '../../../application/use-cases/order-use-cases/update-order-use-case';
 import { UpdateOrderPizzasStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-pizzas-status-use-case';
 import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cases/delete-order-use-case';
 import { orderStatus } from '../../../domain/order-status';
@@ -21,7 +20,6 @@ export class OrderController {
     private getAllOrdersUseCase: GetAllOrdersUseCase,
     private getAllClientOrdersUseCase: GetAllClientOrdersUseCase,
     private getOrderPizzasUseCase: GetOrderPizzasUseCase,
-    private updateOrderUseCase: UpdateOrderUseCase,
     private updateOrderStatusUseCase: UpdateOrderStatusUseCase,
     private updateOrderPizzasStatusUseCase: UpdateOrderPizzasStatusUseCase,
     private deleteOrderUseCase: DeleteOrderUseCase,
@@ -62,13 +60,12 @@ export class OrderController {
       const orders = await this.getAllOrdersUseCase.execute();
 
       let actionsButton = fs.readFileSync(
-        'views/partials/actions-dropdown.hbs',
+        'views/partials/delete-dropdown.hbs',
         'utf8',
       );
 
       const response = orders.map((item, index) => {
         let actions = actionsButton;
-        actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
 
         if (item.status != 0) actions = '<i class="bi bi-clock"></i>';
@@ -82,12 +79,16 @@ export class OrderController {
               : '';
             return `<span class="badge ${status.color}" ${notDone}>${status.label}</span>`;
           })[item.status],
-          // size: pizzaSizes[item.size].size,
           price: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
           }).format(item.price),
-          updated_at: new FormatDate(item.updated_at).fullFormat('vertical'),
+          ammount: (item as any).orderPizza.reduce(
+            (acc: number, crr: { ammount: string }) => acc + crr.ammount,
+            0,
+          ),
+          order: `<span class="badge bg-secondary" style="cursor: pointer;" onclick="getOrderPizzas('${item.id}')">Ver Pedido</span>`,
+          updated_at: new FormatDate(item.updated_at).fullFormat(),
           '#': index + 1,
           actions,
         };
@@ -107,13 +108,12 @@ export class OrderController {
       const orders = await this.getAllClientOrdersUseCase.execute(clientId);
 
       let actionsButton = fs.readFileSync(
-        'views/partials/actions-dropdown.hbs',
+        'views/partials/delete-dropdown.hbs',
         'utf8',
       );
 
       const response = orders.map((item, index) => {
         let actions = actionsButton;
-        actions = actions.replace('{{edit}}', `editOrder('${item.id}')`);
         actions = actions.replace('{{delete}}', `deleteOrder('${item.id}')`);
 
         if (item.status != 0) actions = '<i class="bi bi-clock"></i>';
@@ -170,24 +170,6 @@ export class OrderController {
       });
 
       res.status(200).json(response);
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro!' });
-    }
-  }
-
-  async updateOrder(req: Request, res: Response): Promise<void> {
-    const { orderId } = req.params;
-    const { price, orderPizzas } = req.body;
-
-    try {
-      await this.updateOrderUseCase.execute({
-        id: orderId,
-        price,
-        orderPizzas,
-      });
-
-      res.status(204).end();
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ error: 'Ocorreu um erro!' });
