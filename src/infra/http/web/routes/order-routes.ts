@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { WebAuthMiddleware } from '../../middlewares/web-auth-middleware';
 import { pageContext } from '../../utils/page-context';
 import { PizzaFlavorRepositoryImpl } from '../../../database/repositories/pizza-flavor-repository-impl';
 import { GetAllPizzaFlavorsUseCase } from '../../../../application/use-cases/pizza-flavor-use-cases/get-all-pizza-flavors-use-case';
@@ -12,28 +13,32 @@ const router = Router();
 
 const pizzaFlavorRepository = new PizzaFlavorRepositoryImpl();
 const getAllPizzaFlavorsUseCase = new GetAllPizzaFlavorsUseCase(
-  pizzaFlavorRepository,
+	pizzaFlavorRepository,
 );
 
 const pizzaToppingRepository = new PizzaToppingRepositoryImpl();
 const getAllPizzaToppingsUseCase = new GetAllPizzaToppingsUseCase(
-  pizzaToppingRepository,
+	pizzaToppingRepository,
 );
 
-router.get('/pedidos', async (req, res) => {
-  const [pizzaFlavors, pizzaToppings] = await Promise.all([
-    getAllPizzaFlavorsUseCase.execute(),
-    getAllPizzaToppingsUseCase.execute(),
-  ]);
+router.get(
+	'/pedidos',
+	(req, res, next) => WebAuthMiddleware(req, res, next),
+	async (req, res) => {
+		const [pizzaFlavors, pizzaToppings] = await Promise.all([
+			getAllPizzaFlavorsUseCase.execute(),
+			getAllPizzaToppingsUseCase.execute(),
+		]);
 
-  res.render('pages/order/order', {
-    title: 'Pedidos',
-    ...pageContext(req),
-    pizzaFlavors,
-    pizzaToppings,
-    pizzaSizes,
-    orderStatus,
-  });
-});
+		res.render('pages/order/order', {
+			title: 'Pedidos',
+			...pageContext(req),
+			pizzaFlavors,
+			pizzaToppings,
+			pizzaSizes,
+			orderStatus,
+		});
+	},
+);
 
 export default router;

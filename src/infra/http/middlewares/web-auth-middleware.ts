@@ -5,19 +5,16 @@ import { ValidateUserTokenUseCase } from '../../../application/use-cases/auth-us
 import { ExpiredTokenError } from '../../../application/errors/expired-token-error';
 import { AuthRepositoryImpl } from '../../database/repositories/auth-repository-impl';
 
-export const AuthMiddleware = async (
+export const WebAuthMiddleware = async (
 	req: Request,
 	res: Response,
 	next: NextFunction,
+	redirectTo?: string,
 ) => {
 	try {
-		const fullToken = req.headers.authorization;
+		const { token } = req.session as any;
 
-		if (!fullToken) throw new InvalidTokenError('Token não enviado');
-
-		const [, token] = fullToken.split(' ');
-
-		if (!token) throw new InvalidTokenError();
+		if (!token) throw new InvalidTokenError('Token não enviado');
 
 		const response = await new ValidateUserTokenUseCase(
 			new AuthRepositoryImpl(),
@@ -29,6 +26,10 @@ export const AuthMiddleware = async (
 
 		next();
 	} catch (error: any) {
-		res.status(error.statusCode).send({ error: error.message });
+		(req.session as any).errorMessage = error.message;
+
+		req.session.save(() => {
+			res.redirect(redirectTo ?? '/login');
+		});
 	}
 };

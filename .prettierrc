@@ -1,5 +1,5 @@
 {
-  "editorconfig": true,
-  "singleQuote": true,
-  "trailingComma": "all"
+	"singleQuote": true,
+	"trailingComma": "all",
+	"editorconfig": true
 }

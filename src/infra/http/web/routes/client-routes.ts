@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { WebAuthMiddleware } from '../../middlewares/web-auth-middleware';
 import { pageContext } from '../../utils/page-context';
 import { StateRepositoryImpl } from '../../../database/repositories/state-repository-impl';
 import { GetAllStatesUseCase } from '../../../../application/use-cases/state-use-cases/get-all-states-use-case';
@@ -22,45 +23,53 @@ const getClientUseCase = new GetClientUseCase(clientRepository);
 
 const pizzaFlavorRepository = new PizzaFlavorRepositoryImpl();
 const getAllPizzaFlavorsUseCase = new GetAllPizzaFlavorsUseCase(
-  pizzaFlavorRepository,
+	pizzaFlavorRepository,
 );
 
 const pizzaToppingRepository = new PizzaToppingRepositoryImpl();
 const getAllPizzaToppingsUseCase = new GetAllPizzaToppingsUseCase(
-  pizzaToppingRepository,
+	pizzaToppingRepository,
 );
 
-router.get('/clientes', async (req, res) => {
-  const states = await getAllStatesUseCase.execute();
+router.get(
+	'/clientes',
+	(req, res, next) => WebAuthMiddleware(req, res, next),
+	async (req, res) => {
+		const states = await getAllStatesUseCase.execute();
 
-  res.render('pages/client/client', {
-    title: 'Clientes',
-    ...pageContext(req),
-    states,
-  });
-});
+		res.render('pages/client/client', {
+			title: 'Clientes',
+			...pageContext(req),
+			states,
+		});
+	},
+);
 
-router.get('/clientes/:clientId/pedidos', async (req, res) => {
-  const { clientId } = req.params;
+router.get(
+	'/clientes/:clientId/pedidos',
+	(req, res, next) => WebAuthMiddleware(req, res, next),
+	async (req, res) => {
+		const { clientId } = req.params;
 
-  const [client, pizzaFlavors, pizzaToppings] = await Promise.all([
-    getClientUseCase.execute(clientId),
-    getAllPizzaFlavorsUseCase.execute(),
-    getAllPizzaToppingsUseCase.execute(),
-  ]);
+		const [client, pizzaFlavors, pizzaToppings] = await Promise.all([
+			getClientUseCase.execute(clientId),
+			getAllPizzaFlavorsUseCase.execute(),
+			getAllPizzaToppingsUseCase.execute(),
+		]);
 
-  if (!client) return res.redirect('/');
+		if (!client) return res.redirect('/');
 
-  res.render('pages/client/client-orders', {
-    title: `Pedidos - ${client.name}`,
-    ...pageContext(req),
-    menu: [{ link: '/clientes', label: 'Clientes' }],
-    clientId,
-    pizzaFlavors,
-    pizzaToppings,
-    pizzaSizes,
-    orderStatus,
-  });
-});
+		res.render('pages/client/client-orders', {
+			title: `Pedidos - ${client.name}`,
+			...pageContext(req),
+			menu: [{ link: '/clientes', label: 'Clientes' }],
+			clientId,
+			pizzaFlavors,
+			pizzaToppings,
+			pizzaSizes,
+			orderStatus,
+		});
+	},
+);
 
 export default router;

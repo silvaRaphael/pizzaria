@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import stateRoutes from './state-routes';
 import cityRoutes from './city-routes';
+import authRoutes from './auth-routes';
 import userRoutes from './user-routes';
 import clientRoutes from './client-routes';
 import pizzaFlavorRoutes from './pizza-flavor-routes';
@@ -12,6 +13,7 @@ const router = Router();
 
 router.use(stateRoutes);
 router.use(cityRoutes);
+router.use(authRoutes);
 router.use(userRoutes);
 router.use(clientRoutes);
 router.use(pizzaFlavorRoutes);

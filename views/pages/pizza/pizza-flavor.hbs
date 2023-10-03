@@ -75,7 +75,7 @@
 
   function createFlavor(button) {
 
-    const requestCreateFlavor = new ApiRequest('{{defaultPath}}/api/pizza-flavors', 'POST', '#modalAdd');
+    const requestCreateFlavor = new ApiRequest('{{defaultPath}}/api/pizza-flavors', 'POST', '#modalAdd', '{{token}}');
 
     if(!requestCreateFlavor.validate()) return;
 
@@ -100,11 +100,11 @@
     requestCreateFlavor.send();
   }
 
-  const requestUpdateFlavor = new ApiRequest(null, 'PUT', '#modalEdit');
+  const requestUpdateFlavor = new ApiRequest(null, 'PUT', '#modalEdit', '{{token}}');
 
   function editFlavor(id) {
 
-    const requestDataFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'GET', '#modalEdit');
+    const requestDataFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'GET', '#modalEdit', '{{token}}');
 
     requestDataFlavor.onSuccess((response) => {
 
@@ -151,7 +151,7 @@
 
   function deleteFlavor(id) {
     CustomAlert(() => {
-      const requestDeleteFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'DELETE');
+      const requestDeleteFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'DELETE', '{{token}}');
 
       requestDeleteFlavor.onSuccess((response) => {
         pizzaFlavorTable.ajax.reload();
