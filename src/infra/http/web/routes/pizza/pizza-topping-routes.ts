@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import { WebAuthMiddleware } from '../../../middlewares/web-auth-middleware';
 import { pageContext } from '../../../utils/page-context';
+import { WebAuthMiddleware } from '../../../middlewares/web-auth-middleware';
 
 const router = Router();
 

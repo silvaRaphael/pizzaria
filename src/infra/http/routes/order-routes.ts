@@ -13,6 +13,7 @@ import { DeleteOrderUseCase } from '../../../application/use-cases/order-use-cas
 import { OrderPizzaRepositoryImpl } from '../../database/repositories/order-pizza-repository.impl';
 import { GetOrderPizzasUseCase } from '../../../application/use-cases/order-use-cases/get-order-pizzas-use-case';
 import { UpdateOrderPizzasStatusUseCase } from '../../../application/use-cases/order-use-cases/update-order-pizzas-status-use-case';
+import { AuthMiddleware } from '../middlewares/auth-middleware';
 
 const router = Router();
 
@@ -21,45 +22,49 @@ const orderPizzaFlavorRepository = new OrderPizzaFlavorRepositoryImpl();
 const orderPizzaRepository = new OrderPizzaRepositoryImpl();
 const orderPizzaToppingRepository = new OrderPizzaToppingRepositoryImpl();
 const orderController = new OrderController(
-  new CreateOrderUseCase(
-    orderRepository,
-    orderPizzaRepository,
-    orderPizzaFlavorRepository,
-    orderPizzaToppingRepository,
-  ),
-  new GetOrderUseCase(orderRepository),
-  new GetAllOrdersUseCase(orderRepository),
-  new GetAllClientOrdersUseCase(orderRepository),
-  new GetOrderPizzasUseCase(orderPizzaRepository),
-  new UpdateOrderStatusUseCase(orderRepository),
-  new UpdateOrderPizzasStatusUseCase(orderPizzaRepository),
-  new DeleteOrderUseCase(orderRepository),
+	new CreateOrderUseCase(
+		orderRepository,
+		orderPizzaRepository,
+		orderPizzaFlavorRepository,
+		orderPizzaToppingRepository,
+	),
+	new GetOrderUseCase(orderRepository),
+	new GetAllOrdersUseCase(orderRepository),
+	new GetAllClientOrdersUseCase(orderRepository),
+	new GetOrderPizzasUseCase(orderPizzaRepository),
+	new UpdateOrderStatusUseCase(orderRepository),
+	new UpdateOrderPizzasStatusUseCase(orderPizzaRepository),
+	new DeleteOrderUseCase(orderRepository),
 );
 
-router.post('/order', (req, res) => orderController.createOrder(req, res));
+router.post('/order', AuthMiddleware, (req, res) =>
+	orderController.createOrder(req, res),
+);
 
-router.get('/order/:orderId', (req, res) => orderController.getOrder(req, res));
+router.get('/order/:orderId', AuthMiddleware, (req, res) =>
+	orderController.getOrder(req, res),
+);
 
 router.get('/orders', (req, res) => orderController.getAllOrders(req, res));
 
 router.get('/orders/:clientId', (req, res) =>
-  orderController.getAllClientOrders(req, res),
+	orderController.getAllClientOrders(req, res),
 );
 
-router.get('/order-pizzas/:orderId', (req, res) =>
-  orderController.getOrderPizzas(req, res),
+router.get('/order-pizzas/:orderId', AuthMiddleware, (req, res) =>
+	orderController.getOrderPizzas(req, res),
 );
 
-router.patch('/order/:orderId', (req, res) =>
-  orderController.updateOrderStatus(req, res),
+router.patch('/order/:orderId', AuthMiddleware, (req, res) =>
+	orderController.updateOrderStatus(req, res),
 );
 
-router.patch('/order-pizzas/:orderPizzasId', (req, res) =>
-  orderController.updateOrderPizzasStatus(req, res),
+router.patch('/order-pizzas/:orderPizzasId', AuthMiddleware, (req, res) =>
+	orderController.updateOrderPizzasStatus(req, res),
 );
 
-router.delete('/order/:orderId', (req, res) =>
-  orderController.deleteOrder(req, res),
+router.delete('/order/:orderId', AuthMiddleware, (req, res) =>
+	orderController.deleteOrder(req, res),
 );
 
 export default router;

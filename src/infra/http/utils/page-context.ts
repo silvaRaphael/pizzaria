@@ -18,6 +18,7 @@ export const pageContext = (
 		query: req.query,
 		token: (req.session as any).token,
 		userId: (req.session as any).userId,
+		username: (req.session as any).username,
 		...value,
 	};
 };

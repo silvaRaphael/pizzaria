@@ -1,14 +1,19 @@
 import { Router } from 'express';
 
-import { WebAuthMiddleware } from '../../middlewares/web-auth-middleware';
 import { pageContext } from '../../utils/page-context';
 import { OrderRepositoryImpl } from '../../../database/repositories/order-repository-impl';
 import { GetAllOrdersUseCase } from '../../../../application/use-cases/order-use-cases/get-all-orders-use-case';
+import { WebAuthMiddleware } from '../../middlewares/web-auth-middleware';
+import { ClientRepositoryImpl } from '../../../database/repositories/client-repository-impl';
+import { GetAllClientsUseCase } from '../../../../application/use-cases/client-use-cases/get-all-clients-use-case';
 
 const router = Router();
 
 const orderRepository = new OrderRepositoryImpl();
 const getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
+
+const clientRepository = new ClientRepositoryImpl();
+const getAllClientsUseCase = new GetAllClientsUseCase(clientRepository);
 
 router.get(
 	'/',
@@ -46,6 +51,8 @@ router.get(
 		// 	],
 		// });
 
+		const clients = await getAllClientsUseCase.execute();
+
 		const monthRevenueValue = monthOrders.reduce(
 			(acc, crr) => acc + crr.price,
 			0,
@@ -63,6 +70,8 @@ router.get(
 		const monthRevenuePercentage =
 			(monthRevenueValue * 100) / lastMonthRevenueValue - 100;
 
+		const clientsAmmount = clients.length;
+
 		res.render('pages/home', {
 			title: 'Pizzaria',
 			...pageContext(req),
@@ -72,6 +81,7 @@ router.get(
 			monthRevenue,
 			monthRevenuePercentage,
 			monthRevenueIncrease: monthRevenuePercentage >= 0,
+			clientsAmmount,
 		});
 	},
 );

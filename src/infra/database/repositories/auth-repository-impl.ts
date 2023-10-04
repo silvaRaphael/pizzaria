@@ -22,6 +22,7 @@ export class AuthRepositoryImpl implements AuthRepository {
 				select: {
 					id: true,
 					password: true,
+					username: true,
 				},
 			});
 
@@ -45,7 +46,7 @@ export class AuthRepositoryImpl implements AuthRepository {
 				},
 			});
 
-			return { userId: user.id, token };
+			return { userId: user.id, username: user.username, token };
 		} catch (error: any) {
 			throw new Error(error.message);
 		}
@@ -72,9 +73,9 @@ export class AuthRepositoryImpl implements AuthRepository {
 			const response = await prisma.user.findFirst({
 				where: {
 					token,
-					// token_expiration: {
-					// 	lt: DateTime(),
-					// },
+					token_expiration: {
+						gt: DateTime(),
+					},
 				},
 				select: {
 					id: true,

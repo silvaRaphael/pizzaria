@@ -1,0 +1,224 @@
+{{#> wrapper}}
+  <div class="col-lg-12">
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">{{title}}</h5>
+        <a class="btn btn-primary h-min" onclick="openModalAdd()">Novo Usuário</a>
+      </div>
+      <div class="card-body">
+        <div class="py-3">
+          <table id="user-table" class="table dt-responsive nowrap align-middle" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Usuário</th>
+                <th scope="col">Criado Em</th>
+                <th scope="col"><i class="bi bi-tools"></i></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{{/wrapper}}
+
+{{#> simple-modal id="modalAdd" title="Novo Usuário" onSave="createUser(this)"}}
+  <div class="col-12 form-group mb-2">
+    <label>Nome</label>
+    <input type="text" class="form-control" name="name" required>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Usuário</label>
+    <input type="text" class="form-control" name="username" required>
+  </div>
+  <div class="col-6 form-group mb-2">
+    <label>Senha</label>
+		<div class="input-group">
+			<input type="password" id="password" class="form-control" name="password" required>
+			<button class="btn btn-outline-primary" onclick="togglePasswordVisibility(this, getEl('#password'))"><i class="bi bi-eye"></i></button>
+		</div>
+  </div>
+	<div class="col-12 form-group mb-2">
+		<label>Copiar dados do usuário</label>
+		<div class="input-group">
+			<input type="text" id="userdata" class="form-control" name="userdata" disabled>
+			<button class="btn btn-outline-primary" onclick="copyUserdata(getEl('#userdata'))">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+					<path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2Zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6ZM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2Z"/>
+				</svg>
+			</button>
+		</div>
+	</div>
+{{/simple-modal}}
+
+{{#> simple-modal id="modalEdit" title="Editar Usuário" onSave="updateUser(this)"}}
+	<div class="col-12 form-group mb-2">
+    <label>Nome</label>
+    <input type="text" class="form-control" name="name" required>
+  </div>
+  <div id="username-edit-input" class="col-6 form-group mb-2">
+    <label>Usuário</label>
+    <input type="text" class="form-control" name="username" required>
+  </div>
+  <div id="password-edit-input" class="col-6 form-group mb-2 d-none">
+    <label>Senha</label>
+		<div class="input-group">
+			<input type="password" id="password-edit" class="form-control" name="password">
+			<button class="btn btn-outline-primary" onclick="togglePasswordVisibility(this, getEl('#password-edit'))"><i class="bi bi-eye"></i></button>
+		</div>
+  </div>
+{{/simple-modal}}
+
+<script>
+  const userTable = new DataTable('#user-table', {
+    paging: true,
+    autoWidth: true,
+    searching: true,
+    pageLength: 25,
+    language,
+    columns: [
+      { data: '#', width: '10%', className: 'text-center' },
+      { data: 'name', width: '40%' },
+      { data: 'username', width: '23%' },
+      { data: 'created_at', width: '20%', className: 'text-center' },
+      { data: 'actions', width: '7%', orderable: false, className: 'text-center' },
+    ],
+    ajax: {
+      url: '{{defaultPath}}/api/users',
+      dataSrc: '',
+    },
+  });
+
+  const modalAdd = new bootstrap.Modal('#modalAdd');
+  const modalEdit = new bootstrap.Modal('#modalEdit');
+
+	const requestCreateUser = new ApiRequest('{{defaultPath}}/api/users', 'POST', '#modalAdd', '{{token}}');
+
+	function openModalAdd() {
+		getEl('.modal-confirm-button').disabled = false;
+		requestCreateUser.clearFields();
+		modalAdd.show();
+	}
+
+	function togglePasswordVisibility(button, input) {
+		input.type = input.type == 'password' ? 'text' : 'password';
+		button.children[0].classList.toggle('bi-eye', input.type == 'password');
+		button.children[0].classList.toggle('bi-eye-slash', input.type != 'password');
+	}
+
+	async function copyUserdata(input) {
+		if(!input.value) return;
+		await navigator.clipboard.writeText(input.value);
+		Notification('Dados copiados!');
+	}
+
+  function createUser(button) {
+
+    if(!requestCreateUser.validate()) return;
+
+    requestCreateUser.setButton(button);
+
+		const data = {
+      name: requestCreateUser.getField('name').value,
+      username: requestCreateUser.getField('username').value,
+      password: requestCreateUser.getField('password').value,
+    };
+
+    requestCreateUser.setBody(data);
+
+    requestCreateUser.onSuccess((response) => {
+      Notification('Usuário adicionado!');
+      userTable.ajax.reload();
+			button.disabled = true;
+			getEl('#userdata').value = `Usuário: ${data.username} - Senha: ${data.password}`;
+    });
+
+    requestCreateUser.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestCreateUser.send();
+  }
+
+  const requestUpdateUser = new ApiRequest(null, 'PUT', '#modalEdit', '{{token}}');
+
+  function editUser(id) {
+
+    const requestDataUser = new ApiRequest(`{{defaultPath}}/api/user/${id}`, 'GET', '#modalEdit', '{{token}}');
+
+    requestDataUser.onSuccess((response) => {
+
+			const data = {
+				name: response.name,
+				username: response.username,
+			};
+
+			getEl('#password-edit-input').classList.toggle('d-none', !('password' in response));
+			getEl('#username-edit-input').classList.toggle('col-12', !('password' in response));
+
+			if(('password' in response)) data.password = response.password;
+
+      requestDataUser.setFields(data);
+
+      requestUpdateUser.setUrl(`{{defaultPath}}/api/user/${id}`);
+      
+      modalEdit.show();
+    });
+
+    requestDataUser.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestDataUser.send();
+  }
+
+  function updateUser(button) {
+
+    if(!requestUpdateUser.validate()) return;
+
+    requestUpdateUser.setButton(button);
+
+		const data = {
+      name: requestUpdateUser.getField('name').value,
+      username: requestUpdateUser.getField('username').value,
+		};
+
+		if(requestUpdateUser.getField('password').value) data.password = requestUpdateUser.getField('password').value;
+
+		requestUpdateUser.setBody(data);
+
+    requestUpdateUser.onSuccess((response) => {
+      Notification('Usuário alterado!');
+      userTable.ajax.reload();
+      modalEdit.hide();
+    });
+
+    requestUpdateUser.onError((response) => {
+      Notification(response.error, 'danger');
+    });
+
+    requestUpdateUser.send();
+  }
+
+  function deleteUser(id) {
+    CustomAlert(() => {
+      const requestDeleteUser = new ApiRequest(`{{defaultPath}}/api/user/${id}`, 'DELETE', '', '{{token}}');
+
+      requestDeleteUser.onSuccess((response) => {
+        userTable.ajax.reload();
+      });
+
+      requestDeleteUser.onError((response) => {
+        Notification(response.error, 'danger');
+      });
+
+      requestDeleteUser.send();
+    });
+  }
+
+</script>

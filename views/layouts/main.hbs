@@ -1,43 +1,97 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+<html lang='pt-BR'>
 
-  <title>{{title}}</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+	<head>
+		<meta charset='utf-8' />
+		<meta content='width=device-width, initial-scale=1.0' name='viewport' />
 
-  <!-- Favicons -->
-  <link href="{{defaultPath}}/assets/img/favicon.png" rel="icon">
-  <link href="{{defaultPath}}/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+		<title>
+			{{title}}
+		</title>
+		<meta content='' name='description' />
+		<meta content='' name='keywords' />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+		<!-- Favicons -->
+		<link href='{{defaultPath}}/assets/img/favicon.png' rel='icon' />
+		<link
+			href='{{defaultPath}}/assets/img/apple-touch-icon.png'
+			rel='apple-touch-icon'
+		/>
 
-  <!-- Vendor CSS Files -->
-  <link href="{{defaultPath}}/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/datatables/datatables.min.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/simple-datatables/style.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/sweetalert2/sweetalert2.min.css" rel="stylesheet">
-  <link href="{{defaultPath}}/assets/vendor/toastify/toastify.min.css" rel="stylesheet">
+		<!-- Google Fonts -->
+		<link href='https://fonts.gstatic.com' rel='preconnect' />
+		<link
+			href='https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i'
+			rel='stylesheet'
+		/>
 
-  <link rel='stylesheet' href='https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css' />
-  <link rel='stylesheet' href='https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css' />
-  <link rel='stylesheet' href='https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css'>
-  <script>var language={'sEmptyTable':'Nenhum dado disponível na tabela','sInfo':'Mostrando de _START_ a _END_ de _TOTAL_ registros','sInfoEmpty':'Mostrando de 0 a 0 de 0 registros','sInfoFiltered':'(filtrado de _MAX_ registros no total)','sInfoPostFix':'','sInfoThousands':'.','sLengthMenu':'Mostrar _MENU_ registros por página','sLoadingRecords':'Carregando...','sProcessing':'Processando...','sSearch':'Pesquisar:','sZeroRecords':'Nenhum registro correspondente encontrado','oPaginate':{'sFirst':'Primeiro','sLast':'Último','sNext':'Próximo','sPrevious':'Anterior'},'oAria':{'sSortAscending':':Ative para classificar a coluna em ordem crescente','sSortDescending':':Ative para classificar a coluna em ordem decrescente'}}
-  </script>
+		<!-- Vendor CSS Files -->
+		<link
+			href='{{defaultPath}}/assets/vendor/bootstrap/css/bootstrap.min.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/bootstrap-icons/bootstrap-icons.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/boxicons/css/boxicons.min.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/quill/quill.snow.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/quill/quill.bubble.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/remixicon/remixicon.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/datatables/datatables.min.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/simple-datatables/style.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/sweetalert2/sweetalert2.min.css'
+			rel='stylesheet'
+		/>
+		<link
+			href='{{defaultPath}}/assets/vendor/toastify/toastify.min.css'
+			rel='stylesheet'
+		/>
 
-  <!-- Template Main CSS File -->
-  <link href="{{defaultPath}}/assets/css/style.css" rel="stylesheet">
-</head>
-<body>
-  {{{body}}}
-</body>
+		<link
+			rel='stylesheet'
+			href='https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css'
+		/>
+		<link
+			rel='stylesheet'
+			href='https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css'
+		/>
+		<link
+			rel='stylesheet'
+			href='https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css'
+		/>
+		<script>var language = { 'sEmptyTable': 'Nenhum dado disponível na tabela','sInfo':'Mostrando de _START_ a _END_ de _TOTAL_ registros',
+			'sInfoEmpty': 'Mostrando de 0 a 0 de 0 registros', 'sInfoFiltered': '(filtrado de _MAX_ registros no total)', 'sInfoPostFix': '',
+			'sInfoThousands': '.', 'sLengthMenu': 'Mostrar _MENU_ registros por página', 'sLoadingRecords': 'Carregando...', 'sProcessing':
+			'Processando...', 'sSearch': 'Pesquisar:', 'sZeroRecords': 'Nenhum registro correspondente encontrado', 'oPaginate': { 'sFirst': 'Primeiro',
+			'sLast': 'Último', 'sNext': 'Próximo', 'sPrevious': 'Anterior' }, 'oAria': { 'sSortAscending': ':Ative para classificar a coluna em ordem crescente',
+			'sSortDescending': ':Ative para classificar a coluna em ordem decrescente'}}
+		</script>
+
+		<!-- Template Main CSS File -->
+		<link href='{{defaultPath}}/assets/css/style.css' rel='stylesheet' />
+	</head>
+
+	<body>
+		{{{body}}}
+	</body>
+
 </html>

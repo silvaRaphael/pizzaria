@@ -75,7 +75,7 @@
 
   function createTopping(button) {
 
-    const requestCreateTopping = new ApiRequest('{{defaultPath}}/api/pizza-toppings', 'POST', '#modalAdd');
+    const requestCreateTopping = new ApiRequest('{{defaultPath}}/api/pizza-toppings', 'POST', '#modalAdd', '{{token}}');
 
     if(!requestCreateTopping.validate()) return;
 
@@ -100,11 +100,11 @@
     requestCreateTopping.send();
   }
 
-  const requestUpdateTopping = new ApiRequest(null, 'PUT', '#modalEdit');
+  const requestUpdateTopping = new ApiRequest(null, 'PUT', '#modalEdit', '{{token}}');
 
   function editTopping(id) {
 
-    const requestDataTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'GET', '#modalEdit');
+    const requestDataTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'GET', '#modalEdit', '{{token}}');
 
     requestDataTopping.onSuccess((response) => {
 
@@ -151,7 +151,7 @@
 
   function deleteTopping(id) {
     CustomAlert(() => {
-      const requestDeleteTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'DELETE');
+      const requestDeleteTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'DELETE', '{{token}}');
 
       requestDeleteTopping.onSuccess((response) => {
         pizzaToppingTable.ajax.reload();

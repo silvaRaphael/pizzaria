@@ -1,12 +1,12 @@
 export class ExpiredTokenError extends Error {
-  public statusCode: number = 401;
+	public statusCode: number = 401;
 
-  constructor(message: string = 'Token expirado') {
-    super(message);
+	constructor(message: string = 'Sua sessão expirou!') {
+		super(message);
 
-    this.name = 'ExpiredTokenError';
+		this.name = 'ExpiredTokenError';
 
-    if (Error.captureStackTrace)
-      Error.captureStackTrace(this, ExpiredTokenError);
-  }
+		if (Error.captureStackTrace)
+			Error.captureStackTrace(this, ExpiredTokenError);
+	}
 }

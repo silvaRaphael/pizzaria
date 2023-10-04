@@ -1,4 +1,5 @@
 export interface UserCredentialsDTO {
-  userId: string;
-  token?: string;
+	userId: string;
+	username?: string;
+	token?: string;
 }

@@ -131,7 +131,7 @@
 
   function createClient(button) {
 
-    const requestCreateClient = new ApiRequest('{{defaultPath}}/api/clients', 'POST', '#modalAdd');
+    const requestCreateClient = new ApiRequest('{{defaultPath}}/api/clients', 'POST', '#modalAdd', '{{token}}');
 
     if(!requestCreateClient.validate()) return;
 
@@ -162,11 +162,11 @@
     requestCreateClient.send();
   }
 
-  const requestUpdateClient = new ApiRequest(null, 'PUT', '#modalEdit');
+  const requestUpdateClient = new ApiRequest(null, 'PUT', '#modalEdit', '{{token}}');
 
   function editClient(id) {
 
-    const requestDataClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'GET', '#modalEdit');
+    const requestDataClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'GET', '#modalEdit', '{{token}}');
 
     requestDataClient.onSuccess((response) => {
 
@@ -227,7 +227,7 @@
 
   function deleteClient(id) {
     CustomAlert(() => {
-      const requestDeleteClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'DELETE');
+      const requestDeleteClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'DELETE', '{{token}}');
 
       requestDeleteClient.onSuccess((response) => {
         clientTable.ajax.reload();

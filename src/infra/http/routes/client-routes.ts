@@ -7,36 +7,37 @@ import { GetClientUseCase } from '../../../application/use-cases/client-use-case
 import { ClientRepositoryImpl } from '../../database/repositories/client-repository-impl';
 import { UpdateClientUseCase } from '../../../application/use-cases/client-use-cases/update-client-use-case';
 import { DeleteClientUseCase } from '../../../application/use-cases/client-use-cases/delete-client-use-case';
+import { AuthMiddleware } from '../middlewares/auth-middleware';
 
 const router = Router();
 
 const clientRepository = new ClientRepositoryImpl();
 const clientController = new ClientController(
-  new CreateClientUseCase(clientRepository),
-  new GetClientUseCase(clientRepository),
-  new GetAllClientsUseCase(clientRepository),
-  new UpdateClientUseCase(clientRepository),
-  new DeleteClientUseCase(clientRepository),
+	new CreateClientUseCase(clientRepository),
+	new GetClientUseCase(clientRepository),
+	new GetAllClientsUseCase(clientRepository),
+	new UpdateClientUseCase(clientRepository),
+	new DeleteClientUseCase(clientRepository),
 );
 
-router.post('/clients', (req, res) => {
-  clientController.createClient(req, res);
+router.post('/clients', AuthMiddleware, (req, res) => {
+	clientController.createClient(req, res);
 });
 
-router.get('/client/:clientId', (req, res) => {
-  clientController.getClient(req, res);
+router.get('/client/:clientId', AuthMiddleware, (req, res) => {
+	clientController.getClient(req, res);
 });
 
 router.get('/clients', (req, res) => {
-  clientController.getAllClients(req, res);
+	clientController.getAllClients(req, res);
 });
 
-router.put('/client/:clientId', (req, res) => {
-  clientController.updateClient(req, res);
+router.put('/client/:clientId', AuthMiddleware, (req, res) => {
+	clientController.updateClient(req, res);
 });
 
-router.delete('/client/:clientId', (req, res) => {
-  clientController.deleteClient(req, res);
+router.delete('/client/:clientId', AuthMiddleware, (req, res) => {
+	clientController.deleteClient(req, res);
 });
 
 export default router;

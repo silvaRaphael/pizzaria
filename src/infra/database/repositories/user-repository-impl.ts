@@ -8,6 +8,7 @@ export class UserRepositoryImpl implements UserRepository {
 			const userExists = await prisma.user.findFirst({
 				where: {
 					username: user.username,
+					active: true,
 				},
 			});
 
@@ -20,7 +21,7 @@ export class UserRepositoryImpl implements UserRepository {
 					id: user.id,
 					username: user.username,
 					name: user.name,
-					password: user.password,
+					password: user.password ?? '',
 					active: user.active,
 					token: user.token,
 					token_expiration: user.token_expiration,
@@ -60,6 +61,7 @@ export class UserRepositoryImpl implements UserRepository {
 					id: true,
 					name: true,
 					username: true,
+					created_at: true,
 				},
 				orderBy: {
 					name: 'asc',
@@ -71,17 +73,20 @@ export class UserRepositoryImpl implements UserRepository {
 	}
 
 	async update(user: User): Promise<void> {
+		const data = {
+			username: user.username,
+			name: user.name,
+			updated_at: user.updated_at,
+		};
+
+		if (user.password) (data as any).password = user.password;
+
 		try {
 			await prisma.user.update({
 				where: {
 					id: user.id,
 				},
-				data: {
-					username: user.username,
-					name: user.name,
-					password: user.password,
-					updated_at: user.updated_at,
-				},
+				data,
 			});
 		} catch (error: any) {
 			throw new Error(error.message);

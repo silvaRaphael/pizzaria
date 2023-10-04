@@ -25,7 +25,7 @@ export const AuthMiddleware = async (
 
 		if (!response) throw new ExpiredTokenError();
 
-		(res as any).userId = response.userId;
+		(req as any).userId = response.userId;
 
 		next();
 	} catch (error: any) {

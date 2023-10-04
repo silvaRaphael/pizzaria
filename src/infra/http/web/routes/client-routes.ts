@@ -1,6 +1,5 @@
 import { Router } from 'express';
 
-import { WebAuthMiddleware } from '../../middlewares/web-auth-middleware';
 import { pageContext } from '../../utils/page-context';
 import { StateRepositoryImpl } from '../../../database/repositories/state-repository-impl';
 import { GetAllStatesUseCase } from '../../../../application/use-cases/state-use-cases/get-all-states-use-case';
@@ -10,6 +9,7 @@ import { PizzaFlavorRepositoryImpl } from '../../../database/repositories/pizza-
 import { GetAllPizzaFlavorsUseCase } from '../../../../application/use-cases/pizza-flavor-use-cases/get-all-pizza-flavors-use-case';
 import { PizzaToppingRepositoryImpl } from '../../../database/repositories/pizza-topping-repository-impl';
 import { GetAllPizzaToppingsUseCase } from '../../../../application/use-cases/pizza-topping-use-cases/get-all-pizza-toppings-use-case';
+import { WebAuthMiddleware } from '../../middlewares/web-auth-middleware';
 import { orderStatus } from '../../../../domain/order-status';
 import { pizzaSizes } from '../../../../domain/pizza-sizes';
 

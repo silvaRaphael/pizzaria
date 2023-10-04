@@ -22,8 +22,6 @@ export const WebAuthMiddleware = async (
 
 		if (!response) throw new ExpiredTokenError();
 
-		(res as any).userId = response.userId;
-
 		next();
 	} catch (error: any) {
 		(req.session as any).errorMessage = error.message;

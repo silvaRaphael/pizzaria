@@ -6,102 +6,108 @@ import { GetUserUseCase } from '../../../application/use-cases/user-use-cases/ge
 import { GetAllUsersUseCase } from '../../../application/use-cases/user-use-cases/get-all-users-use-case';
 import { UpdateUserUseCase } from '../../../application/use-cases/user-use-cases/update-user-use-case';
 import { DeleteUserUseCase } from '../../../application/use-cases/user-use-cases/delete-user-use-case';
+import { FormatDate } from '../utils/format-date';
 
 export class UserController {
-  constructor(
-    private createUserUseCase: CreateUserUseCase,
-    private getUserUseCase: GetUserUseCase,
-    private getAllUsersUseCase: GetAllUsersUseCase,
-    private updateUserUseCase: UpdateUserUseCase,
-    private deleteUserUseCase: DeleteUserUseCase,
-  ) {}
+	constructor(
+		private createUserUseCase: CreateUserUseCase,
+		private getUserUseCase: GetUserUseCase,
+		private getAllUsersUseCase: GetAllUsersUseCase,
+		private updateUserUseCase: UpdateUserUseCase,
+		private deleteUserUseCase: DeleteUserUseCase,
+	) {}
 
-  async createUser(req: Request, res: Response): Promise<void> {
-    const { username, name, password } = req.body;
+	async createUser(req: Request, res: Response): Promise<void> {
+		const { username, name, password } = req.body;
 
-    try {
-      const user = await this.createUserUseCase.execute({
-        username,
-        name,
-        password,
-      });
+		try {
+			const user = await this.createUserUseCase.execute({
+				username,
+				name,
+				password,
+			});
 
-      res.status(201).json({ id: user.id });
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro!' });
-    }
-  }
+			res.status(201).json({ id: user.id });
+		} catch (error: any) {
+			console.error(error);
+			res.status(500).json({ error: 'Ocorreu um erro!' });
+		}
+	}
 
-  async getUser(req: Request, res: Response): Promise<void> {
-    const { userId } = req.params;
+	async getUser(req: Request, res: Response): Promise<void> {
+		const { userId } = req.params;
+		const myId = (req as any).userId;
 
-    try {
-      const user = await this.getUserUseCase.execute(userId);
+		try {
+			const user = await this.getUserUseCase.execute(userId);
 
-      res.status(200).json(user);
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro!' });
-    }
-  }
+			if (user.id == myId) (user as any).password = '';
 
-  async getAllUsers(req: Request, res: Response): Promise<void> {
-    try {
-      const users = await this.getAllUsersUseCase.execute();
+			res.status(200).json(user);
+		} catch (error: any) {
+			console.error(error);
+			res.status(500).json({ error: error.message });
+		}
+	}
 
-      let actions = fs.readFileSync(
-        'views/partials/actions-dropdown.hbs',
-        'utf8',
-      );
+	async getAllUsers(req: Request, res: Response): Promise<void> {
+		try {
+			const users = await this.getAllUsersUseCase.execute();
 
-      const response = users.map((item, index) => {
-        actions = actions.replace('{{edit}}', `editUser('${item.id}')`);
-        actions = actions.replace('{{delete}}', `deleteUser('${item.id}')`);
+			let actionsButton = fs.readFileSync(
+				'views/partials/actions-dropdown.hbs',
+				'utf8',
+			);
 
-        return {
-          ...item,
-          '#': index + 1,
-          actions,
-        };
-      });
+			const response = users.map((item, index) => {
+				let actions = actionsButton;
+				actions = actions.replace('{{edit}}', `editUser('${item.id}')`);
+				actions = actions.replace('{{delete}}', `deleteUser('${item.id}')`);
 
-      res.status(200).json(response);
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro!' });
-    }
-  }
+				return {
+					...item,
+					'#': index + 1,
+					created_at: new FormatDate(item.created_at).fullFormat(),
+					actions,
+				};
+			});
 
-  async updateUser(req: Request, res: Response): Promise<void> {
-    const { userId } = req.params;
-    const { username, name, password } = req.body;
+			res.status(200).json(response);
+		} catch (error: any) {
+			console.error(error);
+			res.status(500).json({ error: 'Ocorreu um erro!' });
+		}
+	}
 
-    try {
-      await this.updateUserUseCase.execute({
-        id: userId,
-        username,
-        name,
-        password,
-      });
+	async updateUser(req: Request, res: Response): Promise<void> {
+		const { userId } = req.params;
+		const { username, name, password } = req.body;
 
-      res.status(204).end();
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro!' });
-    }
-  }
+		try {
+			await this.updateUserUseCase.execute({
+				id: userId,
+				username,
+				name,
+				password,
+			});
 
-  async deleteUser(req: Request, res: Response): Promise<void> {
-    const { userId } = req.params;
+			res.status(204).end();
+		} catch (error: any) {
+			console.error(error);
+			res.status(500).json({ error: 'Ocorreu um erro!' });
+		}
+	}
 
-    try {
-      await this.deleteUserUseCase.execute(userId);
+	async deleteUser(req: Request, res: Response): Promise<void> {
+		const { userId } = req.params;
 
-      res.status(204).end();
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: 'Ocorreu um erro!' });
-    }
-  }
+		try {
+			await this.deleteUserUseCase.execute(userId);
+
+			res.status(204).end();
+		} catch (error: any) {
+			console.error(error);
+			res.status(500).json({ error: 'Ocorreu um erro!' });
+		}
+	}
 }

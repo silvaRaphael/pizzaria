@@ -19,6 +19,7 @@ export class AuthController {
 
 			(req.session as any).token = auth.token;
 			(req.session as any).userId = auth.userId;
+			(req.session as any).username = auth.username;
 
 			req.session.save(() => {
 				res.status(200).json(auth);

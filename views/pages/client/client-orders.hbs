@@ -207,7 +207,7 @@
 
   function createPizzaOrder(button) {
 
-    const requestCreatePizzaOrder = new ApiRequest(null, null, '#modalAdd');
+    const requestCreatePizzaOrder = new ApiRequest(null, null, '#modalAdd', '{{token}}');
 
     if(!requestCreatePizzaOrder.validate()) return;
 
@@ -263,7 +263,7 @@
 
   function createOrder(button) {
 
-    const requestCreateOrder = new ApiRequest('{{defaultPath}}/api/order', 'POST', '#modalAdd');
+    const requestCreateOrder = new ApiRequest('{{defaultPath}}/api/order', 'POST', '#modalAdd', '{{token}}');
 
     if(!pizzaOrders.length) return;
 
@@ -296,11 +296,11 @@
     requestCreateOrder.send();
   }
 
-  const requestUpdateOrder = new ApiRequest(null, 'PUT', '#modalEdit');
+  const requestUpdateOrder = new ApiRequest(null, 'PUT', '#modalEdit', '{{token}}');
 
   function editOrder(id) {
 
-    const requestDataOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'GET', '#modalEdit');
+    const requestDataOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'GET', '#modalEdit', '{{token}}');
 
     requestDataOrder.onSuccess((response) => {
 
@@ -364,7 +364,7 @@
 
   function deleteOrder(id) {
     CustomAlert(() => {
-      const requestDeleteOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'DELETE');
+      const requestDeleteOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'DELETE', '{{token}}');
 
       requestDeleteOrder.onSuccess((response) => {
         OrderTable.ajax.reload();
@@ -378,7 +378,7 @@
     });
   }
 
-  const requestUpdateOrderStatus = new ApiRequest(null, 'PATCH', '#modalEditStatus');
+  const requestUpdateOrderStatus = new ApiRequest(null, 'PATCH', '#modalEditStatus', '{{token}}');
 
   function editOrderStatus(id, status) {
 
@@ -409,7 +409,7 @@
 
   function getOrderPizzas(id) {
 
-    const requestDataOrderPizzas = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'GET', '');
+    const requestDataOrderPizzas = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'GET', '', '{{token}}');
 
     requestDataOrderPizzas.onSuccess((response) => {
       const ordersPizzaList = getEl('#order-pizza-list');
@@ -482,7 +482,7 @@
 
   function updateOrderPizzaStatus(button, status, id, order_id) {
 
-    const requestUpdateOrderPizzasStatus = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'PATCH', '#modalOrderPizzas');
+    const requestUpdateOrderPizzasStatus = new ApiRequest(`{{defaultPath}}/api/order-pizzas/${id}`, 'PATCH', '#modalOrderPizzas', '{{token}}');
 
     requestUpdateOrderPizzasStatus.setButton(button);
 

@@ -1,9 +1,12 @@
 <html lang='pt-BR'>
+
 	<head>
 		<meta charset='utf-8' />
 		<meta content='width=device-width, initial-scale=1.0' name='viewport' />
 
-		<title>Login - Pizzaria</title>
+		<title>
+			Login - Pizzaria
+		</title>
 		<meta content name='description' />
 		<meta content name='keywords' />
 
@@ -63,20 +66,23 @@
 										href='/login'
 										class='logo d-flex align-items-center w-auto'
 									>
-										{{!-- <img src='{{defaultPath}}/assets/img/logo.png' alt /> --}}
-										{{! <span class='d-none d-lg-block'>NiceAdmin</span> }}
-										<h3 class='fw-bold fs-4'>Pizzaria</h3>
+										<img src='{{defaultPath}}/assets/img/logo.png' alt='' />
+										<span class='d-block'>Pizzaria</span>
 									</a>
-								</div><!-- End Logo -->
+								</div>
+								<!-- End Logo -->
 
 								<div class='card mb-3'>
 
 									<div class='card-body'>
 
 										<div class='pt-4 pb-2'>
-											<h5 class='card-title text-center pb-0 fs-4'>Acessar sua
-												conta</h5>
-											<p class='text-center small'>Entre com seu usuário e senha</p>
+											<h5 class='card-title text-center pb-0 fs-4'>
+												Acessar sua conta
+											</h5>
+											<p class='text-center small'>
+												Entre com seu usuário e senha
+											</p>
 										</div>
 
 										<div id='login-form' class='row g-3'>
@@ -95,7 +101,9 @@
 														id='username'
 														required
 													/>
-													<div class='invalid-feedback'>Digite seu usuário.</div>
+													<div class='invalid-feedback'>
+														Digite seu usuário.
+													</div>
 												</div>
 											</div>
 
@@ -108,7 +116,9 @@
 													id='password'
 													required
 												/>
-												<div class='invalid-feedback'>Digite sua senha!</div>
+												<div class='invalid-feedback'>
+													Digite sua senha!
+												</div>
 											</div>
 
 											<div class='col-12'>
@@ -130,7 +140,8 @@
 				</section>
 
 			</div>
-		</main><!-- End #main -->
+		</main>
+		<!-- End #main -->
 
 		<a
 			href='#'
@@ -150,15 +161,31 @@
 		<script src='{{defaultPath}}/assets/js/main.js'></script>
 
 		<script>
-			function login(button) { const login_request = new
-			ApiRequest('/api/sign-in', 'POST', '#login-form');
-			login_request.setButton(button); if(!login_request.validate()) return;
-			login_request.setBody({ username:
-			login_request.getField('username').value, password:
-			login_request.getField('password').value, });
-			login_request.onSuccess((response) => { console.log(response)
-			location.href = '/'; }); login_request.onError((response) => {
-			Notification(response.error) }); login_request.send(); }
+			if ('{{errorMessage}}') Notification('{{errorMessage}}', 'danger');
+
+			function login(button) {
+				const login_request = new ApiRequest('/api/sign-in', 'POST', '#login-form');
+
+				login_request.setButton(button);
+				
+				if (!login_request.validate()) return;
+				
+				login_request.setBody({
+					username: login_request.getField('username').value,
+					password: login_request.getField('password').value,
+				});
+
+				login_request.onSuccess((response) => {
+					location.href = '/';
+				});
+				
+				login_request.onError((response) => {
+
+					Notification(response.error);
+				});
+
+				login_request.send();
+			}
 		</script>
 	</body>
 
