@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import fs from 'node:fs';
+import fs from 'fs';
 
 import { CreateUserUseCase } from '../../../application/use-cases/user-use-cases/create-user-use-case';
 import { GetUserUseCase } from '../../../application/use-cases/user-use-cases/get-user-use-case';

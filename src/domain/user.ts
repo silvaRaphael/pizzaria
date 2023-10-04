@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from 'crypto';
 import { hashSync } from 'bcryptjs';
 
 import { DateTime } from '../infra/http/utils/datetime';
