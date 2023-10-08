@@ -151,7 +151,7 @@
 
   function deleteFlavor(id) {
     CustomAlert(() => {
-      const requestDeleteFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'DELETE', '{{token}}');
+      const requestDeleteFlavor = new ApiRequest(`{{defaultPath}}/api/pizza-flavor/${id}`, 'DELETE', '', '{{token}}');
 
       requestDeleteFlavor.onSuccess((response) => {
         pizzaFlavorTable.ajax.reload();

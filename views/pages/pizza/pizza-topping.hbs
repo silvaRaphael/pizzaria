@@ -151,7 +151,7 @@
 
   function deleteTopping(id) {
     CustomAlert(() => {
-      const requestDeleteTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'DELETE', '{{token}}');
+      const requestDeleteTopping = new ApiRequest(`{{defaultPath}}/api/pizza-topping/${id}`, 'DELETE', '', '{{token}}');
 
       requestDeleteTopping.onSuccess((response) => {
         pizzaToppingTable.ajax.reload();

@@ -213,7 +213,7 @@
 
   function deleteOrder(id) {
     CustomAlert(() => {
-      const requestDeleteOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'DELETE', '{{token}}');
+      const requestDeleteOrder = new ApiRequest(`{{defaultPath}}/api/order/${id}`, 'DELETE', '', '{{token}}');
 
       requestDeleteOrder.onSuccess((response) => {
         OrderTable.ajax.reload();

@@ -227,7 +227,7 @@
 
   function deleteClient(id) {
     CustomAlert(() => {
-      const requestDeleteClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'DELETE', '{{token}}');
+      const requestDeleteClient = new ApiRequest(`{{defaultPath}}/api/client/${id}`, 'DELETE', '', '{{token}}');
 
       requestDeleteClient.onSuccess((response) => {
         clientTable.ajax.reload();
