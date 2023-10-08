@@ -1,7 +1,5 @@
 export class FormatDate {
-	constructor(protected date: Date) {
-		this.date = date;
-	}
+	constructor(public date: Date) {}
 
 	fullFormat(type: 'horizontal' | 'vertical' = 'horizontal'): string {
 		let dateFormated = this.date
