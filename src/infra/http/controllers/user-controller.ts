@@ -29,7 +29,7 @@ export class UserController {
 
 			res.status(201).json({ id: user.id });
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: 'Ocorreu um erro!' });
 		}
 	}
@@ -45,7 +45,7 @@ export class UserController {
 
 			res.status(200).json(user);
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: error.message });
 		}
 	}
@@ -74,7 +74,7 @@ export class UserController {
 
 			res.status(200).json(response);
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: 'Ocorreu um erro!' });
 		}
 	}
@@ -93,7 +93,7 @@ export class UserController {
 
 			res.status(204).end();
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: 'Ocorreu um erro!' });
 		}
 	}
@@ -106,7 +106,7 @@ export class UserController {
 
 			res.status(204).end();
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: 'Ocorreu um erro!' });
 		}
 	}

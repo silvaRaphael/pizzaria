@@ -25,7 +25,7 @@ export class AuthController {
 				res.status(200).json(auth);
 			});
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: error.message });
 		}
 	}
@@ -40,7 +40,7 @@ export class AuthController {
 				res.end();
 			});
 		} catch (error: any) {
-			console.error(error);
+			// console.error(error);
 			res.status(500).json({ error: 'Ocorreu um erro!' });
 		}
 	}

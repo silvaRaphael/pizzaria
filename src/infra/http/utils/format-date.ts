@@ -1,25 +1,25 @@
 export class FormatDate {
-  constructor(protected date: Date) {
-    this.date = new Date(date.toISOString().replace('Z', ''));
-  }
+	constructor(protected date: Date) {
+		this.date = date;
+	}
 
-  fullFormat(type: 'horizontal' | 'vertical' = 'horizontal'): string {
-    let dateFormated = this.date
-      .toLocaleString()
-      .replace(',', ' -')
-      .replace(':', 'h')
-      .split(':')[0];
+	fullFormat(type: 'horizontal' | 'vertical' = 'horizontal'): string {
+		let dateFormated = this.date
+			.toLocaleString()
+			.replace(',', ' -')
+			.replace(':', 'h')
+			.split(':')[0];
 
-    if (type == 'vertical') dateFormated = dateFormated.replace(' - ', '<br>');
+		if (type == 'vertical') dateFormated = dateFormated.replace(' - ', '<br>');
 
-    return dateFormated;
-  }
+		return dateFormated;
+	}
 
-  dateFormat(): string {
-    return this.date.toLocaleDateString();
-  }
+	dateFormat(): string {
+		return this.date.toLocaleDateString();
+	}
 
-  timeFormat(): string {
-    return this.date.toLocaleTimeString().replace(':', 'h').split(':')[0];
-  }
+	timeFormat(): string {
+		return this.date.toLocaleTimeString().replace(':', 'h').split(':')[0];
+	}
 }
